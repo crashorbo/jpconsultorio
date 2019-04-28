@@ -1,0 +1,391 @@
+{% extends 'base2.html' %}
+
+{% load static %}
+
+{% load paciente_tags %}
+
+{% block contenido %}
+<button type="submit" id="paciente-espera" class="right-side-toggle waves-effect waves-light btn-success btn btn-circle btn-sm pull-right m-l-10"><i class="icon-calendar text-white"></i></button>
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+    <form id="form-guardar" action="{% url 'agenda-editar' pk=consulta.id %}" method="post">
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">D.P.</div>
+            <div class="hide">
+              {{ form.paciente }}
+              {{ form.procedencia }}
+              {{ form.seguro }}
+              {{ form.fecha }}
+              {{ form.hora_inicio }}
+              {{ form.hora_fin }}
+              {{ form.tipo }}
+              {{ form.prioridad }}
+          </div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-12">
+              <h5>Nombre: <strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong></h5>
+            </div>
+            <div class="col-md-6 col-sm-12 b-r">
+              <h5>Ocupacion: <strong>{{ consulta.paciente.ocupacion }}</strong></h5>
+            </div>
+            <div class="col-md-3 col-sm-6 b-r">
+              <h5>Edad: <strong>{{ consulta.paciente.fecha_nacimiento|edad }}</strong></h5>
+            </div>
+            <div class="col-md-3 col-sm-6 text-right">
+              {% csrf_token %}
+              <button type="button" class="btn btn-sm btn-info" id="historiac" data-paciente="{{ consulta.paciente.id }}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
+              <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Guardar"><i class="fa fa-save"></i></button>
+              <a href="{% url "agenda-listar" %}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Volver"><i class="fa fa-rotate-left"></i></a>
+            </div>
+            <div class="col-md-12">
+              <h5>Procedencia: <strong>{{ consulta.procedencia }}</strong></h5>
+            </div>
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">Ant.</div>  
+          </div>
+        </div>        
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-12">
+              <small>Oculares</small>
+              {{ form.antocu }}
+            </div>
+            <div class="col-md-12">
+              <small>Sistemicos</small>
+              {{ form.antsis }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">M.C.</div>
+          </div>
+        </div>        
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-12">
+              {{ form.motivo }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">A.V.</div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>S/C</strong></h5>
+            </label>
+            <div class="col-md-5">
+              {{ form.dsc }}
+            </div>
+            <div class="col-md-5">
+              {{ form.isc }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>C/C</strong></h5>
+            </label>
+            <div class="col-md-5">
+              {{ form.dcc }}
+            </div>
+            <div class="col-md-5">
+              {{ form.icc }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Refr.</strong></h5>
+            </label>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-4">{{ form.dre1 }}</div>
+                <div class="col-md-4">{{ form.dre2 }}</div>
+                <div class="col-md-4">{{ form.dre3 }}</div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-4">{{ form.ire1 }}</div>
+                <div class="col-md-4">{{ form.ire2 }}</div>
+                <div class="col-md-4">{{ form.ire3 }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Auto.</strong></h5>
+            </label>
+            <div class="col-md-5">
+              {{ form.dau }}
+            </div>
+            <div class="col-md-5">
+              {{ form.iau }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Cerca</strong></h5>
+            </label>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-6">{{ form.ddc1 }}</div>
+                <div class="col-md-6">{{ form.ddc2 }}</div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-6">{{ form.idc1 }}</div>
+                <div class="col-md-6">{{ form.idc2 }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Pin Hole</strong></h5>
+            </label>
+            <div class="col-md-5">
+              {{ form.dph }}
+            </div>
+            <div class="col-md-5">
+              {{ form.iph }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Ciclopl.</strong></h5>
+            </label>
+            <div class="col-md-5">
+              {{ form.dci }}
+            </div>
+            <div class="col-md-5">
+              {{ form.ici }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Lente</strong></h5>
+            </label>
+            <div class="col-md-5">
+              {{ form.dcl }}
+            </div>
+            <div class="col-md-5">
+              {{ form.icl }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label"> 
+              <h5><strong>Receta</strong></h5>
+            </label>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-4">{{ form.drc1 }}</div>
+                <div class="col-md-4">{{ form.drc2 }}</div>
+                <div class="col-md-4">{{ form.drc3 }}</div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-4">{{ form.irc1 }}</div>
+                <div class="col-md-4">{{ form.irc2 }}</div>
+                <div class="col-md-4">{{ form.irc3 }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label">
+              <h5><strong>Adicion</strong></h5>
+            </label>
+            <div class="col-md-10">
+              {{ form.adicion }}
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-2 col-form-label">
+              <h5><strong>Tipo</strong></h5>
+            </label>
+            <div class="col-md-8">
+              {{ form.tipo_lente }}
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-inverse btn-block" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="icon-printer"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div class="col-md-6 col-sm-12">
+    <div class="row m-b-5">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">T.O.</div>
+          </div>
+        </div>        
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-6">
+              <small>Ojo Derecho</small>
+              {{ form.dto }}
+            </div>
+            <div class="col-md-6">
+              <small>Ojo Izquierdo</small>
+              {{ form.ito }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">Bio.</div>
+          </div>
+        </div> 
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-6">
+              <small>Ojo Derecho</small>
+              {{ form.dbio }}
+            </div>
+            <div class="col-md-6">
+              <small>Ojo Izquierdo</small>
+              {{ form.ibio }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">F.O.</div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-6">
+              <small>Ojo Derecho</small>
+              {{ form.dfdo }}
+            </div>
+            <div class="col-md-6">
+              <small>Ojo Izquierdo</small>
+              {{ form.ifdo }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">Otros</div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <div class="row">
+            <div class="col-md-12">
+              {{ form.otros }}
+            </div>
+          </div>
+        </div>
+      </div>  
+    </form>  
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">Diag.</div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <form id="diagform" action="{% url 'diagnostico-crear' %}" method="post">
+            {% csrf_token %}
+            {{ diagform.agenda}}
+            <div class="row">
+              <div class="col-md-12">
+                <div class="input-group">
+                  {{ diagform.detalle }}
+                  <span class="input-group-btn"><button class="btn btn-success" type="submit"><i class="fa fa-plus"></i></span></button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div id="diagnosticos" class="col-md-12">
+              <table class="table table-striped tabla">
+              {% for item in consulta.diagnostico_set.all %}
+                <tr>
+                  <td><h6>{{ forloop.counter }}</h6></td>
+                  <td><h6>{{ item.detalle }}</h6></td>
+                  <td class="text-right"><form action="{% url 'diagnostico-eliminar' pk=item.id %}" method="post" class="form-eliminar-diag">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
+                </tr>
+              {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">Trat.</div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <form id="tratform" action="{% url 'tratamiento-crear' %}" method="post">
+            {% csrf_token %}
+            {{ tratform.agenda}}
+            <div class="row">
+              <div class="col-md-12">
+                <div class="input-group">
+                  {{ tratform.detalle }}
+                  <span class="input-group-btn"><button class="btn btn-success" type="submit"><i class="fa fa-plus"></i></span></button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div id="tratamientos" class="col-md-12">
+              <table class="table table-striped tabla">
+              {% for item in consulta.tratamiento_set.all %}
+                <tr>
+                  <td><h6>{{ forloop.counter }}</h6></td>
+                  <td><h6>{{ item.detalle }}</h6></td>
+                  <td class="text-right"><form action="{% url 'tratamiento-eliminar' pk=item.id %}" method="post" class="form-eliminar-trat">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
+                </tr>
+              {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> 
+  </div>
+{% endblock %}
+{% block js %}
+  <script src="{% static "assets/paginas/agenda/agenda-editar.js" %}"></script>
+{% endblock %}

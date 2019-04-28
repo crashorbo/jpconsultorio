@@ -1,0 +1,9 @@
+<table class="table table-striped tabla">
+{% for item in consulta.tratamiento_set.all %}
+  <tr>
+    <td><h6>{{ forloop.counter }}</h6></td>
+    <td><h6>{{ item.detalle }}</h6></td>
+    <td class="text-right"><form action="{% url 'tratamiento-eliminar' pk=item.id %}" method="post" class="form-eliminar-trat">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
+  </tr>
+{% endfor %}
+</table>

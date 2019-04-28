@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+
+<!-- ============================================================== -->
+<!-- Start Page Content -->
+<!-- ============================================================== -->
+<div class="row p-t-30">
+    <div class="col-lg-3 col-md-6">
+        <div class="card ">
+            <div class="row">
+                <div class="col-12">
+                    <div class="social-widget">
+                        <div class="icono-main soc-header box-twitter">
+                            <i class="icon-calendar-3"></i>
+                        </div>
+                        <div class="soc-content">
+                            <div class="col-12 text-center">
+                                <a href="{% url "agenda-index" %}" class="btn btn-info">
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card ">
+            <div class="row">
+                <div class="col-12">
+                    <div class="social-widget">
+                        <div class="icono-main soc-header box-twitter">
+                            <i class="icon-doctor"></i>
+                        </div>
+                        <div class="soc-content">
+                            <div class="col-12 text-center">
+                                <a href="{% url "agenda-listar" %}" class="btn btn-info">
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="col-lg-3 col-md-6">
+        <div class="card ">
+            <div class="row">
+                <div class="col-12">
+                    <div class="social-widget">
+                        <div class="icono-main soc-header box-twitter">
+                            <i class="ti-user"></i>
+                        </div>
+                        <div class="soc-content">
+                            <div class="col-12 text-center">
+                                <a href="{% url "paciente-index" %}" class="btn btn-info">
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="col-lg-3 col-md-6">
+        <div class="card ">
+            <div class="row">
+                <div class="col-12">
+                    <div class="social-widget">
+                        <div class="icono-main soc-header box-twitter">
+                            <i class="ti-settings"></i>
+                        </div>
+                        <div class="soc-content">
+                            <div class="col-12 text-center">
+                                <a href="{% url "agenda-index" %}" class="btn btn-info">
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>       
+</div>
+<!-- ============================================================== -->
+<!-- End PAge Content -->
+<!-- ============================================================== -->
+{% endblock %}

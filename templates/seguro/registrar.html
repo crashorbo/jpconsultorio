@@ -1,0 +1,78 @@
+{% load static %}
+<div class="modal-header">
+  <h4 class="modal-title">Registro Seguro</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+{% if form.errors %}
+<div class="alert alert-danger">
+    {{ form.non_field_errors }}
+    <ul>
+        {% for field in form %}
+            {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+<div class="modal-body">
+  <form id="form-seguro" class="form-material form-paciente" action="{% url "seguro-registrar" %}" method="post" novalidate>
+    {% csrf_token %}
+    <div class="form-group">     
+        {{ form.nombre }}
+    </div>
+    <div class="form-group">        
+        {{ form.direccion }}
+    </div>
+    <div class="form-group">        
+        {{ form.telefono }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-danger waves-effect waves-light">Guardar</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  $('form').keypress(function(e){   
+    if(e == 13){
+      return false;
+    }
+  });
+
+  $('input').keypress(function(e){
+    if(e.which == 13){
+      return false;
+    }
+  });
+
+  $('.form-paciente').on('submit', function (e) {
+      e.preventDefault();
+      var $formData = $(this).serialize();
+      var $thisUrl = $(this).attr('action');
+      var $thisMethod = $(this).attr('method');
+      $.ajax({
+          method: $thisMethod,
+          url: $thisUrl,
+          data: $formData,
+          success: function(data){
+            $("#msj-modal").html(data);
+            $("#responsive-modal").modal('hide');
+            $("#mensaje-modal").modal('show');
+          },
+          error: function(xhr,errmsg,err) {
+            // Show an error
+            $('#results').html("<div class='alert-box alert radius' data-alert>"+
+            "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+      })
+  });
+
+  $("input").keyup(function(e){
+      this.value = this.value.toUpperCase();
+  });
+
+  $("textarea").keyup(function(){
+  this.value = this.value.toUpperCase();
+});
+</script>
