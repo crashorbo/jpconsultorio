@@ -64,18 +64,8 @@ class AgendaRegistrar(CreateView):
             if servicios.is_valid():
                 servicios.instance = self.object
                 servicios.save()
-            self.recalculo()
+            
         return render(self.request, 'paciente/success.html')
-    
-    def recalculo(self):
-        hoy = datetime.now()
-        try:
-            movdiario = Movdiario.objects.get(fecha=date(hoy.year,hoy.month,hoy.day),estado=True)
-        except Movdiario.DoesNotExist:
-            print(date(hoy.year,hoy.month,hoy.day))
-            movdiario = Movdiario(parse_date(date(hoy.year,hoy.month,hoy.day)), 0, 0, True)
-            movdiario.save()
-        return movdiario
 
 class AgendaAjaxLista(View):
     def get(self, *args, **kwargs):

@@ -19,8 +19,8 @@ class Paciente(models.Model):
   direccion = models.TextField(blank=True)
   telefono = models.CharField(max_length=20, blank=True)
   ocupacion = models.CharField(max_length=50, blank=True)
+  codigo = models.TextField(blank=True)
   creado = models.DateTimeField(auto_now=True)
-  actualizado = models.DateTimeField(auto_now=True)
 
   def __str__(self):
     return self.nombres+' '+self.apellidos+' - '+self.nro_documento

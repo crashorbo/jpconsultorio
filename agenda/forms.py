@@ -7,7 +7,7 @@ from seguro.models import Seguro
 from servicio.models import Servicio
 
 class AgendaForm(forms.ModelForm):
-  paciente = forms.ModelChoiceField(queryset=Paciente.objects.all(), empty_label="Seleccionar Paciente", widget=forms.Select(attrs={'class': 'form-control select2'}))
+  paciente = forms.ModelChoiceField(queryset=Paciente.objects.all(), empty_label="Seleccionar Paciente", widget=autocomplete.ModelSelect2(url='paciente-autocomplete'))
   seguro = forms.ModelChoiceField(queryset=Seguro.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control'}))
   
   class Meta:

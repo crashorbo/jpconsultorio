@@ -1,9 +1,9 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, AjaxTiempoView
+from .views import IndexView, MovimientoCalculoView
 
 
 urlpatterns = [
     path('', login_required(IndexView.as_view()), name='index'),
-    path('ajax-tiempo', login_required(AjaxTiempoView.as_view()), name='ajax-tiempo')
+    path('movcalculo', login_required(MovimientoCalculoView.as_view()), name='ajaxmovcalculo')
 ]

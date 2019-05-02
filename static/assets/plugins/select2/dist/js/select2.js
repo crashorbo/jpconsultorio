@@ -5139,7 +5139,7 @@ S2.define('select2/core',[
     var width = this._resolveWidth(this.$element, this.options.get('width'));
 
     if (width != null) {
-      $container.css('width', width);
+      $container.css('width', '355px');
     }
   };
 

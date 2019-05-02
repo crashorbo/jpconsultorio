@@ -23,7 +23,7 @@ $(document).ready(function(){
     }
   });
 
-  $('.select2').select2({
+  $('#id_paciente').select2({
     language: 'es',
     ajax: {
       url: "paciente-autocomplete/",
@@ -56,6 +56,7 @@ $(document).ready(function(){
     minimumInputLength: 2,
     
   });
+ 
   $('.clockpicker').clockpicker({
     donetext: 'Done',
   }).find('input').change(function() {
@@ -86,7 +87,7 @@ $(document).ready(function(){
           $("#responsive-modal").modal('hide');
           $('#calendar').fullCalendar("refetchEvents");
           $('#form-agenda')[0].reset();
-          $(".select2").val("").trigger("change");
+          $("#id_paciente").val("").trigger("change");
           $(".seguro-seleccion").hide();
           $("#mensaje-modal").modal('show');
         },
