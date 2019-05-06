@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 
 {% load static %}
 
@@ -25,17 +25,6 @@
           </tr>
         </thead>
         <tbody>
-          {% for paciente in pacientes %}
-            <tr>
-              <td>{{ paciente.nombres|add:" "|add:paciente.apellidos }}</td>
-              <td>{{ paciente.documento|documento }}</td>
-              <td>{{ paciente.nro_documento }}</td>
-              <td>{{ paciente.telefono }}</td>
-              <td class="text-right">
-                  <button class="btn btn-simple btn-warning btn-xs"><i class="fa fa-edit"></i></button>
-              </td>
-            </tr>
-          {% endfor %}
         </tbody>
       </table>
     </div>

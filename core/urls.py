@@ -5,5 +5,5 @@ from .views import IndexView, MovimientoCalculoView
 
 urlpatterns = [
     path('', login_required(IndexView.as_view()), name='index'),
-    path('movcalculo', login_required(MovimientoCalculoView.as_view()), name='ajaxmovcalculo')
+    path('movcalculo', login_required(MovimientoCalculoView.as_view()), name='ajaxmov_calculo'),
 ]

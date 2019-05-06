@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, PacienteAutocomplete, AgendaRegistrar, AgendaAjaxEditar, AgendaAjaxLista, AgendaListar, AgendaEditar, DiagnosticoCrear, DiagnosticoEliminar, TratamientoCrear, TratamientoEliminar, AgendaAjaxDelete, AgendaAjaxEspera
+from .views import IndexView, PacienteAutocomplete, AgendaRegistrar, AgendaAjaxEditar, AgendaAjaxLista, AgendaListar, AgendaEditar, DiagnosticoCrear, DiagnosticoEliminar, TratamientoCrear, TratamientoEliminar, AgendaAjaxDelete, AgendaAjaxEspera, Reportemov, AgendaservUpdate
 
 
 urlpatterns = [
@@ -10,6 +10,7 @@ urlpatterns = [
     path('registrar', login_required(AgendaRegistrar.as_view()), name='agenda-registrar'),
     path('ajax-lista', login_required(AgendaAjaxLista.as_view()), name='agenda-ajax-lista'),
     path('listar', login_required(AgendaListar.as_view()), name='agenda-listar'),
+    path('movimiento/reportmov', login_required(Reportemov.as_view()), name='reportemov'), 
     path('espera', login_required(AgendaAjaxEspera.as_view()), name='agenda_espera'),
     path('editar/<pk>', login_required(AgendaEditar.as_view()), name='agenda-editar'),
     path('historia/<pk>', login_required(AgendaEditar.as_view()), name='agenda-editar'),
@@ -18,5 +19,6 @@ urlpatterns = [
     path('diagnostico/crear', login_required(DiagnosticoCrear.as_view()), name='diagnostico-crear'), 
     path('diagnostico/<pk>/eliminar', login_required(DiagnosticoEliminar.as_view()), name='diagnostico-eliminar'),
     path('tratamiento/crear', login_required(TratamientoCrear.as_view()), name='tratamiento-crear'),
-    path('tratamiento/<pk>/eliminar', login_required(TratamientoEliminar.as_view()), name='tratamiento-eliminar'), 
+    path('tratamiento/<pk>/eliminar', login_required(TratamientoEliminar.as_view()), name='tratamiento-eliminar'),
+    path('agendaserv/<pk>/cobrar', login_required(AgendaservUpdate.as_view()), name='agendaserv-cobrar'),
 ]

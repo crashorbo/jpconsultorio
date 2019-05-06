@@ -26,9 +26,9 @@ class Agenda(models.Model):
   )
 
   BENEFICIARIO_CHOICE = (
-    (0, 'BENF'),
-    (1, 'ACT'),
-    (2, 'RENT'),
+    ('BENF', 'BENF'),
+    ('ACT', 'ACT'),
+    ('RENT', 'RENT'),
   )
 
   paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
@@ -41,7 +41,7 @@ class Agenda(models.Model):
   tipo = models.IntegerField(choices=TIPO_CHOICE, default=0)
   procedencia = models.CharField(max_length=20, blank=True)
   matricula = models.CharField(max_length=100, blank=True)
-  tipo_beneficiario = models.IntegerField(choices=BENEFICIARIO_CHOICE, default=0)
+  tipo_beneficiario = models.CharField(max_length=10, choices=BENEFICIARIO_CHOICE, default='BENF')
   antocu = models.TextField(blank=True)
   antsis = models.TextField(blank=True)
   motivo = models.TextField(blank=True)

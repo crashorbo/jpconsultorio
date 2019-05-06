@@ -8,15 +8,6 @@ from paciente.models import Paciente
 from datetime import datetime
 
 
-def recdbfpacientes():
-  db = dataset.connect('postgresql://postgres:add150806@localhost:5432/consultorio')
-  table = db['rec_paciente']
-
-  for record in DBF('historial/paciente.dbf', lowernames=True):
-    table.insert(record)
-  
-  return "hecho"
-
 def migrarpacientes():
   pacientes = Recpaciente.objects.all()
   now = datetime.now()

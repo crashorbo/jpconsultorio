@@ -23,6 +23,8 @@ $(document).ready(function(){
     }
   });
 
+  recalculo();
+
   $('#id_paciente').select2({
     language: 'es',
     ajax: {
@@ -90,6 +92,7 @@ $(document).ready(function(){
           $("#id_paciente").val("").trigger("change");
           $(".seguro-seleccion").hide();
           $("#mensaje-modal").modal('show');
+          window.recalculo();
         },
         error: function(xhr,errmsg,err) {
           // Show an error
@@ -102,9 +105,8 @@ $(document).ready(function(){
 
   $("#registro-paciente").click(function(){
     var getUrl = window.location;
-    console.log(getUrl .protocol + "//" + getUrl.host);
     $.ajax({
-      url: getUrl .protocol + "//" + getUrl.host+'/paciente/registrar',
+      url: getUrl.protocol + "//" + getUrl.host+'/paciente/registrar',
       type: 'get',  
       success: function(data){
           $('#contenido-modal').html(data);
@@ -143,3 +145,25 @@ $(document).ready(function(){
       $(".seguro-seleccion").show();
   });
 });
+
+window.recalculo = function (){
+  var getUrl = window.location;
+  $.ajax({
+    url: getUrl.protocol + "//" + getUrl.host+'/movcalculo', 
+    type: 'get',  
+    success: function(data){
+        console.log(data);
+        window.document.getElementById('sis_ingresos').value = data.ingreso + ' Bs.';
+        $("#sis_ingresos").text(data.ingreso + ' Bs.');
+        $("#sis_egresos").text(data.egreso + ' Bs.');
+        $("#sis_total").text((Number(data.ingreso) - Number(data.egreso)).toFixed(2) + ' Bs.');
+    }
+  })
+};
+
+function imprimirlista(e, obj)
+{
+  e.preventDefault();
+  this_url = $(obj).attr('href');
+  window.open(this_url,"reporte","height=500,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
+}
