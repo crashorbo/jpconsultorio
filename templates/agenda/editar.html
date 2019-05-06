@@ -22,21 +22,22 @@
               {{ form.hora_fin }}
               {{ form.tipo }}
               {{ form.prioridad }}
+              {{ form.tipo_beneficiario }}
           </div>
           </div>
         </div>
         <div class="col-md-11 col-sm-10">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8 b-r">
               <h5>Nombre: <strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong></h5>
             </div>
-            <div class="col-md-6 col-sm-12 b-r">
-              <h5>Ocupacion: <strong>{{ consulta.paciente.ocupacion }}</strong></h5>
-            </div>
-            <div class="col-md-3 col-sm-6 b-r">
+            <div class="col-md-4 b-r">
               <h5>Edad: <strong>{{ consulta.paciente.fecha_nacimiento|edad }}</strong></h5>
             </div>
-            <div class="col-md-3 col-sm-6 text-right">
+            <div class="col-md-8 col-sm-12 b-r">
+              <h5>Ocupacion: <strong>{{ consulta.paciente.ocupacion }}</strong></h5>
+            </div>
+            <div class="col-md-4 col-sm-6 text-right">
               {% csrf_token %}
               <button type="button" class="btn btn-sm btn-info" id="historiac" data-paciente="{{ consulta.paciente.id }}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
               <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Guardar"><i class="fa fa-save"></i></button>

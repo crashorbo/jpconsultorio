@@ -13,6 +13,9 @@ from .models import Movdiario
 class IndexView(TemplateView):
     template_name = 'core/index.html'
 
+class AdministracionView(TemplateView):
+    template_name = 'administracion/index.html'
+
 class MovimientoCalculoView(View):
     def get(self, *args, **kwargs):
         hoy = datetime.now()
