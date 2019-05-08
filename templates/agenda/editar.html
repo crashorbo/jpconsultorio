@@ -236,7 +236,7 @@
               {{ form.tipo_lente }}
             </div>
             <div class="col-md-2">
-              <button type="button" class="btn btn-inverse btn-block" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="icon-printer"></i></button>
+              <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-inverse btn-block" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
             </div>
           </div>
         </div>

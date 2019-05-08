@@ -22,7 +22,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.pagesizes import letter, landscape, portrait
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.graphics.shapes import Drawing 
@@ -156,8 +156,27 @@ class AgendaAjaxDelete(DeleteView):
     context_object_name = 'agenda'
 
     def delete(self, request, *args, **kwargs):
-        self.get_object().delete()
+        borrar = self.get_object()
+        print(borrar.estado)
+        if not borrar.estado: 
+            borrar.delete()
+            self.recalculo()
         return render(self.request, 'paciente/success.html')
+    
+    def recalculo(self):
+        hoy = datetime.now()
+        fecha = hoy.strftime("%Y-%m-%d")
+        try:
+            movimiento = Movdiario.objects.get(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
+        except Movdiario.DoesNotExist:
+            movimiento = Movdiario(fecha=datetime.strptime(fecha, "%Y-%m-%d"), ingreso=0, egreso=0, estado=True)            
+        servicios = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
+        valor = 0
+        for serv in servicios:
+            if serv.estado:
+                valor = valor + serv.costo
+        movimiento.ingreso = valor
+        movimiento.save()
 
 class AgendaEditar(UpdateView):
     model = Agenda
@@ -353,3 +372,93 @@ class Reportemov(View):
         response.write(buff.getvalue())
         buff.close()
         return response
+
+class Reporterec(View):
+    def subrayar(self, pdf, x, y, texto):
+        tam = len(texto)
+        pdf.line(x-tam*4, y-4,x+tam*4,y-4)
+
+    def paciente(self, pdf):
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawCentredString(220,430, self.agenda.paciente.nombres + ' ' + self.agenda.paciente.apellidos)
+        self.subrayar(pdf, 220,430,self.agenda.paciente.nombres + ' ' +self.agenda.paciente.apellidos)
+
+    def encabezado(self, pdf):
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawCentredString(220,400, "RECETA DE LENTES")
+        self.subrayar(pdf, 220,400, "RECETA DE LENTES")
+
+    def subtitulo(self, pdf):
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawCentredString(140,370, "PARA USO PERMANENTE")
+        self.subrayar(pdf, 140,370, "PARA USO PERMANENTE")
+
+    def medida(self,pdf):
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawCentredString(100,290, "OD.")
+        pdf.drawCentredString(100,260, "OI.")
+        pdf.setFont("Times-Roman", 12)
+        pdf.drawCentredString(160,320, "ESFERICO")
+        pdf.drawCentredString(240,320, "CILINDRICO")
+        pdf.drawCentredString(320,320, "EJE")
+        pdf.setFont("Times-Roman", 16)
+        pdf.drawCentredString(160,290, self.agenda.drc1)
+        pdf.drawCentredString(240,290, self.agenda.drc2)
+        pdf.drawCentredString(160,260, self.agenda.irc1)
+        pdf.drawCentredString(240,260, self.agenda.irc2)
+        pdf.setFont("Times-Bold", 16)
+        pdf.drawCentredString(320,290, self.agenda.drc3+'°')
+        pdf.drawCentredString(320,260, self.agenda.irc3+'°')
+        
+    def observaciones(self, pdf):
+        y = 210
+        adicion = self.agenda.tipo_lente.split(",")
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawString(70, y, "Obs.")
+        pdf.setFont("Times-Roman", 10)
+        pdf.setFillColorRGB(1,0,0)
+        for item in adicion:
+            pdf.drawString(140, y, item)
+            y = y - 15
+        y = y - 5
+        pdf.setFillColorRGB(0,0,0)
+        pdf.drawString(80, y, "No olvide traer sus lentes a control.")
+        pdf.drawString(80, y-15, "No olvide traer su receta en la proxima consulta.")
+        pdf.drawString(80, 50, "09 - Noviembre - 2019")
+
+    def tabla(self, pdf):
+        pdf.line(80, 335 ,360, 335)
+        pdf.line(80, 310 ,360, 310)
+        pdf.line(80, 280 ,360, 280)
+        pdf.line(80, 250 ,360, 250)
+        pdf.line(80, 335 ,80, 250)
+        pdf.line(120, 335 ,120, 250)
+        pdf.line(200, 335 ,200, 250)
+        pdf.line(280, 335 ,280, 250)
+        pdf.line(360, 335 ,360, 250)
+
+
+    def get(self, *args, **kwargs):
+        self.agenda = Agenda.objects.get(id=self.kwargs['pk'])
+        recetam = (15*cm, 20*cm)
+        #Indicamos el tipo de contenido a devolver, en este caso un pdf
+        response = HttpResponse(content_type='application/pdf')
+        pdf_name = "tramite.pdf"  # llamado clientes
+        response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
+        #La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+        buffer = BytesIO()
+        #Canvas nos permite hacer el reporte con coordenadas X y Y
+        pdf = canvas.Canvas(buffer, pagesize=recetam)
+        self.paciente(pdf)
+        self.encabezado(pdf)
+        self.subtitulo(pdf)
+        self.medida(pdf)
+        self.observaciones(pdf)
+        self.tabla(pdf)
+        pdf.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+        
+

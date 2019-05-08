@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, PacienteAutocomplete, AgendaRegistrar, AgendaAjaxEditar, AgendaAjaxLista, AgendaListar, AgendaEditar, DiagnosticoCrear, DiagnosticoEliminar, TratamientoCrear, TratamientoEliminar, AgendaAjaxDelete, AgendaAjaxEspera, Reportemov, AgendaservUpdate
+from .views import IndexView, PacienteAutocomplete, AgendaRegistrar, AgendaAjaxEditar, AgendaAjaxLista, AgendaListar, AgendaEditar, DiagnosticoCrear, DiagnosticoEliminar, TratamientoCrear, TratamientoEliminar, AgendaAjaxDelete, AgendaAjaxEspera, Reportemov, AgendaservUpdate, Reporterec
 
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('ajax-lista', login_required(AgendaAjaxLista.as_view()), name='agenda-ajax-lista'),
     path('listar', login_required(AgendaListar.as_view()), name='agenda-listar'),
     path('movimiento/reportmov', login_required(Reportemov.as_view()), name='reportemov'), 
+    path('reporte-receta/<pk>',login_required(Reporterec.as_view()), name='reporterec'),
     path('espera', login_required(AgendaAjaxEspera.as_view()), name='agenda_espera'),
     path('editar/<pk>', login_required(AgendaEditar.as_view()), name='agenda-editar'),
     path('historia/<pk>', login_required(AgendaEditar.as_view()), name='agenda-editar'),

@@ -53,6 +53,7 @@
           success: function(data){
             $('#calendar').fullCalendar("refetchEvents");
             $("#responsive-modal").modal('hide');
+            window.recalculo();
           },
           error: function(xhr,errmsg,err) {
             // Show an error
