@@ -3,6 +3,9 @@
 {% load static %}
 
 {% load paciente_tags %}
+{% block css %}
+<link href="{% static "assets/plugins/bootstrap-select/bootstrap-select.min.css" %}" rel="stylesheet">
+{% endblock %}
 
 {% block contenido %}
 <button type="submit" id="paciente-espera" class="right-side-toggle waves-effect waves-light btn-success btn btn-circle btn-sm pull-right m-l-10"><i class="icon-calendar text-white"></i></button>
@@ -39,7 +42,7 @@
             </div>
             <div class="col-md-4 col-sm-6 text-right">
               {% csrf_token %}
-              <button type="button" class="btn btn-sm btn-info" id="historiac" data-paciente="{{ consulta.paciente.id }}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
+              <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historia-lista' pk=consulta.paciente.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
               <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Guardar"><i class="fa fa-save"></i></button>
               <a href="{% url "agenda-listar" %}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Volver"><i class="fa fa-rotate-left"></i></a>
             </div>
@@ -233,10 +236,21 @@
               <h5><strong>Tipo</strong></h5>
             </label>
             <div class="col-md-8">
-              {{ form.tipo_lente }}
+              <div class="hide">
+                {{ form.tipo_lente }}
+              </div>
+              <select id="selectipo" multiple data-style="form-control form-control-sm btn-secondary">
+                  <option>Organicos</option>
+                  <option>Proteccion UV</option>
+                  <option>H. Index</option>
+                  <option>H. Lite</option>
+                  <option>Antireflex</option>
+                  <option>Fotocromatico</option>
+              </select>
+                  
             </div>
             <div class="col-md-2">
-              <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-inverse btn-block" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+              <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-sm btn-inverse btn-block" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
             </div>
           </div>
         </div>
@@ -330,19 +344,19 @@
               <div class="col-md-12">
                 <div class="input-group">
                   {{ diagform.detalle }}
-                  <span class="input-group-btn"><button class="btn btn-success" type="submit"><i class="fa fa-plus"></i></span></button>
+                  <span class="input-group-btn"><button class="btn btn-success btn-sm" type="submit"><i class="fa fa-plus"></i></span></button>
                 </div>
               </div>
             </div>
           </form>
           <div class="row">
             <div id="diagnosticos" class="col-md-12">
-              <table class="table table-striped tabla">
+              <table class="table table-striped tabla table-sm">
               {% for item in consulta.diagnostico_set.all %}
                 <tr>
                   <td><h6>{{ forloop.counter }}</h6></td>
                   <td><h6>{{ item.detalle }}</h6></td>
-                  <td class="text-right"><form action="{% url 'diagnostico-eliminar' pk=item.id %}" method="post" class="form-eliminar-diag">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
+                  <td class="text-right"><form action="{% url 'diagnostico-eliminar' pk=item.id %}" method="post" class="form-eliminar-diag">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-close"></i></button></form></td>
                 </tr>
               {% endfor %}
               </table>
@@ -364,14 +378,14 @@
               <div class="col-md-12">
                 <div class="input-group">
                   {{ tratform.detalle }}
-                  <span class="input-group-btn"><button class="btn btn-success" type="submit"><i class="fa fa-plus"></i></span></button>
+                  <span class="input-group-btn"><button class="btn btn-success btn-sm" type="submit"><i class="fa fa-plus"></i></span></button>
                 </div>
               </div>
             </div>
           </form>
           <div class="row">
             <div id="tratamientos" class="col-md-12">
-              <table class="table table-striped tabla">
+              <table class="table table-sm table-striped tabla">
               {% for item in consulta.tratamiento_set.all %}
                 <tr>
                   <td><h6>{{ forloop.counter }}</h6></td>
@@ -388,5 +402,6 @@
   </div>
 {% endblock %}
 {% block js %}
+  <script src="{% static "assets/plugins/bootstrap-select/bootstrap-select.min.js" %}"></script>
   <script src="{% static "assets/paginas/agenda/agenda-editar.js" %}"></script>
 {% endblock %}

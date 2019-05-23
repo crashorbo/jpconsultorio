@@ -2,7 +2,7 @@ import json
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, View, CreateView, ListView, UpdateView, DeleteView
+from django.views.generic import TemplateView, View, CreateView, ListView, UpdateView, DeleteView, DetailView
 from dal import autocomplete
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -129,6 +129,13 @@ class AgendaListar(ListView):
         context['consultas'] = self.model.objects.filter(fecha__exact=datetime.now(), estado__exact=0)
         return context
 
+class AgendaFechaListar(View):
+    def get(self, *args, **kwargs):
+        q = self.request.GET['fecha']
+        fecha = datetime.strptime(q, "%d-%m-%Y")
+        qs = Agenda.objects.filter(fecha=fecha)       
+        return render(self.request, 'agenda/ajax/listaconsultas.html', {'consultas': qs})
+
 class AgendaAjaxEspera(ListView):
     template_name = 'agenda/ajax/listar.html'
     model = Agenda
@@ -205,9 +212,18 @@ class HistoriaListar(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['historias'] = self.model.objects.filter(paciente__exact=self.kwargs['pk'], estado__exact=1)
+        historias = self.model.objects.filter(paciente__exact=self.kwargs['pk'], estado__exact=1).order_by('-fecha')
+        context['historias'] = historias
+        if len(historias) > 0:
+            context['historia'] = historias[0]
+        else:
+            context['historia'] = None
         return context
 
+class HistoriaVer(DetailView):
+    model = Agenda
+    template_name = 'agenda/ajax/historiaver.html'
+    context_object_name = 'historia'
 
 class DiagnosticoCrear(CreateView):
     model = Diagnostico

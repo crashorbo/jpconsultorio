@@ -8,11 +8,28 @@ $(document).ready(function(){
       }
     })
   });
+  selectipo();
+});
+
+$(document).keydown(function(e) { 
+  if (e.keyCode == 40) {
+    $(".move:focus").next().focus(); 
+  } 
+  if (e.keyCode == 38) {
+    $(".move:focus").prev().focus();
+  }
 });
 
 $('#historiac').on('click', function(e){
-  alert($(this).attr('data-paciente'));
-  $('#lmodal').modal('show');
+  $this_url = $(this).attr('data-url');
+  $.ajax({
+    url: $this_url,
+    type: 'get',  
+    success: function(data){
+      $('#lmcontenido').html(data);
+      $('#lmodal').modal('show');
+    }
+  })
 });
 
 $('#form-guardar').on('submit', function (e) {
@@ -153,4 +170,30 @@ function imprimirlista(e, obj)
   e.preventDefault();
   this_url = $(obj).attr('href');
   window.open(this_url,"reporte","height=600,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
+}
+
+$('#selectipo').selectpicker({
+  'title': 'Seleccionar tipo de lente',
+  'size': 6,
+});
+$('#selectipo').on('change', function(){
+  var aux = [];
+  var valor = "";
+  aux = $(this).val();
+  aux.forEach(element => {
+    if (valor == "")
+      valor = element;
+    else
+      valor = valor+","+element;
+  });
+  $('#id_tipo_lente').val(valor);
+  console.log(valor);
+});
+
+function selectipo(){
+  var valor = "";
+  var aux = [];
+  valor = $('#id_tipo_lente').val();
+  aux = valor.split(",")
+  $('#selectipo').selectpicker('val', aux);
 }

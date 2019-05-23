@@ -17,7 +17,8 @@ class TableAsJSON(JSONResponseMixin, View):
       '1': 'documento',
       '2': 'nro_documento',
       '3': 'telefono',
-      '3': 'acciones',
+      '4': 'codigo',
+      '5': 'acciones',
     }
     object_list = self.model.objects.all()
     search_text = request.GET.get('sSearch', '').lower()

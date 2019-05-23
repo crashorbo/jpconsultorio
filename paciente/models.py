@@ -58,6 +58,7 @@ class Paciente(models.Model):
       self.documento,
       self.nro_documento,
       self.telefono,
+      self.codigo,
       '<button class="pacienteeditar btn btn-xs btn-warning" data-url='+str(self.id)+'><i class="fa fa-edit"></i></button>']
 
 
