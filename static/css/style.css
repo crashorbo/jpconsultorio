@@ -1888,7 +1888,7 @@ File: scss
       .right-sidebar .rpanel-title span:hover {
         color: #ffffff; }
   .right-sidebar .r-panel-body {
-    padding: 20px; }
+    padding: 10px 20px; }
     .right-sidebar .r-panel-body ul {
       margin: 0px;
       padding: 0px; }
@@ -1898,7 +1898,7 @@ File: scss
 
 .shw-rside {
   right: 0px;
-  width: 240px;
+  width: 450px;
   display: block; }
 
 .chatonline img {
@@ -1907,7 +1907,7 @@ File: scss
   width: 30px; }
 
 .chatonline li a {
-  padding: 13px 0;
+  padding: 5px 0;
   float: left;
   width: 100%; }
   .chatonline li a span {

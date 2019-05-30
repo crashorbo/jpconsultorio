@@ -2,6 +2,6 @@
 
 {% for consulta in consultas %}
 <li>
-    <a href="{% url 'agenda-editar' pk=consulta.id %}"><span>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}<small class="{% if consulta.prioridad == 0%}text-success{% endif %}{% if consulta.prioridad == 1%}text-warning{% endif %}{% if consulta.prioridad == 2%}text-danger{% endif %}">{{ consulta.prioridad|ctipo  }}</small></span></a>
+    <a href="{% url 'agenda-editar' pk=consulta.id %}"><span><strong>{{ consulta.hora_inicio }} - </strong> {{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}<small class="{% if consulta.prioridad == 0%}text-success{% endif %}{% if consulta.prioridad == 1%}text-warning{% endif %}{% if consulta.prioridad == 2%}text-danger{% endif %}">{{ consulta.prioridad|ctipo  }}</small></span></a>
 </li>
 {% endfor %}

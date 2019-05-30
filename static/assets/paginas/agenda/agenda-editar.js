@@ -12,11 +12,13 @@ $(document).ready(function(){
 });
 
 $(document).keydown(function(e) { 
-  if (e.keyCode == 40) {
-    $(".move:focus").next().focus(); 
-  } 
   if (e.keyCode == 38) {
-    $(".move:focus").prev().focus();
+    $(this).next('.form-control').focus();
+    console.log('arriba')
+  } 
+  if (e.keyCode == 40) {
+    $(this).prev('.form-control').focus();
+    console.log('abajo')
   }
 });
 
@@ -196,4 +198,30 @@ function selectipo(){
   valor = $('#id_tipo_lente').val();
   aux = valor.split(",")
   $('#selectipo').selectpicker('val', aux);
+}
+
+$('#id_dre1').on('change', function(){
+  $('#id_drc1').val(transformador($(this).val()));
+});
+$('#id_dre2').on('change', function(){
+  $('#id_drc2').val(transformador($(this).val()));
+});
+$('#id_dre3').on('change', function(){
+  $('#id_drc3').val(transformador($(this).val()));
+});
+$('#id_ire1').on('change', function(){
+  $('#id_irc1').val(transformador($(this).val()));
+});
+$('#id_ire2').on('change', function(){
+  $('#id_irc2').val(transformador($(this).val()));
+});
+$('#id_ire3').on('change', function(){
+  $('#id_irc3').val(transformador($(this).val()));
+});
+$('#id_ddc2').on('change', function(){
+  $('#id_adicion').val(transformador($(this).val()));
+});
+
+function transformador(t){
+  return t;
 }

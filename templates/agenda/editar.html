@@ -11,7 +11,7 @@
 <button type="submit" id="paciente-espera" class="right-side-toggle waves-effect waves-light btn-success btn btn-circle btn-sm pull-right m-l-10"><i class="icon-calendar text-white"></i></button>
   <div class="row">
     <div class="col-md-6 col-sm-12">
-    <form id="form-guardar" action="{% url 'agenda-editar' pk=consulta.id %}" method="post">
+    <form id="form-guardar" action="{% url 'agenda-editar' pk=consulta.id %}" method="post" autocomplete=off>
       <div class="row">
         <div class="col-md-1 col-sm-2 fixribbon">
           <div class="row">
@@ -31,23 +31,17 @@
         </div>
         <div class="col-md-11 col-sm-10">
           <div class="row">
-            <div class="col-md-8 b-r">
-              <h5>Nombre: <strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong></h5>
+            <div class="col-md-9">
+              <h6>Nombre: <strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong></h6>
             </div>
-            <div class="col-md-4 b-r">
-              <h5>Edad: <strong>{{ consulta.paciente.fecha_nacimiento|edad }}</strong></h5>
+            <div class="col-md-3">
+              <h6>Edad: <strong>{{ consulta.paciente.fecha_nacimiento|edad }}</strong></h6>
             </div>
-            <div class="col-md-8 col-sm-12 b-r">
-              <h5>Ocupacion: <strong>{{ consulta.paciente.ocupacion }}</strong></h5>
+            <div class="col-md-6 col-sm-12">
+              <h6>Ocupacion: <em>{{ consulta.paciente.ocupacion }}</em></h6>
             </div>
-            <div class="col-md-4 col-sm-6 text-right">
-              {% csrf_token %}
-              <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historia-lista' pk=consulta.paciente.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
-              <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Guardar"><i class="fa fa-save"></i></button>
-              <a href="{% url "agenda-listar" %}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Volver"><i class="fa fa-rotate-left"></i></a>
-            </div>
-            <div class="col-md-12">
-              <h5>Procedencia: <strong>{{ consulta.procedencia }}</strong></h5>
+            <div class="col-md-6 col-sm-6">
+              <h6>Procedencia: <em>{{ consulta.procedencia }}</em></h6>
             </div>
             {% if form.errors %}
             <div class="alert alert-danger">
@@ -71,11 +65,9 @@
         <div class="col-md-11 col-sm-10">
           <div class="row">
             <div class="col-md-12">
-              <small>Oculares</small>
               {{ form.antocu }}
             </div>
             <div class="col-md-12">
-              <small>Sistemicos</small>
               {{ form.antsis }}
             </div>
           </div>
@@ -103,154 +95,159 @@
         </div>
         <div class="col-md-11 col-sm-10">
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>S/C</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>S/C</strong></h6>
             </label>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.dsc }}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.isc }}
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>C/C</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>C/C</strong></h6>
             </label>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.dcc }}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.icc }}
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Refr.</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Refr.</strong></h6>
             </label>
             <div class="col-md-5">
               <div class="row">
-                <div class="col-md-4">{{ form.dre1 }}</div>
-                <div class="col-md-4">{{ form.dre2 }}</div>
-                <div class="col-md-4">{{ form.dre3 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.dre1 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.dre2 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.dre3 }}</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="row">
-                <div class="col-md-4">{{ form.ire1 }}</div>
-                <div class="col-md-4">{{ form.ire2 }}</div>
-                <div class="col-md-4">{{ form.ire3 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.ire1 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.ire2 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.ire3 }}</div>
               </div>
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Auto.</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Auto.</strong></h6>
             </label>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.dau }}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.iau }}
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Cerca</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Cerca</strong></h6>
             </label>
             <div class="col-md-5">
               <div class="row">
-                <div class="col-md-6">{{ form.ddc1 }}</div>
-                <div class="col-md-6">{{ form.ddc2 }}</div>
+                <div class="col-md-6 p-l-0">{{ form.ddc1 }}</div>
+                <div class="col-md-6 p-l-0">{{ form.ddc2 }}</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="row">
-                <div class="col-md-6">{{ form.idc1 }}</div>
-                <div class="col-md-6">{{ form.idc2 }}</div>
+                <div class="col-md-6 p-l-0">{{ form.idc1 }}</div>
+                <div class="col-md-6 p-l-0">{{ form.idc2 }}</div>
               </div>
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Pin Hole</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Pin Hole</strong></h6>
             </label>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.dph }}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.iph }}
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Ciclopl.</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Ciclopl.</strong></h6>
             </label>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.dci }}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.ici }}
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Lente</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Lente</strong></h6>
             </label>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.dcl }}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 p-l-0">
               {{ form.icl }}
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label"> 
-              <h5><strong>Receta</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0"> 
+              <h6><strong>Receta</strong></h6>
             </label>
             <div class="col-md-5">
               <div class="row">
-                <div class="col-md-4">{{ form.drc1 }}</div>
-                <div class="col-md-4">{{ form.drc2 }}</div>
-                <div class="col-md-4">{{ form.drc3 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.drc1 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.drc2 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.drc3 }}</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="row">
-                <div class="col-md-4">{{ form.irc1 }}</div>
-                <div class="col-md-4">{{ form.irc2 }}</div>
-                <div class="col-md-4">{{ form.irc3 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.irc1 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.irc2 }}</div>
+                <div class="col-md-4 p-l-0">{{ form.irc3 }}</div>
               </div>
             </div>
           </div>
           <div class="row">
-            <label class="col-md-2 col-form-label">
-              <h5><strong>Adicion</strong></h5>
+            <label class="col-md-2 col-form-label p-r-0">
+              <h6><strong>Adicion</strong></h6>
             </label>
-            <div class="col-md-10">
+            <div class="col-md-10 p-l-0">
               {{ form.adicion }}
             </div>
           </div>
-          <div class="row">
-            <label class="col-md-2 col-form-label">
-              <h5><strong>Tipo</strong></h5>
+          <div class="row m-b-10">
+            <label class="col-md-2 col-form-label p-r-0">
+              <h6><strong>Tipo</strong></h6>
             </label>
-            <div class="col-md-8">
+            <div class="col-md-10 p-l-0">
               <div class="hide">
                 {{ form.tipo_lente }}
               </div>
-              <select id="selectipo" multiple data-style="form-control form-control-sm btn-secondary">
+              <select id="selectipo" multiple data-style="form-control form-control-sm btn-secondary" tabindex="33" >
                   <option>Organicos</option>
                   <option>Proteccion UV</option>
                   <option>H. Index</option>
                   <option>H. Lite</option>
                   <option>Antireflex</option>
                   <option>Fotocromatico</option>
-              </select>
-                  
+              </select>      
             </div>
-            <div class="col-md-2">
-              <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-sm btn-inverse btn-block" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+          </div>
+          <div class="row m-b-10">
+            <div class="col-md-12 text-right">
+              {% csrf_token %}
+              <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historia-lista' pk=consulta.paciente.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
+              <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Guardar"><i class="fa fa-save"></i></button>
+              <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-sm btn-inverse" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+              <a href="{% url "agenda-listar" %}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Volver"><i class="fa fa-rotate-left"></i></a>
             </div>
           </div>
         </div>
@@ -267,11 +264,9 @@
         <div class="col-md-11 col-sm-10">
           <div class="row">
             <div class="col-md-6">
-              <small>Ojo Derecho</small>
               {{ form.dto }}
             </div>
-            <div class="col-md-6">
-              <small>Ojo Izquierdo</small>
+            <div class="col-md-6">             
               {{ form.ito }}
             </div>
           </div>
@@ -285,12 +280,10 @@
         </div> 
         <div class="col-md-11 col-sm-10">
           <div class="row">
-            <div class="col-md-6">
-              <small>Ojo Derecho</small>
+            <div class="col-md-6">              
               {{ form.dbio }}
             </div>
             <div class="col-md-6">
-              <small>Ojo Izquierdo</small>
               {{ form.ibio }}
             </div>
           </div>
@@ -305,11 +298,9 @@
         <div class="col-md-11 col-sm-10">
           <div class="row">
             <div class="col-md-6">
-              <small>Ojo Derecho</small>
               {{ form.dfdo }}
             </div>
             <div class="col-md-6">
-              <small>Ojo Izquierdo</small>
               {{ form.ifdo }}
             </div>
           </div>
@@ -354,7 +345,7 @@
               <table class="table table-striped tabla table-sm">
               {% for item in consulta.diagnostico_set.all %}
                 <tr>
-                  <td><h6>{{ forloop.counter }}</h6></td>
+                  <td width="3%"><h6>{{ forloop.counter }}</h6></td>
                   <td><h6>{{ item.detalle }}</h6></td>
                   <td class="text-right"><form action="{% url 'diagnostico-eliminar' pk=item.id %}" method="post" class="form-eliminar-diag">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-close"></i></button></form></td>
                 </tr>

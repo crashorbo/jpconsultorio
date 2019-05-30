@@ -165,5 +165,5 @@ function imprimirlista(e, obj)
 {
   e.preventDefault();
   this_url = $(obj).attr('href');
-  window.open(this_url,"reporte","height=500,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
+  window.open(this_url,"reporte","height=700,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
 }

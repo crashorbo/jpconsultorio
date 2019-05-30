@@ -65,19 +65,20 @@ class AgendaRegistrar(CreateView):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        servicios = context['servicios']
-        with transaction.atomic():
-            self.object = form.save(commit=False)
-            self.object.hora_fin = (datetime.combine(datetime.today(), self.object.hora_inicio)+timedelta(minutes=30)).time()
-            if self.object.tipo == 0:
-                self.object.procedencia = 'PARTICULAR'
-            elif self.object.tipo == 1:
-                self.object.procedencia = self.object.seguro.nombre
-            self.object.save()
-            if servicios.is_valid():
-                servicios.instance = self.object
-                servicios.save()
-            self.recalculo()
+        servicios = context['servicios']    
+        if servicios.is_valid():
+            with transaction.atomic():
+                self.object = form.save(commit=False)
+                self.object.hora_fin = (datetime.combine(datetime.today(), self.object.hora_inicio)+timedelta(minutes=30)).time()
+                if self.object.tipo == 0:
+                    self.object.procedencia = 'PARTICULAR'
+                elif self.object.tipo == 1:
+                    self.object.procedencia = self.object.seguro.nombre
+                self.object.save()
+                if servicios.is_valid():
+                    servicios.instance = self.object
+                    servicios.save()
+                self.recalculo()
         return render(self.request, 'paciente/success.html')
 
     def recalculo(self):
