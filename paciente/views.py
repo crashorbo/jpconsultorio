@@ -69,7 +69,17 @@ class PacienteEditar(UpdateView):
   model = Paciente
   form_class = PacienteForm
   template_name = 'paciente/editar.html'
+  context_object_name = 'paciente'
 
   def form_valid(self, form):
     self.object = form.save()
     return render(self.request, 'paciente/success.html')
+
+class PacienteEliminar(View):
+  def get(self, request):
+    data = {
+      'id': request.GET.get('id')
+    }
+    paciente = Paciente.objects.get(pk=request.GET.get('id'))
+    paciente.delete()
+    return JsonResponse(data)

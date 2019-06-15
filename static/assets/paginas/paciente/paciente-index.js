@@ -28,17 +28,57 @@ $(document).ready(function(){
     "sAjaxSource": "/paciente/as_json"
   });
 
-  $("#registro-paciente").click(function(){
-    $.ajax({
-      url: 'registrar',
-      type: 'get',  
+  $('#myTable').on('click','.paciente-eliminar', function(e){
+    e.preventDefault();
+    $thisUrl = $(this).attr('data-url');
+    $.ajax(({
+      url: 'ajax/eliminar',
+      type: 'get',
+      data: {'id': $thisUrl},
       success: function(data){
-          $('#contenido-modal').html(data);
+        $('#myTable').DataTable().ajax.reload(null, false);
       }
-    })
+    }));
   });
+});
 
-  $('#mensaje-modal').on('hidden.bs.modal', function (e) {
-    location.reload();
+$("#registro-paciente").click(function(){
+  $.ajax({
+    url: 'registrar',
+    type: 'get',  
+    success: function(data){
+        $('#contenido-modal').html(data);
+    }
+  })
+});
+
+$("#myTable").on('click','.paciente-editar',function(e){
+  e.preventDefault();
+  $this_url = $(this).attr('data-url');
+  $.ajax({
+    url: $this_url,
+    type: 'get',  
+    success: function(data){
+      $('#contenido-modal').html(data);
+      $('#responsive-modal').modal('show');
+
+    }
+  })
+});
+
+$('#mensaje-modal').on('hidden.bs.modal', function (e) {
+  $('#myTable').DataTable().ajax.reload(null, false);
+});
+
+$('#myTable').on('click', '.paciente-historial',function(e){
+  e.preventDefault();
+  $this_url = $(this).attr('data-url');
+  $.ajax({
+    url: $this_url,
+    type: 'get',  
+    success: function(data){
+      $('#lmcontenido').html(data);
+      $('#lmodal').modal('show');
+    }
   })
 });

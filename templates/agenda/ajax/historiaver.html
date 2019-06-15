@@ -1,210 +1,227 @@
 <div class="col-md-6">
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Antecedentes:</strong></th>
+      <th>Antecedentes</th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
     <tbody>
       <tr>
-        <td width="15%"><strong><u>Sistemicos:</u></strong></td>
-        <td>{{ historia.antsis }}</td>
+        <td width="15%" class="table-info"><strong><h6 class="m-0"><u>Sistemicos:</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.antsis }}</h6></td>
       </tr>
       <tr>
-        <td width="15%"><strong><u>Oculares:</u></strong></td>
-        <td>{{ historia.antocu }}</td>
+        <td width="15%" class="table-info"><strong><h6 class="m-0"><u>Oculares:</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.antocu }}</h6></td>
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Motivo de Consulta:</strong></th>
+      <th>Motivo de Consulta</th>
     </thead>
     <tbody>
       <tr>
-        <td>{{ historia.motivo }}</td>
+        <td><h6 class="m-0">{{ historia.motivo }}</h6></td>
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Agudeza Visual:</strong></th>
+      <th>Agudeza Visual</th>
     </thead>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>S/C:</u></strong></td>
-        <td width="40%" class="text-center">{{ historia.dsc }}</td>
-        <td width="40%" class="text-center">{{ historia.isc }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>S/C:</u></h6></strong></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.dsc }}</h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.isc }}</h6></td>
       </tr>
       <tr class="b-b">
-        <td width="20%"><strong><u>C/C:</u></strong></td>
-        <td width="40%" class="text-center">{{ historia.dcc }}</td>
-        <td width="40%" class="text-center">{{ historia.scc }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <table class="table table-sm table-bordered m-b-0">
-    <tbody>
-      <tr class="b-b">
-        <td width="20%"><strong><u>Refr.:</u></strong></td>
-        <td width="13%" class="text-center">{{ historia.dre1 }}</td>
-        <td width="13%" class="text-center">{{ historia.dre2 }}</td>
-        <td width="13%" class="text-center">{{ historia.dre3 }}</td>
-        <td width="13%" class="text-center">{{ historia.ire1 }}</td>
-        <td width="13%" class="text-center">{{ historia.ire2 }}</td>
-        <td width="13%" class="text-center">{{ historia.ire3 }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>C/C:</u></h6></strong></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.dcc }}</h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.icc }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Auto.:</u></strong></td>
-        <td width="40%" class="text-center">{{ historia.dau }}</td>
-        <td width="40%" class="text-center">{{ historia.iau }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>Refr.:</u></h6></strong></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.dre1 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.dre2 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.dre3 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.ire1 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.ire2 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.ire3 }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Cerca:</u></strong></td>
-        <td width="20%" class="text-center">{{ historia.ddc1 }}</td>
-        <td width="20%" class="text-center">{{ historia.ddc2 }}</td>
-        <td width="20%" class="text-center">{{ historia.idc1 }}</td>
-        <td width="20%" class="text-center">{{ historia.idc2 }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>Auto.:</u></h6></strong></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.dau }}</h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.iau }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Pin Hole:</u></strong></td>
-        <td width="40%" class="text-center">{{ historia.dph }}</td>
-        <td width="40%" class="text-center">{{ historia.iph }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>Cerca:</u></h6></strong></td>
+        <td width="20%" class="text-center"><h6 class="m-0">{{ historia.ddc1 }}</h6></td>
+        <td width="20%" class="text-center"><h6 class="m-0">{{ historia.ddc2 }}</h6></td>
+        <td width="20%" class="text-center"><h6 class="m-0">{{ historia.idc1 }}</h6></td>
+        <td width="20%" class="text-center"><h6 class="m-0">{{ historia.idc2 }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Ciclopl.:</u></strong></td>
-        <td width="40%" class="text-center">{{ historia.dci }}</td>
-        <td width="40%" class="text-center">{{ historia.ici }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>Pin Hole:</u></h6></strong></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.dph }}</h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.iph }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Lente:</u></strong></td>
-        <td width="40%" class="text-center">{{ historia.dcl }}</td>
-        <td width="40%" class="text-center">{{ historia.icl }}</td>
+        <td width="20%" class="table-info"><strong><h6 class="m-0"><u>Ciclopl.:</u></h6></strong></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.dci }}</h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.ici }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Receta:</u></strong></td>
-        <td width="13%" class="text-center">{{ historia.drc1 }}</td>
-        <td width="13%" class="text-center">{{ historia.drc2 }}</td>
-        <td width="13%" class="text-center">{{ historia.drc3 }}</td>
-        <td width="13%" class="text-center">{{ historia.irc1 }}</td>
-        <td width="13%" class="text-center">{{ historia.irc2 }}</td>
-        <td width="13%" class="text-center">{{ historia.irc3 }}</td>
+        <td width="20%" class="table-info"><h6 class="m-0"><u>Lente:</u></h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.dcl }}</h6></td>
+        <td width="40%" class="text-center"><h6 class="m-0">{{ historia.icl }}</h6></td>
       </tr>
     </tbody>
   </table>
   <table class="table table-sm table-bordered m-b-0">
     <tbody>
       <tr class="b-b">
-        <td width="20%"><strong><u>Adicion:</u></strong></td>
-        <td width="80%" class="text-center">{{ historia.adicion }}</td>
+        <td width="20%" class="table-info"><h6 class="m-0"><u>Receta:</u></h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.drc1 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.drc2 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.drc3 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.irc1 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.irc2 }}</h6></td>
+        <td width="13%" class="text-center"><h6 class="m-0">{{ historia.irc3 }}</h6></td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-sm table-bordered m-b-0">
+    <tbody>
+      <tr class="b-b">
+        <td width="20%" class="table-info"><h6 class="m-0"><u>Adicion:</u></h6></td>
+        <td width="80%" class="text-center"><h6 class="m-0">{{ historia.adicion }}</h6></td>
       </tr>
     </tbody>
   </table>
 </div>
 <div class="col-md-6">
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Tension Ocular:</strong></th>
+      <th>Tension Ocular</th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
     <tbody>
       <tr>
-        <td width="30%"><strong><u>Ojo Derecho:</u></strong></td>
-        <td>{{ historia.dto }}</td>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.D.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.dto }}</h6></td>
       </tr>
       <tr>
-        <td width="30%"><strong><u>Ojo Izquierdo:</u></strong></td>
-        <td>{{ historia.ito }}</td>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.I.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.ito }}</h6></td>
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Biomicroscopia:</strong></th>
+      <th>Biomicroscopia</th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
     <tbody>
       <tr>
-        <td width="30%"><strong><u>Ojo Derecho:</u></strong></td>
-        <td>{{ historia.dbio }}</td>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.D.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.dbio }}</h6></td>
       </tr>
       <tr>
-        <td width="30%"><strong><u>Ojo Izquierdo:</u></strong></td>
-        <td>{{ historia.ibio }}</td>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.I.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.ibio }}</h6></td>
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Fondo de Ojo:</strong></th>
+      <th>Biomicroscopia</th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
     <tbody>
       <tr>
-        <td width="30%"><strong><u>Ojo Derecho:</u></strong></td>
-        <td>{{ historia.dfdo }}</td>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.D.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.dbio }}</h6></td>
       </tr>
       <tr>
-        <td width="30%"><strong><u>Ojo Izquierdo:</u></strong></td>
-        <td>{{ historia.ifdo }}</td>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.I.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.ibio }}</h6></td>
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Diagnostico:</strong></th>
+      <th>Fondo de Ojo</th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
+    <tbody>
+      <tr>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.D.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.dfdo }}</h6></td>
+      </tr>
+      <tr>
+        <td width="10%" class="table-info"><strong><h6 class="m-0"><u>O.I.</u></h6></strong></td>
+        <td><h6 class="m-0">{{ historia.ifdo }}</h6></td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-sm table-borderless table-striped m-b-0 color-table inverse-table">
+    <thead>
+      <th>Diagnostico</th>
+    </thead>
+  </table>
+  <table class="table table-sm m-b-0 table-striped">
     <tbody>
     {% for item in historia.diagnostico_set.all %}
       <tr>
-        <td width="5%">{{ forloop.counter }}</td>
-        <td>{{ item.detalle }}</td>
+        <td width="5%"><h6 class="m-0">{{ forloop.counter }}</h6></td>
+        <td><h6 class="m-0">{{ item.detalle }}</h6></td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0">
+  <table class="table table-sm table-borderless table-striped m-b-0 color-table inverse-table">
     <thead>
-      <th><strong>Tratamiento:</strong></th>
+      <th>Tratamiento:</th>
     </thead>
   </table>
-  <table class="table table-sm m-b-0">
+  <table class="table table-sm m-b-0 table-striped">
     <tbody>
     {% for item in historia.tratamiento_set.all %}
       <tr>
-        <td width="5%">{{ forloop.counter }}</td>
-        <td>{{ item.detalle }}</td>
+        <td width="5%"><h6 class="m-0">{{ forloop.counter }}</h6></td>
+        <td><h6 class="m-0">{{ item.detalle }}</h6></td>
       </tr>
     {% endfor %}
     </tbody>

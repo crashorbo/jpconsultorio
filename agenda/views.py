@@ -1,4 +1,5 @@
 import json
+import locale
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -17,6 +18,7 @@ from .models import Agenda, Diagnostico, Tratamiento, Agendaserv
 from .forms import AgendaForm, DiagnosticoForm, TratamientoForm, ServicioFormset
 from io import BytesIO
 from decimal import Decimal, getcontext
+from django.utils import formats
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -394,6 +396,10 @@ class Reporterec(View):
     def subrayar(self, pdf, x, y, texto):
         tam = len(texto)
         pdf.line(x-tam*4, y-4,x+tam*4,y-4)
+    
+    def subrayar2(self, pdf, x, y, texto):
+        tam = len(texto)
+        pdf.line(x, y-4,x+tam*8,y-4)
 
     def paciente(self, pdf):
         pdf.setFont("Times-Bold", 12)
@@ -407,31 +413,49 @@ class Reporterec(View):
 
     def subtitulo(self, pdf):
         pdf.setFont("Times-Bold", 12)
-        pdf.drawCentredString(140,370, "PARA USO PERMANENTE")
-        self.subrayar(pdf, 140,370, "PARA USO PERMANENTE")
+        pdf.drawString(65,370, "PARA LEJOS:")
+        self.subrayar2(pdf, 65,370, "PARA LEJOS")
 
     def medida(self,pdf):
-        pdf.setFont("Times-Bold", 12)
-        pdf.drawCentredString(100,290, "OD.")
-        pdf.drawCentredString(100,260, "OI.")
-        pdf.setFont("Times-Roman", 12)
-        pdf.drawCentredString(160,320, "ESFERICO")
-        pdf.drawCentredString(240,320, "CILINDRICO")
-        pdf.drawCentredString(320,320, "EJE")
-        pdf.setFont("Times-Roman", 16)
-        pdf.drawCentredString(160,290, self.agenda.drc1)
-        pdf.drawCentredString(240,290, self.agenda.drc2)
-        pdf.drawCentredString(160,260, self.agenda.irc1)
-        pdf.drawCentredString(240,260, self.agenda.irc2)
         pdf.setFont("Times-Bold", 16)
-        pdf.drawCentredString(320,290, self.agenda.drc3+'°')
-        pdf.drawCentredString(320,260, self.agenda.irc3+'°')
+        pdf.drawCentredString(100,305, "OD.")
+        pdf.drawCentredString(100,275, "OI.")
+        pdf.setFont("Times-Roman", 12)
+        pdf.drawCentredString(160,335, "ESFERICO")
+        pdf.drawCentredString(240,335, "CILINDRICO")
+        pdf.drawCentredString(320,335, "EJE")
+        pdf.drawString(80, 255, "Favor Medir D.P.")
+        pdf.setFont("Times-Roman", 16)
+        if(self.agenda.drc1):
+            pdf.drawCentredString(160,305, self.agenda.drc1)
+        else:
+            pdf.drawCentredString(160,305, '------')
+        if(self.agenda.drc2):
+            pdf.drawCentredString(240,305, self.agenda.drc2)
+        else:
+            pdf.drawCentredString(240,305, '------')
+        if(self.agenda.irc1):
+            pdf.drawCentredString(160,275, self.agenda.irc1)
+        else:
+            pdf.drawCentredString(160,275, '------')
+        if(self.agenda.irc2):
+            pdf.drawCentredString(240,275, self.agenda.irc2)
+        else:
+            pdf.drawCentredString(240,275, '------')
+        pdf.setFont("Times-Bold", 16)
+        if(self.agenda.drc3):
+            pdf.drawCentredString(320,305, self.agenda.drc3+'°')
+        else:
+            pdf.drawCentredString(320,305, self.agenda.drc3+'------')
+        if(self.agenda.irc3):
+            pdf.drawCentredString(320,275, self.agenda.irc3+'°')
+        else:
+            pdf.drawCentredString(320,275, '------')
         
-    def observaciones(self, pdf):
-        y = 210
+    def observaciones(self, pdf, y):
         adicion = self.agenda.tipo_lente.split(",")
         pdf.setFont("Times-Bold", 12)
-        pdf.drawString(70, y, "Obs.")
+        pdf.drawString(80, y, "Obs.")
         pdf.setFont("Times-Roman", 10)
         pdf.setFillColorRGB(1,0,0)
         for item in adicion:
@@ -441,19 +465,34 @@ class Reporterec(View):
         pdf.setFillColorRGB(0,0,0)
         pdf.drawString(80, y, "No olvide traer sus lentes a control.")
         pdf.drawString(80, y-15, "No olvide traer su receta en la proxima consulta.")
-        pdf.drawString(80, 50, "09 - Noviembre - 2019")
+        mes = {1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abril", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"}
+        pdf.drawString(80, 50, str(date.today().day)+" - "+mes[date.today().month]+" - "+str(date.today().year))
+        pdf.drawRightString(360, 50, datetime.now().strftime("(%H:%M:%S)"))
 
     def tabla(self, pdf):
-        pdf.line(80, 335 ,360, 335)
-        pdf.line(80, 310 ,360, 310)
-        pdf.line(80, 280 ,360, 280)
-        pdf.line(80, 250 ,360, 250)
-        pdf.line(80, 335 ,80, 250)
-        pdf.line(120, 335 ,120, 250)
-        pdf.line(200, 335 ,200, 250)
-        pdf.line(280, 335 ,280, 250)
-        pdf.line(360, 335 ,360, 250)
+        pdf.line(80, 350 ,360, 350)
+        pdf.line(80, 325 ,360, 325)
+        pdf.line(80, 295 ,360, 295)
+        pdf.line(80, 265 ,360, 265)
+        pdf.line(80, 350 ,80, 265)
+        pdf.line(120, 350 ,120, 265)
+        pdf.line(200, 350 ,200, 265)
+        pdf.line(280, 350 ,280, 265)
+        pdf.line(360, 350 ,360, 265)
 
+    def tablaa(self, pdf):
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawString(65,230, "PARA CERCA:")
+        self.subrayar2(pdf, 65,230, "PARA CERCA")
+        pdf.line(200, 240 ,360, 240)
+        pdf.line(200, 210 ,360, 210)
+        pdf.line(200, 240 ,200, 210)
+        pdf.line(280, 240 , 280, 210)
+        pdf.line(360, 240 , 360, 210)
+        pdf.setFont("Times-Bold", 16)
+        pdf.drawCentredString(240, 220,"ADICION")
+        pdf.setFont("Times-Roman", 16)
+        pdf.drawCentredString(320, 220, self.agenda.adicion)
 
     def get(self, *args, **kwargs):
         self.agenda = Agenda.objects.get(id=self.kwargs['pk'])
@@ -470,7 +509,11 @@ class Reporterec(View):
         self.encabezado(pdf)
         self.subtitulo(pdf)
         self.medida(pdf)
-        self.observaciones(pdf)
+        if (self.agenda.adicion):
+            self.tablaa(pdf)
+            self.observaciones(pdf, 190)
+        else:
+            self.observaciones(pdf, 230)
         self.tabla(pdf)
         pdf.save()
         pdf = buffer.getvalue()

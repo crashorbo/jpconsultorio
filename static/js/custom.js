@@ -83,8 +83,8 @@ $(function () {
     // ============================================================== 
     // Right sidebar options
     // ============================================================== 
-    $(".right-side-toggle").click(function () {
-        $(".right-sidebar").slideDown(50);
+    $(".right-side-toggle").hover(function () {
+        //$(".right-sidebar").slideDown(50);
         $(".right-sidebar").toggleClass("shw-rside");
         
     });

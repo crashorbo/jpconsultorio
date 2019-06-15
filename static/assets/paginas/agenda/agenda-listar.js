@@ -18,7 +18,6 @@ $('.fecha').on('change', function(){
     type: 'get',  
     success: function(data){
         $('#lista-pacientes').html(data)
-        
     }
   })
 });

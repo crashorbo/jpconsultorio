@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
 from django.db.models import Q
 from django.db.models.query import QuerySet
 import datetime
@@ -37,6 +38,12 @@ class Paciente(models.Model):
     (3, 'CERTIFICADO DE NACIMIENTO')
   )
 
+  DOCUMENTO_PRINT = {
+    1: 'CEDULA DE IDENTIDAD',
+    2: 'PASAPORTE',
+    3: 'CERTIFICADO DE NACIMIENTO'
+  }
+
   nombres = models.CharField(max_length=100)
   apellidos = models.CharField(max_length=100)
   fecha_nacimiento = models.DateField(default=datetime.datetime.now)
@@ -55,11 +62,11 @@ class Paciente(models.Model):
   
   def as_list(self):
     return [self.nombres+' '+self.apellidos,
-      self.documento,
+      self.DOCUMENTO_PRINT[self.documento],
       self.nro_documento,
       self.telefono,
       self.codigo,
-      '<button class="pacienteeditar btn btn-xs btn-warning" data-url='+str(self.id)+'><i class="fa fa-edit"></i></button>']
+      '<button class="paciente-historial btn btn-xs btn-info" data-url='+reverse('historia-lista',args=[self.id])+'><i class="icon-medical-history"></i></button><button class="paciente-editar btn btn-xs btn-warning m-l-5" data-url='+reverse('paciente-editar', args=[self.id])+'><i class="fa fa-edit"></i></button><button class="paciente-eliminar btn btn-xs btn-danger m-l-5" data-url='+str(self.id)+'><i class="fa fa-close"></i></button>']
 
 
 

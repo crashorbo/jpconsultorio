@@ -5136,7 +5136,7 @@ chat application Page
           list-style: none;
           overflow: hidden; }
           .chat-main-box .chat-left-aside .chat-left-inner .style-none li a {
-            padding: 20px; }
+            padding: 10px 10px; }
             .chat-main-box .chat-left-aside .chat-left-inner .style-none li a:hover, .chat-main-box .chat-left-aside .chat-left-inner .style-none li a.active {
               background: #ebf3f5; }
   .chat-main-box .chat-right-aside {
@@ -7911,4 +7911,8 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
 .col-form-label {
   padding-top: 4px;
   padding-bottom: 4px;
+}
+
+.historiaver{
+  padding: 20px 4px;
 }

@@ -49,9 +49,15 @@ $('#form-guardar').on('submit', function (e) {
       url: $thisUrl,
       data: $formData,
       success: function(data){
-        $("#msj-modal").html(data);
-        $("#responsive-modal").modal('hide');
-        $("#mensaje-modal").modal('show');
+        $.toast({
+          heading: 'Administracion Consulta',
+          text: 'Se ha Guardado el registro con exito.',
+          position: 'top-right',
+          loaderBg:'#ff6849',
+          icon: 'success',
+          hideAfter: 3500, 
+          stack: 6
+        });
       },
       error: function(xhr,errmsg,err) {
         // Show an error
@@ -88,6 +94,31 @@ $('#diagform').on('submit', function (e) {
       }
   })
 });
+
+var autoguardado = function(){
+  var $formData = $("#form-guardar").serialize();
+  var $formArray = $("#form-guardar").serializeArray();
+  var $formArray = {};
+  $.each($("#diagform").serializeArray(), function (i, field) {
+    $formArray[field.name] = field.value; 
+  });
+  var $thisUrl = $("#form-guardar").attr('action');
+  var $thisMethod = $("#form-guardar").attr('method');
+  $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function(data){
+        console.log("guardado");
+      },
+      error: function(xhr,errmsg,err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>"+
+        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+  })
+}
 
 $('#tratform').on('submit', function (e) {
   e.preventDefault();
@@ -174,10 +205,7 @@ function imprimirlista(e, obj)
   window.open(this_url,"reporte","height=600,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
 }
 
-$('#selectipo').selectpicker({
-  'title': 'Seleccionar tipo de lente',
-  'size': 6,
-});
+
 $('#selectipo').on('change', function(){
   var aux = [];
   var valor = "";
@@ -189,7 +217,7 @@ $('#selectipo').on('change', function(){
       valor = valor+","+element;
   });
   $('#id_tipo_lente').val(valor);
-  console.log(valor);
+  autoguardado()
 });
 
 function selectipo(){
@@ -199,29 +227,53 @@ function selectipo(){
   aux = valor.split(",")
   $('#selectipo').selectpicker('val', aux);
 }
-
+$('.autoguardado').on('change', function(){
+  autoguardado();
+});
 $('#id_dre1').on('change', function(){
   $('#id_drc1').val(transformador($(this).val()));
+  autoguardado();
 });
 $('#id_dre2').on('change', function(){
   $('#id_drc2').val(transformador($(this).val()));
+  autoguardado();
 });
 $('#id_dre3').on('change', function(){
-  $('#id_drc3').val(transformador($(this).val()));
-});
-$('#id_ire1').on('change', function(){
-  $('#id_irc1').val(transformador($(this).val()));
-});
-$('#id_ire2').on('change', function(){
-  $('#id_irc2').val(transformador($(this).val()));
-});
-$('#id_ire3').on('change', function(){
-  $('#id_irc3').val(transformador($(this).val()));
+  $('#id_drc3').val($(this).val());
+  autoguardado();
 });
 $('#id_ddc2').on('change', function(){
   $('#id_adicion').val(transformador($(this).val()));
+  autoguardado();
+});
+$('#id_ire1').on('change', function(){
+  $('#id_irc1').val(transformador($(this).val()));
+  autoguardado();
+});
+$('#id_ire2').on('change', function(){
+  $('#id_irc2').val(transformador($(this).val()));
+  autoguardado();
+});
+$('#id_ire3').on('change', function(){
+  $('#id_irc3').val($(this).val());
+  autoguardado();
 });
 
 function transformador(t){
-  return t;
+  var dosdecimales = parseFloat(t).toFixed(2);
+  if(isNaN(dosdecimales))
+  {
+    return "";
+  }
+  else{
+    if(dosdecimales==0)
+    {
+      return "";
+    }
+    if(dosdecimales > 0)
+    {
+      dosdecimales = '+'+dosdecimales;
+    }
+  }
+  return dosdecimales;
 }

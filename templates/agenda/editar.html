@@ -4,11 +4,12 @@
 
 {% load paciente_tags %}
 {% block css %}
-<link href="{% static "assets/plugins/bootstrap-select/bootstrap-select.min.css" %}" rel="stylesheet">
+
+<link href="{% static "assets/plugins/bootstrap-selectf/dist/css/bootstrap-select.css" %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 
 {% block contenido %}
-<button type="submit" id="paciente-espera" class="right-side-toggle waves-effect waves-light btn-success btn btn-circle btn-sm pull-right m-l-10"><i class="icon-calendar text-white"></i></button>
+<button id="paciente-espera" class="right-side-toggle waves-effect waves-light btn-success btn btn-circle btn-sm pull-right m-l-10"><i class="icon-calendar text-white"></i></button>
   <div class="row">
     <div class="col-md-6 col-sm-12">
     <form id="form-guardar" action="{% url 'agenda-editar' pk=consulta.id %}" method="post" autocomplete=off>
@@ -231,7 +232,7 @@
               <div class="hide">
                 {{ form.tipo_lente }}
               </div>
-              <select id="selectipo" multiple data-style="form-control form-control-sm btn-secondary" tabindex="33" >
+              <select id="selectipo" multiple class="form-control form-control-sm" title="Selecciona Tipo de Lente" tabindex="33" >
                   <option>Organicos</option>
                   <option>Proteccion UV</option>
                   <option>H. Index</option>
@@ -393,6 +394,6 @@
   </div>
 {% endblock %}
 {% block js %}
-  <script src="{% static "assets/plugins/bootstrap-select/bootstrap-select.min.js" %}"></script>
+  <script src="{% static "assets/plugins/bootstrap-selectf/dist/js/bootstrap-select.min.js" %}"></script>
   <script src="{% static "assets/paginas/agenda/agenda-editar.js" %}"></script>
 {% endblock %}

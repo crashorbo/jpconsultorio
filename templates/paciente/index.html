@@ -12,9 +12,9 @@
 {% block contenido %}
 <div class="card">
   <div class="card-body">
-    <h4 class="card-title">Lista de Pacientes<button class="float-right btn btn-info" data-toggle="modal" data-target="#responsive-modal" id="registro-paciente">Registrar</button></h4>
+    <h4 class="card-title">Lista de Pacientes<a href="{% url 'index' %}" class="m-l-5 btn btn-sm btn-warning waves-effect waves-light float-right"><i class="ti-back-left"></i></a><button class="float-right btn btn-sm btn-info" data-toggle="modal" data-target="#responsive-modal" id="registro-paciente">Registrar</button></h4>
     <div class="table-responsive m-t-40">
-      <table id="myTable" class="table table-bordered table-striped">
+      <table id="myTable" class="table table-sm table-bordered table-striped">
         <thead>
           <tr>
             <th>Nombre</th>            
