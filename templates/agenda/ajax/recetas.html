@@ -1,0 +1,20 @@
+<table class="table table-sm table-striped tabla">
+<thead>
+  <tr>
+    <th>Nombre</th>
+    <th>Cantidad</th>
+    <th>Presentacion</th>
+    <th>Indicacion</th>
+    <th></th>
+  </tr>
+</thead>
+{% for item in consulta.receta_set.all %}
+  <tr>    
+    <td><h6>{{ item.medicamento.nombre }}</h6></td>
+    <td><h6>{{ item.cantidad }}</h6></td>
+    <td><h6>{{ item.presentacion }}</h6></td>
+    <td><h6>{{ item.indicacion }}</h6></td>
+    <td class="text-right"><form action="{% url 'receta-eliminar' pk=item.id %}" method="post" class="form-eliminar-receta">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
+  </tr>
+{% endfor %}
+</table>

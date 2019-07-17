@@ -21,9 +21,11 @@
                 <div class="col-md-12">
                     <form id="form-agenda" action="{% url 'agenda-registrar' %}" method="post">
                         {% csrf_token %}
-                        
-                        {{ form.paciente }}
-                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form.paciente }}
+                            </div>
+                        </div>
                         <div class="row m-t-5">
                             <div class="col-md-6">    
                                 {{ form.fecha}}

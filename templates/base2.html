@@ -70,10 +70,10 @@
                 <!-- ============================================================== -->
             </div>
             <!-- Modal -->
-            <div data-backdrop="static" data-keyboard="false"  id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div data-backdrop="static" data-keyboard="false"  id="responsive-modal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow:hidden;">
                 <div class="modal-dialog">
                     <div id="contenido-modal" class="modal-content">
-                        
+                        {% block "modal-content" %}{% endblock %}
                     </div>
                 </div>
             </div>
@@ -139,8 +139,6 @@
     <!--otros componentes -->
     <script src="{% static 'django_js_reverse/js/reverse.js' %}"></script>
     {% block js %}{% endblock %}
-    <!--Configuracion por defecto -->
-    <script src="{% static "assets/paginas/defecto.js" %}"></script>
     <!-- ============================================================== -->
     <!-- Style switcher -->
     <!-- ============================================================== -->

@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'paciente.apps.PacienteConfig',
     'seguro.apps.SeguroConfig',
     'servicio.apps.ServicioConfig',
+    'configuracion.apps.ConfiguracionConfig',
+    'medicamento.apps.MedicamentoConfig',
 ]
 
 MIDDLEWARE = [

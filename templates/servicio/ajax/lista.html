@@ -1,0 +1,105 @@
+{% load static %}
+<div class="row page-titles m-b-0">
+  <div class="col-md-5 col-8 align-self-center">
+    <h3 class="text-themecolor m-b-0 m-t-0">Servicios</h3>
+  </div>
+  <div class="col-md-7 col-4 align-self-center">
+    <div class="d-flex m-t-10 justify-content-end">
+      <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+        <div class="chart-text m-r-10">
+          <button id="registrar-servicio" class="btn btn-info" data-url="{% url "servicio-ajax-registrar" %}">Registrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<div class="row rowstyle">
+  <div class="col-md-12 p-0">
+    <div class="card"> 
+      <div class="card-body">
+      <table id="myTable" class="table table-sm table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Costo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static "assets/plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script>
+    $('#myTable').DataTable({
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    },
+    "bServerSide": true,
+    "sAjaxSource": "/servicio/as_json"
+  });
+  
+  $('#registrar-servicio').on('click', function(e){
+    e.preventDefault();
+    $thisUrl = $(this).attr("data-url");
+    $.ajax({
+      method: "get",
+      url: $thisUrl,
+      success: function(data){
+        $('#contenido-modal').html(data);
+        $('#responsive-modal').modal('show');
+      }  
+    })
+  });
+
+  $('#myTable').on('click', '.servicio-editar', function(e){
+    e.preventDefault();
+    $thisUrl = $(this).attr("data-url");
+    $.ajax({
+      method: "get",
+      url: $thisUrl,
+      success: function(data){
+        $('#contenido-modal').html(data);
+        $('#responsive-modal').modal('show');
+      }  
+    })
+  })
+  $('#myTable').on('click','.servicio-eliminar', function(e){
+    e.preventDefault();
+    $thisUrl = $(this).attr('data-url');
+    $thisId = $(this).attr('data-id');
+    $.ajax(({
+      url: $thisUrl,
+      type: 'get',
+      data: {'id': $thisId},
+      success: function(data){
+        $('#myTable').DataTable().ajax.reload(null, false);
+      }
+    }));
+  });
+</script>

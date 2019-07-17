@@ -2,8 +2,9 @@ $(document).ready(function(){
 
   var calendar = $('#calendar').fullCalendar({
     defaultView: 'agendaDay',
+    slotDuration: '00:15',
     minTime: '08:00:00',
-    maxTime: '22:00:00',  
+    maxTime: '22:00:00',
     header: {
       left: 'prev,next today',
       center: 'title',
@@ -93,6 +94,7 @@ $(document).ready(function(){
           $(".seguro-seleccion").hide();
           $("#mensaje-modal").modal('show');
           window.recalculo();
+          costo();
         },
         error: function(xhr,errmsg,err) {
           // Show an error
@@ -144,15 +146,32 @@ $(document).ready(function(){
     else
       $(".seguro-seleccion").show();
   });
+  costo();
 });
+
+$("#id_agendaserv-0-servicio").on("change", function(){
+  costo();
+});
+
+function costo(){
+  var servicioId = $("#id_agendaserv-0-servicio").val();
+  $.ajax({
+    url: "/servicio-costo",
+    data: {"id": servicioId},
+    type: "get",
+    success: function(data){
+      $("#id_agendaserv-0-costo").val(data.costo);
+    }
+  });
+
+}
 
 window.recalculo = function (){
   var getUrl = window.location;
   $.ajax({
     url: getUrl.protocol + "//" + getUrl.host+'/movcalculo', 
     type: 'get',  
-    success: function(data){
-        console.log(data);
+    success: function(data){        
         window.document.getElementById('sis_ingresos').value = data.ingreso + ' Bs.';
         $("#sis_ingresos").text(data.ingreso + ' Bs.');
         $("#sis_egresos").text(data.egreso + ' Bs.');

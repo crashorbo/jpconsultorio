@@ -1,10 +1,11 @@
 from django import forms
 from django.forms.models import inlineformset_factory
-from .models import Agenda, Diagnostico, Tratamiento, Agendaserv
+from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta
 from dal import autocomplete
 from paciente.models import Paciente
 from seguro.models import Seguro
 from servicio.models import Servicio
+from medicamento.models import Medicamento
 
 class AgendaForm(forms.ModelForm):
   paciente = forms.ModelChoiceField(queryset=Paciente.objects.all(), empty_label="Seleccionar Paciente", widget=autocomplete.ModelSelect2(url='paciente-autocomplete', attrs={'class': 'form-control form-control-sm'}))
@@ -94,3 +95,15 @@ class AgendaservForm(forms.ModelForm):
     }
 
 ServicioFormset = inlineformset_factory(Agenda, Agendaserv, AgendaservForm, can_delete=False, extra=1)
+
+class RecetaForm(forms.ModelForm):
+  medicamento = forms.ModelChoiceField(queryset=Medicamento.objects.all(), empty_label="Seleccionar Medicamento", widget=autocomplete.ModelSelect2(url='medicamento-autocomplete', attrs={'class': 'form-control form-control-sm'}))
+  class Meta:
+    model = Receta
+    fields = ('medicamento','agenda', 'cantidad', 'indicacion','presentacion')
+    widgets = {
+      'agenda': forms.HiddenInput(),
+      'cantidad': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
+      'presentacion': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+      'indicacion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 2}),
+    }

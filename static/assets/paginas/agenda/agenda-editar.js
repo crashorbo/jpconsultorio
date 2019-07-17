@@ -9,6 +9,7 @@ $(document).ready(function(){
     })
   });
   selectipo();
+  $.fn.modal.Constructor.prototype.enforceFocus = function () {};
 });
 
 $(document).keydown(function(e) { 
@@ -32,6 +33,12 @@ $('#historiac').on('click', function(e){
       $('#lmodal').modal('show');
     }
   })
+});
+
+$('#recetar').on('click', function(e){
+  $('#recetaform')[0].reset();
+  $("#id_medicamento").val("").trigger("change");
+  $('#receta-modal').modal('show');
 });
 
 $('#form-guardar').on('submit', function (e) {
@@ -85,6 +92,34 @@ $('#diagform').on('submit', function (e) {
       success: function(data){
         $('.enviod').val('');
         $("#diagnosticos").html(data);
+      },
+      error: function(xhr,errmsg,err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>"+
+        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+  })
+});
+
+$('#recetaform').on('submit', function (e) {
+  e.preventDefault();
+  var $formData = $(this).serialize();
+  var $formArray = $(this).serializeArray();
+  var $formArray = {};
+  $.each($(this).serializeArray(), function (i, field) {
+    $formArray[field.name] = field.value; 
+  });
+  var $thisUrl = $(this).attr('action');
+  var $thisMethod = $(this).attr('method');
+  $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function(data){
+        $('#recetaform')[0].reset();
+        $("#id_medicamento").val("").trigger("change");
+        $("#recetas").html(data);
       },
       error: function(xhr,errmsg,err) {
         // Show an error
@@ -198,6 +233,33 @@ $('#tratamientos').on('submit', '.form-eliminar-trat', function (e) {
       }
   })
 });
+
+$('#recetas').on('submit', '.form-eliminar-receta', function (e) {
+  e.preventDefault();
+  var $formData = $(this).serialize();
+  var $formArray = $(this).serializeArray();
+  var $formArray = {};
+  $.each($(this).serializeArray(), function (i, field) {
+    $formArray[field.name] = field.value; 
+  });
+  var $thisUrl = $(this).attr('action');
+  var $thisMethod = $(this).attr('method');
+  $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function(data){
+        $('#recetas').html(data);
+      },
+      error: function(xhr,errmsg,err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>"+
+        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+  })
+});
+
 function imprimirlista(e, obj)
 {
   e.preventDefault();
@@ -277,3 +339,43 @@ function transformador(t){
   }
   return dosdecimales;
 }
+$('#id_medicamento').select2({
+  language: 'es',
+  ajax: {
+    url: "/medicamento/medicamento-autocomplete/",
+    dataType: 'json',
+    delay: 250,
+    data: function(params) {
+        return {
+            q: params.term, // search term
+            page: params.page
+        };
+    },
+    processResults: function(data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+            results: data.results,
+            pagination: {
+                more: (params.page * 30) < data.total_count
+            }
+        };
+    },
+    cache: true
+  },
+  templateSelection: function(selection) {
+    console.log('templateSelection', selection);
+    $('#id_indicacion').val(selection.indicacion);
+    $('#id_presentacion').val(selection.presentacion);
+    return selection.text;
+
+  },
+  escapeMarkup: function(markup) {
+      return markup;
+  }, // let our custom formatter work
+  minimumInputLength: 2,
+  
+});

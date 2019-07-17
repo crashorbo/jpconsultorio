@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from paciente.models import Paciente
 from seguro.models import Seguro
 from servicio.models import Servicio
-
-
+from configuracion.models import Tipolente
+from medicamento.models import Medicamento
 class Agenda(models.Model):
   TIPO_CHOICE = (
     (0, 'PARTICULAR'),
@@ -106,3 +106,10 @@ class Agendaserv(models.Model):
   fecha = models.DateField(default=timezone.now)
   hora = models.DateTimeField(default=timezone.now)
   estado = models.BooleanField(default=False)
+
+class Receta(models.Model):
+  agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
+  medicamento = models.ForeignKey(Medicamento, on_delete=models.CASCADE)
+  presentacion = models.CharField(blank=True, max_length=100)
+  cantidad = models.IntegerField(default=0)
+  indicacion = models.TextField(blank=True)

@@ -4,8 +4,10 @@ from pathlib import Path
 from dbfread import DBF
 import dataset
 from django.conf import settings
-from core.models import Recpaciente
+from core.models import Recpaciente, RecHistoria
 from paciente.models import Paciente
+from agenda.models import Agenda
+from seguro.models import Seguro
 from datetime import datetime
 
 def crearpacientes():
@@ -35,3 +37,18 @@ def migrarpacientes():
       sispaciente = Paciente(nombres=paciente.nombres, apellidos=paciente.a_paterno+' '+paciente.a_materno,fecha_nacimiento=paciente.fecha_nac, documento=1, nro_documento=paciente.ci, direccion=paciente.direccion, telefono=paciente.telefono, ocupacion=paciente.ocupacion, codigo=paciente.codigo)
       sispaciente.save()
   return len(pacientes)
+
+def migrarhistorias():
+  historias = RecHistoria.objects.all()
+  now = datetime.now()
+  fecha = now.strftime("%Y-%m-%d")
+  seguro = Seguro.objects.get(id=1)
+  for historia in historias:
+    try:
+      paciente = Paciente.objects.get(codigo=historia.paciente)
+      sishistoria = Agenda(paciente=paciente, seguro=seguro, fecha=historia.fecha, estado=1, procedencia=historia.procedenc, antocu=historia.oculares, antsis=historia.sitemicos, motivo=historia.mot_consul, dsc=historia.av_od1, dcc=historia.av_od2, dre1=historia.av_od3a, dre2=historia.av_od3b, dre3=historia.av_od3c, dau=historia.av_od4, ddc1=historia.av_od5, ddc2=historia.av_od6, dph=historia.av_od7, dci=historia.av_od8, dcl=historia.av_od9, drc1=historia.av_od10a, drc2=historia.av_od10b, drc3=historia.av_od10c, isc=historia.av_oi1, icc=historia.av_oi2, ire1=historia.av_oi3a, ire2=historia.av_oi3b, ire3=historia.av_oi3c, iau=historia.av_oi4, idc1=historia.av_oi5, idc2=historia.av_oi6, iph=historia.av_oi7, ici=historia.av_oi8, icl=historia.av_oi9, irc1=historia.av_oi10a, irc2=historia.av_oi10b, irc3=historia.av_oi10c, adicion=historia.adicion, dto=historia.to_od, ito=historia.to_oi, dbio=historia.biom_od, ibio=historia.biom_oi, dfdo=historia.fondo_od, ifdo=historia.fondo_oi, otros=historia.otros, tipo_lente=historia.recet )
+      sishistoria.save()
+      print(paciente)
+    except Exception as e:      
+      print(e)
+  return len(historias)

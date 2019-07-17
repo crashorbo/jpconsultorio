@@ -6,15 +6,13 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Movdiario
+from servicio.models import Servicio
 # Create your views here.
 
 
 # Vista Inicial de la aplicacion
 class IndexView(TemplateView):
     template_name = 'core/index.html'
-
-class AdministracionView(TemplateView):
-    template_name = 'administracion/index.html'
 
 class MovimientoCalculoView(View):
     def get(self, *args, **kwargs):
@@ -29,3 +27,12 @@ class MovimientoCalculoView(View):
     
     def get_results(self, x):
         return dict(fecha=x.fecha.strftime("%Y-%m-%d" ),ingreso=x.ingreso, egreso=x.egreso, estado=x.estado)
+
+class ServicioCostoView(View):
+    def get(self, *args, **kwargs):        
+        servicio = Servicio.objects.get(id=self.request.GET['id'])
+        servicio = self.get_results(servicio)
+        return HttpResponse( json.dumps(servicio, cls=DjangoJSONEncoder), content_type='application/json')
+
+    def get_results(self, x):
+        return dict(costo=x.costo)
