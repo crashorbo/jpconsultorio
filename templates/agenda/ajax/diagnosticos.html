@@ -1,7 +1,7 @@
-<table class="table table-striped tabla table-sm">
+<table class="table tabla table-sm">
 {% for item in consulta.diagnostico_set.all %}
   <tr>
-    <td><h6>{{ forloop.counter }}</h6></td>
+    <td width="8%"><h6>{{ forloop.counter }} .-</h6></td>
     <td><h6>{{ item.detalle }}</h6></td>
     <td class="text-right"><form action="{% url 'diagnostico-eliminar' pk=item.id %}" method="post" class="form-eliminar-diag">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-close"></i></button></form></td>
   </tr>

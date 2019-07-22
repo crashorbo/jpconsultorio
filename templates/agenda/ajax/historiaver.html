@@ -1,7 +1,7 @@
 <div class="col-md-6">
-  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Antecedentes</th>
+      <th><h6 class="m-0"><strong>ANTECEDENTES</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -16,9 +16,10 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Motivo de Consulta</th>
+      <th><h6 class="m-0"><strong>MOTIVO DE CONSULTA</strong></h6></th>
     </thead>
     <tbody>
       <tr>
@@ -26,9 +27,10 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Agudeza Visual</th>
+      <th><h6 class="m-0"><strong>AGUDEZA VISUAL</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm table-bordered m-b-0">
@@ -128,9 +130,9 @@
   </table>
 </div>
 <div class="col-md-6">
-  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Tension Ocular</th>
+      <th><h6 class="m-0"><strong>TENSION OCULAR</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -145,9 +147,10 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Biomicroscopia</th>
+      <th><h6 class="m-0"><strong>BIOMICROSCOPIA</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -162,9 +165,10 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Fondo de Ojo</th>
+      <th><h6 class="m-0"><strong>FONDO DE OJO</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -179,31 +183,44 @@
       </tr>
     </tbody>
   </table>
-  <table class="table table-sm table-borderless table-striped m-b-0 color-table inverse-table">
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th>Diagnostico</th>
+      <th><h6 class="m-0"><strong>OTROS</strong></h6></th>
+    </thead>
+    <tbody>
+      <tr>
+        <td><h6 class="m-0">{{ historia.otros }}</h6></td>
+      </tr>
+    </tbody>
+  </table>
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless m-b-0 color-table">
+    <thead>
+      <th><h6 class="m-0"><strong>DIAGNOSTICO</strong></h6></th>
     </thead>
   </table>
-  <table class="table table-sm m-b-0 table-striped">
+  <table class="table table-sm m-b-0">
     <tbody>
     {% for item in historia.diagnostico_set.all %}
       <tr>
-        <td width="5%"><h6 class="m-0">{{ forloop.counter }}</h6></td>
+        <td width="5%"><h6 class="m-0">{{ forloop.counter }}.-</h6></td>
         <td><h6 class="m-0">{{ item.detalle }}</h6></td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  <table class="table table-sm table-borderless table-striped m-b-0 color-table inverse-table">
+  <hr class="m-0" />
+  <table class="table table-sm table-borderless table-striped m-b-0 color-table">
     <thead>
-      <th>Tratamiento:</th>
+      <th><h6 class="m-0"><strong>TRATAMIENTO</strong></h6></th>
     </thead>
   </table>
-  <table class="table table-sm m-b-0 table-striped">
+  <table class="table table-sm m-b-0 ">
     <tbody>
     {% for item in historia.tratamiento_set.all %}
       <tr>
-        <td width="5%"><h6 class="m-0">{{ forloop.counter }}</h6></td>
+        <td width="5%"><h6 class="m-0">{{ forloop.counter }}.-</h6></td>
         <td><h6 class="m-0">{{ item.detalle }}</h6></td>
       </tr>
     {% endfor %}

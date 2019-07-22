@@ -494,40 +494,86 @@ class Reporterec(View):
             self.subrayar2(pdf, 65,370, "USO PERMANENTE")
 
     def medida(self,pdf):
-        pdf.setFont("Times-Bold", 16)
-        pdf.drawCentredString(100,305, "OD.")
-        pdf.drawCentredString(100,275, "OI.")
-        pdf.setFont("Times-Roman", 12)
-        pdf.drawCentredString(160,335, "ESFERICO")
-        pdf.drawCentredString(240,335, "CILINDRICO")
-        pdf.drawCentredString(320,335, "EJE")
-        pdf.drawString(80, 255, "Favor Medir D.P.")
-        pdf.setFont("Times-Roman", 16)
-        if(self.agenda.drc1):
-            pdf.drawCentredString(160,305, self.agenda.drc1)
+        if (self.agenda.impav):
+            pdf.setFont("Times-Bold", 16)
+            pdf.drawCentredString(85,305, "OD.")
+            pdf.drawCentredString(85,275, "OI.")
+            pdf.setFont("Times-Roman", 12)
+            pdf.drawCentredString(140,335, "ESFERICO")
+            pdf.drawCentredString(215,335, "CILINDRICO")
+            pdf.drawCentredString(295,335, "EJE")
+            pdf.drawCentredString(363,335, "A.V.")
+            pdf.drawString(65, 255, "Favor Medir D.P.")
+            pdf.setFont("Times-Roman", 16)
+            if(self.agenda.drc1):
+                pdf.drawCentredString(140,305, self.agenda.drc1)
+            else:
+                pdf.drawCentredString(140,305, '------')
+            if(self.agenda.drc2):
+                pdf.drawCentredString(215,305, self.agenda.drc2)
+            else:
+                pdf.drawCentredString(215,305, '------')
+            if(self.agenda.irc1):
+                pdf.drawCentredString(140,275, self.agenda.irc1)
+            else:
+                pdf.drawCentredString(140,275, '------')
+            if(self.agenda.irc2):
+                pdf.drawCentredString(215,275, self.agenda.irc2)
+            else:
+                pdf.drawCentredString(215,275, '------')
+            pdf.setFont("Times-Bold", 16)
+            if(self.agenda.drc3):
+                pdf.drawCentredString(295,305, self.agenda.drc3+'°')
+            else:
+                pdf.drawCentredString(295,305, '------')
+            if(self.agenda.irc3):
+                pdf.drawCentredString(295,275, self.agenda.irc3+'°')
+            else:
+                pdf.drawCentredString(295,275, '------')
+            pdf.setFont("Times-Roman", 16)
+            if(self.agenda.dcc):
+                pdf.drawCentredString(363,305, '20/'+self.agenda.dcc)
+            else:
+                pdf.drawCentredString(363,305, '------')
+            if(self.agenda.irc3):
+                pdf.drawCentredString(363,275, '20/'+self.agenda.icc)
+            else:
+                pdf.drawCentredString(363,275, '------')
         else:
-            pdf.drawCentredString(160,305, '------')
-        if(self.agenda.drc2):
-            pdf.drawCentredString(240,305, self.agenda.drc2)
-        else:
-            pdf.drawCentredString(240,305, '------')
-        if(self.agenda.irc1):
-            pdf.drawCentredString(160,275, self.agenda.irc1)
-        else:
-            pdf.drawCentredString(160,275, '------')
-        if(self.agenda.irc2):
-            pdf.drawCentredString(240,275, self.agenda.irc2)
-        else:
-            pdf.drawCentredString(240,275, '------')
-        pdf.setFont("Times-Bold", 16)
-        if(self.agenda.drc3):
-            pdf.drawCentredString(320,305, self.agenda.drc3+'°')
-        else:
-            pdf.drawCentredString(320,305, self.agenda.drc3+'------')
-        if(self.agenda.irc3):
-            pdf.drawCentredString(320,275, self.agenda.irc3+'°')
-        else:
-            pdf.drawCentredString(320,275, '------')
+            pdf.setFont("Times-Bold", 16)
+            pdf.drawCentredString(100,305, "OD.")
+            pdf.drawCentredString(100,275, "OI.")
+            pdf.setFont("Times-Roman", 12)
+            pdf.drawCentredString(160,335, "ESFERICO")
+            pdf.drawCentredString(240,335, "CILINDRICO")
+            pdf.drawCentredString(320,335, "EJE")
+            pdf.drawString(80, 255, "Favor Medir D.P.")
+            pdf.setFont("Times-Roman", 16)
+            if(self.agenda.drc1):
+                pdf.drawCentredString(160,305, self.agenda.drc1)
+            else:
+                pdf.drawCentredString(160,305, '------')
+            if(self.agenda.drc2):
+                pdf.drawCentredString(240,305, self.agenda.drc2)
+            else:
+                pdf.drawCentredString(240,305, '------')
+            if(self.agenda.irc1):
+                pdf.drawCentredString(160,275, self.agenda.irc1)
+            else:
+                pdf.drawCentredString(160,275, '------')
+            if(self.agenda.irc2):
+                pdf.drawCentredString(240,275, self.agenda.irc2)
+            else:
+                pdf.drawCentredString(240,275, '------')
+            pdf.setFont("Times-Bold", 16)
+            if(self.agenda.drc3):
+                pdf.drawCentredString(320,305, self.agenda.drc3+'°')
+            else:
+                pdf.drawCentredString(320,305, self.agenda.drc3+'------')
+            if(self.agenda.irc3):
+                pdf.drawCentredString(320,275, self.agenda.irc3+'°')
+            else:
+                pdf.drawCentredString(320,275, '------')
         
     def observaciones(self, pdf, y):
         adicion = self.agenda.tipo_lente.split(",")
@@ -547,29 +593,55 @@ class Reporterec(View):
         pdf.drawRightString(360, 50, datetime.now().strftime("(%H:%M:%S)"))
 
     def tabla(self, pdf):
-        pdf.line(80, 350 ,360, 350)
-        pdf.line(80, 325 ,360, 325)
-        pdf.line(80, 295 ,360, 295)
-        pdf.line(80, 265 ,360, 265)
-        pdf.line(80, 350 ,80, 265)
-        pdf.line(120, 350 ,120, 265)
-        pdf.line(200, 350 ,200, 265)
-        pdf.line(280, 350 ,280, 265)
-        pdf.line(360, 350 ,360, 265)
+        if (self.agenda.impav):
+            pdf.line(65, 350 ,390, 350)
+            pdf.line(65, 325 ,390, 325)
+            pdf.line(65, 295 ,390, 295)
+            pdf.line(65, 265 ,390, 265)
+            pdf.line(65, 350 ,65, 265)
+            pdf.line(105, 350 ,105, 265)
+            pdf.line(175, 350 ,175, 265)
+            pdf.line(255, 350 ,255, 265)
+            pdf.line(335, 350 ,335, 265)
+            pdf.line(390, 350 ,390, 265)
+        else:
+            pdf.line(80, 350 ,360, 350)
+            pdf.line(80, 325 ,360, 325)
+            pdf.line(80, 295 ,360, 295)
+            pdf.line(80, 265 ,360, 265)
+            pdf.line(80, 350 ,80, 265)
+            pdf.line(120, 350 ,120, 265)
+            pdf.line(200, 350 ,200, 265)
+            pdf.line(280, 350 ,280, 265)
+            pdf.line(360, 350 ,360, 265)
 
     def tablaa(self, pdf):
-        pdf.setFont("Times-Bold", 12)
-        pdf.drawString(65,230, "PARA CERCA:")
-        self.subrayar2(pdf, 65,230, "PARA CERCA")
-        pdf.line(200, 240 ,360, 240)
-        pdf.line(200, 210 ,360, 210)
-        pdf.line(200, 240 ,200, 210)
-        pdf.line(280, 240 , 280, 210)
-        pdf.line(360, 240 , 360, 210)
-        pdf.setFont("Times-Bold", 16)
-        pdf.drawCentredString(240, 220,"ADICION")
-        pdf.setFont("Times-Roman", 16)
-        pdf.drawCentredString(320, 220, self.agenda.adicion)
+        if (self.agenda.impav):
+            pdf.setFont("Times-Bold", 12)
+            pdf.drawString(65,230, "PARA CERCA:")
+            self.subrayar2(pdf, 65,230, "PARA CERCA")
+            pdf.line(175, 240 ,335, 240)
+            pdf.line(175, 210 ,335, 210)
+            pdf.line(175, 240 ,175, 210)
+            pdf.line(255, 240 , 255, 210)
+            pdf.line(335, 240 , 335, 210)
+            pdf.setFont("Times-Bold", 16)
+            pdf.drawCentredString(215, 220,"ADICION")
+            pdf.setFont("Times-Roman", 16)
+            pdf.drawCentredString(295, 220, self.agenda.adicion)
+        else:
+            pdf.setFont("Times-Bold", 12)
+            pdf.drawString(65,230, "PARA CERCA:")
+            self.subrayar2(pdf, 65,230, "PARA CERCA")
+            pdf.line(200, 240 ,360, 240)
+            pdf.line(200, 210 ,360, 210)
+            pdf.line(200, 240 ,200, 210)
+            pdf.line(280, 240 , 280, 210)
+            pdf.line(360, 240 , 360, 210)
+            pdf.setFont("Times-Bold", 16)
+            pdf.drawCentredString(240, 220,"ADICION")
+            pdf.setFont("Times-Roman", 16)
+            pdf.drawCentredString(320, 220, self.agenda.adicion)
 
     def get(self, *args, **kwargs):
         self.agenda = Agenda.objects.get(id=self.kwargs['pk'])
@@ -599,7 +671,7 @@ class Reporterec(View):
         return response
         
 class ReporteRecmed(View):
-    y = 370
+    y = 390
     def subrayar(self, pdf, x, y, texto):
         tam = len(texto)
         pdf.line(x-tam*4, y-4,x+tam*4,y-4)
@@ -612,29 +684,31 @@ class ReporteRecmed(View):
         pdf.setFont("Times-Bold", 12)
         pdf.drawCentredString(220,430, self.agenda.paciente.nombres + ' ' + self.agenda.paciente.apellidos)
         self.subrayar(pdf, 220,430,self.agenda.paciente.nombres + ' ' +self.agenda.paciente.apellidos)
-
-    def encabezado(self, pdf):
-        pdf.setFont("Times-Bold", 12)
-        pdf.drawCentredString(220,400, "RECETA")
-        self.subrayar(pdf, 220,400, "RECETA")
+        pdf.setFont("Times-Roman", 10)
+        mes = {1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abril", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"}
+        pdf.drawString(80, 50, str(date.today().day)+" - "+mes[date.today().month]+" - "+str(date.today().year))
+        pdf.drawRightString(360, 50, datetime.now().strftime("(%H:%M:%S)"))
 
     def receta(self, pdf, numero, rec):
         pdf.setFont("Times-Bold", 16)
         pdf.drawString(80, self.y, str(numero)+'.- '+rec.medicamento.nombre)
-        self.y = self.y-20
         pdf.setFont("Times-Bold", 12)
         pdf.setFillColorRGB(1,0,0)
-        pdf.drawString(120, self.y, str(rec.cantidad)+' '+rec.presentacion)
+        pdf.drawRightString(360, self.y, '('+rec.presentacion+')')
+        self.y = self.y - 20
+        pdf.drawRightString(360, self.y, '#'+str(rec.cantidad))
         pdf.setFillColorRGB(0,0,0)
         pdf.setFont("Times-Roman", 12)
         texto = textwrap.wrap(rec.indicacion, 50)
         self.y = self.y - 20
-        pdf.drawString(90, self.y, "Ind:")
+        pdf.setFont("Times-Bold", 12)
+        pdf.drawString(100, self.y, ">")
+        pdf.setFont("Times-Roman", 12)
         x = 0
         for item in texto:            
-            pdf.drawString(120, self.y, texto[x])
+            pdf.drawString(115, self.y, texto[x])
             x = x+1
-            self.y = self.y-20
+            self.y = self.y-15
 
     def get(self, *args, **kwargs):
         self.agenda = Agenda.objects.get(id=self.kwargs['pk'])
@@ -648,7 +722,6 @@ class ReporteRecmed(View):
         #Canvas nos permite hacer el reporte con coordenadas X y Y
         pdf = canvas.Canvas(buffer, pagesize=recetam)
         self.paciente(pdf)
-        self.encabezado(pdf)
         indice=1
         for item in self.agenda.receta_set.all():
             self.receta(pdf, indice, item)

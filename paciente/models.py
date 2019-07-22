@@ -1,4 +1,9 @@
 from django.db import models
+from uuid import uuid4
+from datetime import date
+import os
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Q
@@ -68,5 +73,34 @@ class Paciente(models.Model):
       self.codigo,
       '<button class="paciente-historial btn btn-xs btn-info" data-url='+reverse('historia-lista',args=[self.id])+'><i class="icon-medical-history"></i></button><button class="paciente-editar btn btn-xs btn-warning m-l-5" data-url='+reverse('paciente-editar', args=[self.id])+'><i class="fa fa-edit"></i></button><button class="paciente-eliminar btn btn-xs btn-danger m-l-5" data-url='+str(self.id)+'><i class="fa fa-close"></i></button>']
 
+class Archivopdf(models.Model):
+  def _generar_ruta_imagen(instance, filename):
+    # El primer paso es extraer la extension de la imagen del
+    # archivo original
+    extension = os.path.splitext(filename)[1][1:]
 
+    # Generamos la ruta relativa a MEDIA_ROOT donde almacenar
+    # el archivo, usando la fecha actual (año/mes)
+    ruta = os.path.join('Imagenes', date.today().strftime("%Y/%m"))
 
+    # Generamos el nombre del archivo con un identificador
+    # aleatorio, y la extension del archivo original.
+    nombre_archivo = '{}.{}'.format(uuid4().hex, extension)
+
+    # Devolvermos la ruta completa
+    return os.path.join(ruta, nombre_archivo)
+  agenda = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+  fecha = models.DateField(auto_now_add=True)
+  fecha_documento = models.DateField(auto_now=True)
+  imagen = models.ImageField(upload_to=_generar_ruta_imagen)
+  descripcion = models.CharField(max_length=200, blank=True)
+  estado = models.BooleanField(default=False)
+
+# Usamos el Decorador receiver para ejecutar nuestra función
+# cuando el Post el borrado.
+#@receiver(pre_delete, sender=Paciente)
+#def post_pre_delete_handler(sender, instance, **kwargs):
+#    try:
+#      instance.imagen.delete(False)
+#    except a as Exception:
+#      print(a)

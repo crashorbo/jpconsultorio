@@ -110,10 +110,14 @@
             <label class="col-md-2 col-form-label p-r-0"> 
               <h6><strong>C/C</strong></h6>
             </label>
-            <div class="col-md-5 p-l-0">
+            <div class="col-md-4 p-l-0">
               {{ form.dcc }}
             </div>
-            <div class="col-md-5 p-l-0">
+            <div class="col-md-2 text-center">
+              {{ form.impav }}
+              <label for="id_impav"><h4 class="m-0"><i class="fa fa-print"></i></h4></label>
+            </div>
+            <div class="col-md-4 p-l-0">
               {{ form.icc }}
             </div>
           </div>
@@ -340,10 +344,10 @@
           </form>
           <div class="row">
             <div id="diagnosticos" class="col-md-12">
-              <table class="table table-striped tabla table-sm">
+              <table class="table tabla table-sm">
               {% for item in consulta.diagnostico_set.all %}
                 <tr>
-                  <td width="3%"><h6>{{ forloop.counter }}</h6></td>
+                  <td width="8%"><h6>{{ forloop.counter }} .-</h6></td>
                   <td><h6>{{ item.detalle }}</h6></td>
                   <td class="text-right"><form action="{% url 'diagnostico-eliminar' pk=item.id %}" method="post" class="form-eliminar-diag">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-close"></i></button></form></td>
                 </tr>
@@ -374,10 +378,10 @@
           </form>
           <div class="row">
             <div id="tratamientos" class="col-md-12">
-              <table class="table table-sm table-striped tabla">
+              <table class="table table-sm tabla">
               {% for item in consulta.tratamiento_set.all %}
                 <tr>
-                  <td><h6>{{ forloop.counter }}</h6></td>
+                  <td width="8%"><h6>{{ forloop.counter }} .-</h6></td>
                   <td><h6>{{ item.detalle }}</h6></td>
                   <td class="text-right"><form action="{% url 'tratamiento-eliminar' pk=item.id %}" method="post" class="form-eliminar-trat">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
                 </tr>

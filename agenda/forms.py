@@ -13,7 +13,7 @@ class AgendaForm(forms.ModelForm):
   
   class Meta:
     model = Agenda
-    fields = ('paciente', 'seguro', 'fecha', 'hora_inicio', 'hora_fin', 'tipo', 'prioridad', 'procedencia', 'matricula', 'tipo_beneficiario', 'antocu', 'antsis', 'motivo', 'dsc', 'dcc', 'dre1', 'dre2', 'dre3', 'dau', 'ddc1', 'ddc2', 'dph', 'dci', 'dcl', 'drc1', 'drc2', 'drc3', 'isc', 'icc', 'ire1', 'ire2', 'ire3', 'iau', 'idc1', 'idc2', 'iph', 'ici', 'icl', 'irc1', 'irc2', 'irc3', 'adicion', 'tipo_lente', 'dto', 'ito', 'dbio', 'ibio', 'dfdo', 'ifdo', 'otros')
+    fields = ('paciente', 'seguro', 'fecha', 'hora_inicio', 'hora_fin', 'tipo', 'prioridad', 'procedencia', 'matricula', 'tipo_beneficiario', 'antocu', 'antsis', 'motivo', 'dsc', 'dcc', 'dre1', 'dre2', 'dre3', 'dau', 'ddc1', 'ddc2', 'dph', 'dci', 'dcl', 'drc1', 'drc2', 'drc3', 'isc', 'icc', 'ire1', 'ire2', 'ire3', 'iau', 'idc1', 'idc2', 'iph', 'ici', 'icl', 'irc1', 'irc2', 'irc3', 'adicion', 'tipo_lente', 'dto', 'ito', 'dbio', 'ibio', 'dfdo', 'ifdo', 'otros', 'impav')
 
     widgets = {
       'fecha': forms.DateInput(attrs={'class': 'form-control fecha form-control-sm'}),
@@ -64,6 +64,7 @@ class AgendaForm(forms.ModelForm):
       'dfdo': forms.Textarea(attrs={'class': 'form-control form-control-sm autoguardado', 'rows': 2, 'tabindex': 38}),
       'ifdo': forms.Textarea(attrs={'class': 'form-control form-control-sm autoguardado', 'rows': 2, 'tabindex': 39}),
       'otros': forms.Textarea(attrs={'class': 'form-control form-control-sm autoguardado', 'rows': 2, 'tabindex': 40}),
+      'impav': forms.CheckboxInput(attrs={'class': 'form-control form-control-sm autoguardado', 'tabindex': 33}),
     }
 
 class DiagnosticoForm(forms.ModelForm):

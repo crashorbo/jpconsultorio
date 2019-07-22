@@ -1,3 +1,4 @@
+{% load paciente_tags %}
 <div class="modal-header">
   <h4 class="modal-title" id="myLargeModalLabel">Historia Clinica</h4>
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -21,7 +22,7 @@
                   <ul class="chatonline style-none ">
                     {% for item in historias %}
                     <li>
-                      <a class="historiaver" href="javascript:void(0)" data-url="{% url 'historia-ver' pk=item.id %}"><span>{{ item.fecha }}</span></a>
+                      <a class="historiaver" href="javascript:void(0)" data-url="{% url 'historia-ver' pk=item.id %}"><span><h5 class="m-0">{{ item.fecha }}</h5></span></a>
                     </li>
                     {% endfor %}
                   </ul>
@@ -31,11 +32,26 @@
                 <!-- .chat-right-panel -->
                 <div class="chat-right-aside">
                   <div class="chat-rbox">
+                    <div class="row m-l-5">
+                      <div class="col-md-12">
+                      <table class="table table-sm m-b-0">
+                        <tbody>
+                          <tr>
+                            <td><h6 class="m-0"><strong>NOMBRE:</strong></h6></td>
+                            <td><h6 class="m-0">{{ historia.paciente.nombres|add:" "|add:historia.paciente.apellidos }}</h6></td>
+                            <td><h6 class="m-0"><strong>EDAD:</strong></h6></td>
+                            <td><h6 class="m-0">{{ historia.paciente.fecha_nacimiento|edad }}</h6></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      </div>
+                    </div>
+                    <hr class="m-0" />  
                     <div id="detallehistoria" class="row m-l-5">
                       <div class="col-md-6">
-                        <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Antecedentes</th>
+                            <th><h6 class="m-0"><strong>ANTECEDENTES</strong></h6></th>
                           </thead>
                         </table>
                         <table class="table table-sm m-b-0">
@@ -50,9 +66,10 @@
                             </tr>
                           </tbody>
                         </table>
-                        <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Motivo de Consulta</th>
+                            <th><h6 class="m-0"><strong>MOTIVO DE CONSULTA</strong></h6></th>
                           </thead>
                           <tbody>
                             <tr>
@@ -60,9 +77,10 @@
                             </tr>
                           </tbody>
                         </table>
-                        <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Agudeza Visual</th>
+                            <th><h6 class="m-0"><strong>AGUDEZA VISUAL</strong></h6></th>
                           </thead>
                         </table>
                         <table class="table table-sm table-bordered m-b-0">
@@ -162,9 +180,9 @@
                         </table>
                       </div>
                       <div class="col-md-6">
-                        <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Tension Ocular</th>
+                            <th><h6 class="m-0"><strong>TENSION OCULAR</strong></h6></th>
                           </thead>
                         </table>
                         <table class="table table-sm m-b-0">
@@ -179,9 +197,10 @@
                             </tr>
                           </tbody>
                         </table>
-                        <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Biomicroscopia</th>
+                            <th><h6 class="m-0"><strong>BIOMICROSCOPIA</strong></h6></th>
                           </thead>
                         </table>
                         <table class="table table-sm m-b-0">
@@ -196,9 +215,10 @@
                             </tr>
                           </tbody>
                         </table>
-                        <table class="table table-sm table-borderless m-b-0 color-table inverse-table">
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Fondo de Ojo</th>
+                            <th><h6 class="m-0"><strong>FONDO DE OJO</strong></h6></th>
                           </thead>
                         </table>
                         <table class="table table-sm m-b-0">
@@ -213,31 +233,44 @@
                             </tr>
                           </tbody>
                         </table>
-                        <table class="table table-sm table-borderless table-striped m-b-0 color-table inverse-table">
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless m-b-0 color-table">
                           <thead>
-                            <th>Diagnostico</th>
+                            <th><h6 class="m-0"><strong>OTROS</strong></h6></th>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><h6 class="m-0">{{ historia.otros }}</h6></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless table-striped m-b-0 color-table">
+                          <thead>
+                            <th><h6 class="m-0"><strong>DIAGNOSTICO</strong></h6></th>
                           </thead>
                         </table>
-                        <table class="table table-sm m-b-0 table-striped">
+                        <table class="table table-sm m-b-0">
                           <tbody>
                           {% for item in historia.diagnostico_set.all %}
                             <tr>
-                              <td width="5%"><h6 class="m-0">{{ forloop.counter }}</h6></td>
+                              <td width="5%"><h6 class="m-0">{{ forloop.counter }}.-</h6></td>
                               <td><h6 class="m-0">{{ item.detalle }}</h6></td>
                             </tr>
                           {% endfor %}
                           </tbody>
                         </table>
-                        <table class="table table-sm table-borderless table-striped m-b-0 color-table inverse-table">
+                        <hr class="m-0" />
+                        <table class="table table-sm table-borderless table-striped m-b-0 color-table">
                           <thead>
-                            <th>Tratamiento:</th>
+                            <th><h6 class="m-0"><strong>TRATAMIENTO</strong></h6></th>
                           </thead>
                         </table>
-                        <table class="table table-sm m-b-0 table-striped">
+                        <table class="table table-sm m-b-0">
                           <tbody>
                           {% for item in historia.tratamiento_set.all %}
                             <tr>
-                              <td width="5%"><h6 class="m-0">{{ forloop.counter }}</h6></td>
+                              <td width="5%"><h6 class="m-0">{{ forloop.counter }}.-</h6></td>
                               <td><h6 class="m-0">{{ item.detalle }}</h6></td>
                             </tr>
                           {% endfor %}
@@ -271,5 +304,20 @@ $(".historiaver").on('click', function(){
     }
   })
 })
+$(function() {
+  
+  // elementos de la lista
+  var menues = $("ul li a"); 
+
+  $(menues[0]).addClass("active");
+  // manejador de click sobre todos los elementos
+  menues.click(function() {
+    // eliminamos active de todos los elementos
+    menues.removeClass("active");
+    // activamos el elemento clicado.
+    $(this).addClass("active");
+  });
+
+});
 //detallehistoria
 </script>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from paciente.models import Paciente
 from seguro.models import Seguro
 from servicio.models import Servicio
@@ -82,6 +82,8 @@ class Agenda(models.Model):
   ifdo = models.TextField(blank=True)
   otros = models.TextField(blank=True)
   tipo_lente = models.TextField(blank=True)
+  codigo = models.TextField(blank=True, null=True)
+  impav = models.BooleanField(default=False)
 
   def __str__(self):
     return self.fecha.strftime('%d/%m/%Y')
@@ -113,3 +115,8 @@ class Receta(models.Model):
   presentacion = models.CharField(blank=True, max_length=100)
   cantidad = models.IntegerField(default=0)
   indicacion = models.TextField(blank=True)
+
+class Reconsulta(models.Model): 
+  agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
+  fecha = models.DateField(auto_now_add=True)
+  detalle = models.TextField(blank=True)
