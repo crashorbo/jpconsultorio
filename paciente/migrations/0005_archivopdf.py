@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('fecha', models.DateField(auto_now_add=True)),
-                ('imagen', models.ImageField(upload_to=paciente.models.Archivopdf._generar_ruta_imagen)),
+                ('archivo', models.FileField(upload_to=paciente.models.Archivopdf._generar_ruta_archivo)),
                 ('descripcion', models.CharField(blank=True, max_length=200)),
                 ('agenda', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='paciente.Paciente')),
             ],
