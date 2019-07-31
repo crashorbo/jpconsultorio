@@ -182,6 +182,33 @@ $('#tratform').on('submit', function (e) {
   })
 });
 
+$('#controlform').on('submit', function (e) {
+  e.preventDefault();
+  var $formData = $(this).serialize();
+  var $formArray = $(this).serializeArray();
+  var $formArray = {};
+  $.each($(this).serializeArray(), function (i, field) {
+    $formArray[field.name] = field.value; 
+  });
+  var $thisUrl = $(this).attr('action');
+  var $thisMethod = $(this).attr('method');
+  $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function(data){
+        $('.enviocontrol').val('');
+        $("#controles").html(data);
+      },
+      error: function(xhr,errmsg,err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>"+
+        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+  })
+});
+
 $('#diagnosticos').on('submit', '.form-eliminar-diag', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
@@ -224,6 +251,32 @@ $('#tratamientos').on('submit', '.form-eliminar-trat', function (e) {
       data: $formData,
       success: function(data){
         $('#tratamientos').html(data);
+      },
+      error: function(xhr,errmsg,err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>"+
+        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+  })
+});
+
+$('#controles').on('submit', '.form-eliminar-control', function (e) {
+  e.preventDefault();
+  var $formData = $(this).serialize();
+  var $formArray = $(this).serializeArray();
+  var $formArray = {};
+  $.each($(this).serializeArray(), function (i, field) {
+    $formArray[field.name] = field.value; 
+  });
+  var $thisUrl = $(this).attr('action');
+  var $thisMethod = $(this).attr('method');
+  $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function(data){
+        $('#controles').html(data);
       },
       error: function(xhr,errmsg,err) {
         // Show an error
@@ -339,6 +392,7 @@ function transformador(t){
   }
   return dosdecimales;
 }
+
 $('#id_medicamento').select2({
   language: 'es',
   ajax: {

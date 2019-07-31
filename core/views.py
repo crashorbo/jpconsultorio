@@ -7,6 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Movdiario
 from servicio.models import Servicio
+from agenda.models import Agenda
 # Create your views here.
 
 
@@ -36,3 +37,15 @@ class ServicioCostoView(View):
 
     def get_results(self, x):
         return dict(costo=x.costo)
+
+class GraficoView(View):
+    def get(self, *args, **kwargs):
+        now = datetime.now()
+        particular = []
+        seguro = []
+        for i in range(12):
+            particular.append(Agenda.objects.filter(fecha__year=now.year, fecha__month=i+1, tipo=0, estado=1).count())
+            seguro.append(Agenda.objects.filter(fecha__year=now.year, fecha__month=i+1, tipo=1, estado=1).count())
+
+        grafico = {"particular": particular, "seguro": seguro}
+        return HttpResponse( json.dumps(grafico, cls=DjangoJSONEncoder), content_type='application/json')

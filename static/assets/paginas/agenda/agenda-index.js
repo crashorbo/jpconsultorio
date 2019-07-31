@@ -86,15 +86,35 @@ $(document).ready(function(){
         url: $thisUrl,
         data: $formData,
         success: function(data){
-          $("#msj-modal").html(data);
-          $("#responsive-modal").modal('hide');
-          $('#calendar').fullCalendar("refetchEvents");
-          $('#form-agenda')[0].reset();
-          $("#id_paciente").val("").trigger("change");
-          $(".seguro-seleccion").hide();
-          $("#mensaje-modal").modal('show');
-          window.recalculo();
-          costo();
+          console.log(data);
+          if(!data.success){
+            $('#calendar').fullCalendar("refetchEvents");
+            $('#form-agenda')[0].reset();
+            $("#id_paciente").val("").trigger("change");
+            $(".seguro-seleccion").hide();
+            $.toast({
+              heading: 'Mensaje del Sistema',
+              text: 'La Cita se ha registrado con exito',
+              position: 'top-right',
+              loaderBg:'#ff6849',
+              icon: 'success',
+              hideAfter: 3500, 
+              stack: 6
+            });
+            window.recalculo();
+            costo();
+          }
+          else{
+            $.toast({
+              heading: 'Mensaje del Sistema',
+              text: 'Ha ocurrido un error, por favor revise los parametros ingresados.',
+              position: 'top-right',
+              loaderBg:'#ff6849',
+              icon: 'error',
+              hideAfter: 3500
+              
+            });
+          }
         },
         error: function(xhr,errmsg,err) {
           // Show an error
@@ -147,6 +167,9 @@ $(document).ready(function(){
       $(".seguro-seleccion").show();
   });
   costo();
+  setInterval(function(){
+    $('#calendar').fullCalendar("refetchEvents");    
+  },180000);
 });
 
 $("#id_agendaserv-0-servicio").on("change", function(){
@@ -171,10 +194,7 @@ window.recalculo = function (){
   $.ajax({
     url: getUrl.protocol + "//" + getUrl.host+'/movcalculo', 
     type: 'get',  
-    success: function(data){        
-        window.document.getElementById('sis_ingresos').value = data.ingreso + ' Bs.';
-        $("#sis_ingresos").text(data.ingreso + ' Bs.');
-        $("#sis_egresos").text(data.egreso + ' Bs.');
+    success: function(data){
         $("#sis_total").text((Number(data.ingreso) - Number(data.egreso)).toFixed(2) + ' Bs.');
     }
   })
@@ -186,3 +206,53 @@ function imprimirlista(e, obj)
   this_url = $(obj).attr('href');
   window.open(this_url,"reporte","height=700,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
 }
+
+$("#controlagenda").on('click', function(e){
+  e.preventDefault();
+  var $formData = $("#form-agenda").serialize();
+  var $formArray = $("#form-agenda").serializeArray();
+  var $formArray = {};
+  $.each($("#form-agenda").serializeArray(), function (i, field) {
+    $formArray[field.name] = field.value; 
+  });
+  var $thisUrl = "/agenda/control";
+  var $thisMethod = "post";
+  $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function(data){
+        if(data.success){
+          $('#calendar').fullCalendar("refetchEvents");
+          $('#form-agenda')[0].reset();
+          $("#id_paciente").val("").trigger("change");
+          $(".seguro-seleccion").hide();
+          $.toast({
+            heading: 'Mensaje del Sistema',
+            text: 'Se ha registrado el control con exito.',
+            position: 'top-right',
+            loaderBg:'#ff6849',
+            icon: 'success',
+            hideAfter: 3500, 
+            stack: 6
+          });
+        }
+        else{
+          $.toast({
+            heading: 'Mensaje del Sistema',
+            text: data.mensaje,
+            position: 'top-right',
+            loaderBg:'#ff6849',
+            icon: 'error',
+            hideAfter: 3500
+          });
+        }
+      },
+      error: function(xhr,errmsg,err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>"+
+        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+  })
+})

@@ -15,12 +15,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="social-widget">
-                        <div class="icono-main soc-header box-twitter">
+                        <div class="icono-main soc-header box-agenda">
                             <i class="icon-calendar-3"></i>
                         </div>
                         <div class="soc-content">
                             <div class="col-12 text-center">
-                                <a href="{% url "agenda-index" %}" class="btn btn-info">
+                                <a href="{% url "agenda-index" %}" class="btn btn-agenda text-white">
                                     <i class="fa fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -35,12 +35,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="social-widget">
-                        <div class="icono-main soc-header box-twitter">
+                        <div class="icono-main soc-header box-consulta">
                             <i class="icon-doctor"></i>
                         </div>
                         <div class="soc-content">
                             <div class="col-12 text-center">
-                                <a href="{% url "agenda-listar" %}" class="btn btn-info">
+                                <a href="{% url "agenda-listar" %}" class="btn btn-consulta text-white">
                                     <i class="fa fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -55,12 +55,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="social-widget">
-                        <div class="icono-main soc-header box-twitter">
+                        <div class="icono-main soc-header box-paciente">
                             <i class="ti-user"></i>
                         </div>
                         <div class="soc-content">
                             <div class="col-12 text-center">
-                                <a href="{% url "paciente-index" %}" class="btn btn-info">
+                                <a href="{% url "paciente-index" %}" class="btn btn-paciente text-white">
                                     <i class="fa fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -100,12 +100,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="social-widget">
-                        <div class="icono-main soc-header box-twitter">
+                        <div class="icono-main soc-header box-agenda">
                             <i class="icon-calendar-3"></i>
                         </div>
                         <div class="soc-content">
                             <div class="col-12 text-center">
-                                <a href="{% url "agenda-index" %}" class="btn btn-info">
+                                <a href="{% url "agenda-index" %}" class="btn btn-agenda text-white">
                                     <i class="fa fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -120,12 +120,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="social-widget">
-                        <div class="icono-main soc-header box-twitter">
+                        <div class="icono-main soc-header box-paciente">
                             <i class="ti-user"></i>
                         </div>
                         <div class="soc-content">
                             <div class="col-12 text-center">
-                                <a href="{% url "paciente-index" %}" class="btn btn-info">
+                                <a href="{% url "paciente-index" %}" class="btn btn-paciente">
                                     <i class="fa fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -139,13 +139,14 @@
 {% endif %}
 <div class="row">
     <!-- column -->
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Grafica Anual</h4>
-                <div id="bar-chart" style="width:100%; height:400px;"></div>
-            </div>
-        </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4 text-center">
+        <img src="{% static "assets/images/logoinicio.png" %}" class="img-fluid" alt="Home" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 text-center">
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-xl" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Salir"><i class="mdi mdi-exit-to-app"></i></a>
     </div>
 </div>
 <!-- ============================================================== -->
@@ -153,6 +154,5 @@
 <!-- ============================================================== -->
 {% endblock %}
 {% block js %}
-<script src="{% static "assets/plugins/echarts/echarts-all.js" %}"></script>
 <script src="{% static "assets/paginas/core/core-index.js" %}"></script>
 {% endblock %}

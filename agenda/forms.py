@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import inlineformset_factory
-from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta
+from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta, Reconsulta
 from dal import autocomplete
 from paciente.models import Paciente
 from seguro.models import Seguro
@@ -85,13 +85,23 @@ class TratamientoForm(forms.ModelForm):
       'detalle': forms.TextInput(attrs={'class': 'form-control form-control-sm enviot', 'tabindex': 42}),
     }
 
+class AgendaservicioForm(forms.ModelForm):
+  servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+  class Meta:
+    model = Agendaserv
+    fields = ('agenda','servicio', 'costo')
+    widgets = {
+      'agenda': forms.HiddenInput(),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
+    }
+
 class AgendaservForm(forms.ModelForm):
   servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
   class Meta:
     model = Agendaserv
     fields = ('servicio', 'costo', 'estado')
     widgets = {
-      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'placeholder': 'Costo'}),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
       'estado': forms.CheckboxInput(attrs={'class': 'filled-in chk-col-blue form-control-sm'}),
     }
 
@@ -107,4 +117,13 @@ class RecetaForm(forms.ModelForm):
       'cantidad': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
       'presentacion': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
       'indicacion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 2}),
+    }
+
+class ReconsultaForm(forms.ModelForm):
+  class Meta:
+    model = Reconsulta
+    fields = ('detalle', 'agenda')
+    widgets = {
+      'agenda': forms.HiddenInput(),
+      'detalle': forms.Textarea(attrs={'class': 'form-control form-control-sm enviocontrol', 'rows': 2, 'tabindex': 43}),
     }

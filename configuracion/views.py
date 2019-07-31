@@ -48,30 +48,34 @@ class TableAsJSON(JSONResponseMixin, View):
     return self.render_json_response(json)
 
 class AjaxListView(ListView):
-  template_name = 'configuracion/ajax/lista.html'
+  template_name = 'configuracion/ajax/tipolente/lista.html'
   model = Tipolente
   context_object_name = 'servicios'
 
 class AjaxCrearView(CreateView):
   model = Tipolente
   form_class = TipolenteForm
-  template_name = 'configuracion/ajax/crear.html'
+  template_name = 'configuracion/ajax/tipolente/crear.html'
 
   def form_valid(self, form):
-    model = form.save(commit=False)
-    model.save()
-    return render(self.request, 'paciente/success.html')
+    self.object = form.save()
+    return JsonResponse({"success": True})
+  
+  def form_invalid(self, form):
+    return JsonResponse({"success": False, "errores": [(k, v[0]) for k, v in form.errors.items()]})
         
 class AjaxEditarView(UpdateView):
-  template_name = 'configuracion/ajax/editar.html'
+  template_name = 'configuracion/ajax/tipolente/editar.html'
   model = Tipolente
   form_class = TipolenteForm
   context_object_name = "servicio"
 
   def form_valid(self, form):
-    model = form.save(commit=False)
-    model.save()
-    return render(self.request, 'paciente/success.html')
+    self.object = form.save()
+    return JsonResponse({"success": True})
+  
+  def form_invalid(self, form):
+    return JsonResponse({"success": False, "errores": [(k, v[0]) for k, v in form.errors.items()]})
 
 class AjaxEliminarView(View):
   def get(self, request):

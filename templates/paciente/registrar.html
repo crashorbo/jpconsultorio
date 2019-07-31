@@ -16,33 +16,49 @@
 <div class="modal-body">
   <form id="form-paciente" class="form-paciente" action="{% url "paciente-registrar" %}" method="post" novalidate>
     {% csrf_token %}
-    <div class="form-group">     
+    <div class="row">
+      <div class="col-md-12">
+        <small>Nombres</small> 
         {{ form.nombres }}
+      </div>
     </div>
-    <div class="form-group">        
+    <div class="row">
+      <div class="col-md-12">
+        <small>Apellidos</small>
         {{ form.apellidos }}
+      </div>
     </div>
     <div class="row">
-        <div class="form-group col-md-6">            
-            {{ form.documento }}
+        <div class="col-md-6">            
+          <small>Documento</small>
+          {{ form.documento }}
         </div>
-        <div class="form-group col-md-6">            
-            {{ form.nro_documento }}
+        <div class="col-md-6">
+          <small>Numero Documento</small>
+          {{ form.nro_documento }}
         </div>
-    </div>
-    <div class="form-group">        
-        {{ form.ocupacion }}
     </div>
     <div class="row">
-        <div class="form-group col-md-6">
-            {{ form.fecha_nacimiento }}
+      <div class="col-md-12">     
+        <small>Ocupacion</small>   
+          {{ form.ocupacion }}
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+          <small>Fecha Nacimiento</small>
+          {{ form.fecha_nacimiento }}
         </div>
-        <div class="form-group col-md-6">            
-            {{ form.telefono }}
+        <div class="col-md-6"> 
+          <small>Telefono</small>           
+          {{ form.telefono }}
         </div>
     </div>
-    <div class="form-group">
+    <div class="row">
+      <div class="col-md-12">
+        <small>Direccion</small>
         {{ form.direccion }}
+      </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
@@ -86,9 +102,29 @@
           url: $thisUrl,
           data: $formData,
           success: function(data){
-            $("#msj-modal").html(data);
-            $("#responsive-modal").modal('hide');
-            $("#mensaje-modal").modal('show');
+            if(data.success){
+              $("#responsive-modal").modal('hide');
+              $.toast({
+                heading: 'Mensaje del Sistema',
+                text: 'El Paciente se ha registrado con exito',
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'success',
+                hideAfter: 3500, 
+                stack: 6
+              });
+            }
+            else{
+              $.toast({
+              heading: 'Mensaje del Sistema',
+              text: 'Ha ocurrido un error, por favor revise los parametros ingresados: \u003C Nombres \u003E y \u003C Apellidos \u003E no deben estar vacios.',
+              position: 'top-right',
+              loaderBg:'#ff6849',
+              icon: 'error',
+              hideAfter: 3500
+            });
+            }
+            
           },
           error: function(xhr,errmsg,err) {
             // Show an error

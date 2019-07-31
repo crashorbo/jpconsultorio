@@ -10,10 +10,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static "assets/images/favicon/apple-touch-icon.png" %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static "assets/images/favicon/favicon-32x32.png" %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static "assets/images/favicon/favicon-16x16.png" %}">
+    <link rel="manifest" href="{% static "assets/images/favicon/site.webmanifest" %}">
+    <link rel="mask-icon" href="{% static "assets/images/favicon/safari-pinned-tab.svg" %}" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <title>{% block titulo %}{% endblock %}</title>
     <!-- Bootstrap Core CSS -->
     <link href="{% static "assets/plugins/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    <!-- toast CSS -->
+    <link href="{% static "assets/plugins/toast-master/css/jquery.toast.css" %}" rel="stylesheet">
     <!-- Estilo de componentes -->
     {% block css %}{% endblock %}
     <!-- Custom CSS -->
@@ -47,15 +55,17 @@
             <!-- Sidebar scroll-->
             <div class="scroll-sidebar">
                 <!-- User profile -->
-                <div class="user-profile" style="background: url({% static "assets/images/background/user-info.jpg"%}) no-repeat; height: 140px;">
+                <div class="user-profile p-10" style="background: #fff; height: 140px;">
+                    <img src="{% static "assets/images/logoiso.png" %}" class="img-fluid" />
                 </div>
                 <!-- End User profile text-->
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="nav-small-cap">CONFIGURACION</li>
+                        <li><a class="waves-effect waves-dark" href="{% url "configuracion" %}"><i class="mdi mdi-gauge"></i><span class="hide-menu">INICIO</span></a></li>
                         <li>
-                            <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Modulos</span></a>
+                            <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">MODULOS</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a id="seguros" href="{% url "seguro-ajax-lista" %}">Seguros</a></li>
                                 <li><a id="servicios" href="{% url "servicio-ajax-lista" %}">Servicios</a></li>
@@ -63,7 +73,7 @@
                                 <li><a id="medicamentos" href="{% url "medicamento-ajax-lista" %}">Medicamentos</a></li>
                             </ul>
                         </li>
-                        <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-laptop-windows"></i><span class="hide-menu">Reportes</span></a>
+                        <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-laptop-windows"></i><span class="hide-menu">REPORTES</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="../minisidebar/index.html">Minisidebar</a></li>
                                 <li><a href="../horizontal/index2.html">Horizontal</a></li>
@@ -91,9 +101,9 @@
             <!-- Bottom points-->
             <div class="sidebar-footer">
                 <!-- item-->
-                <a href="{% url 'index' %}" class="link" data-toggle="tooltip" title="Settings"><i class="ti-back-left"></i></a>
+                <a href="{% url 'index' %}" class="link" data-toggle="tooltip" title="Volver"><i class="ti-back-left"></i></a>
                 <!-- item-->
-                <a href="{% url 'logout' %}" class="link" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
+                <a href="{% url 'logout' %}" class="link" data-toggle="tooltip" title="Salir"><i class="mdi mdi-power"></i></a>
             </div>
             <!-- End Bottom points-->
         </aside>
@@ -163,6 +173,7 @@
     <script src="{% static "assets/plugins/sparkline/jquery.sparkline.min.js" %}"></script>
     <!--Custom JavaScript -->
     <script src="{% static "administracion/js/custom.min.js" %}"></script>
+    <script src="{% static "assets/plugins/toast-master/js/jquery.toast.js" %}"></script>
     <!--otros componentes -->
     {% block js %}{% endblock %}
 </body>

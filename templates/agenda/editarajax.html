@@ -1,39 +1,42 @@
 {% load static %}
+{% load paciente_tags %}
 {% block css %}
 <!-- Clock Plugin JavaScript -->
 <link rel="stylesheet" href="{% static "assets/plugins/clockpicker/dist/clockfix.css" %}">
 {% endblock %}
-<div class="modal-header">
-  <h4 class="modal-title">Editar Cita</h4>
-  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-</div>
-{% if form.errors %}
-<div class="alert alert-danger">
-    {{ form.non_field_errors }}
-    <ul>
-        {% for field in form %}
-            {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
-        {% endfor %}
-    </ul>
-</div>
-{% endif %}
 <div class="modal-body">
+  <div class="row">
+    <div class="col-md-8">
+    <h6><strong>Nombre:</strong> {{ agenda.paciente.nombres }} {{ agenda.paciente.apellidos }}</h6>
+    </div>
+    <div class="col-md-4">
+    <h6><strong>Edad: </strong>{{ agenda.paciente.fecha_nacimiento|edad }}</h6>
+    </div>
+  </div>
+  <hr class="m-t-0" />
   <form id="form-ajaxeliminar" class="form-paciente" action="{% url "agenda-editarajax" pk=agenda.id %}" method="post" novalidate>
     {% csrf_token %}
     <div class="row hide">
         {{ form }}
     </div>
     <div class="row">
-      <div class="col-md-6">  
+      <div class="col-md-7">
+          <small>Fecha</small>
           {{ form.fecha }}
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
+          <small>Hora</small>
           {{ form.hora_inicio }}
       </div>
+      <div class="col-md-1 p-0">
+          <button type="submit" class="btn btn-success btn-sm waves-effect waves-light m-t-20"><i class="fa fa-save"></i></button>
+      </div>
     </div>
-    <hr/>
-    <div id="servicios" class="row">
-      <table class="table table-striped color-table dark-table">
+  </form>
+  <hr/>
+  <div id="servicios" class="row">
+    <div class="col-md-12">
+      <table class="table table-sm table-striped color-table dark-table m-b-0">
         <thead>
           <tr>
             <th>Servicio</th>
@@ -53,13 +56,30 @@
         </tbody>
       </table>
     </div>
-    
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
-        <button id="eliminar" data-url="{% url 'agenda-eliminarajax' pk=agenda.id %}" type="button" class="btn btn-danger waves-effect">Eliminar</button>
-        <button type="submit" class="btn btn-success waves-effect waves-light">Guardar</button>
+  </div>
+  <div class="row m-b-10">
+    <div class="col-md-12">
+      <form id="form-servicio-crear" action="{% url "servicioajax-crear" %}" method="post" >
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-7">
+            {{ servicioform.servicio }}
+          </div>
+          <div class="col-md-4">
+            {{ servicioform.costo }}
+          </div>
+          {{ servicioform.agenda }}
+          <div class="col-md-1 p-0">
+            <button type="submit" class="btn btn-success btn-sm waves-effect waves-light"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+      <button id="eliminar" data-url="{% url 'agenda-eliminarajax' pk=agenda.id %}" type="button" class="btn btn-danger waves-effect">Eliminar</button>
+  </div>
 </div>
 
 <!-- Clock Plugin JavaScript -->
@@ -69,6 +89,9 @@
 <script src="{% static "assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
 <script src="{% static "assets/plugins/bootstrap-datepicker/dist/es.js" %}"></script>
 <script>
+  $(document).ready(function(){
+    costo();
+  })
   $('.clockpicker').clockpicker({
     autoclose: true
   });
@@ -100,10 +123,59 @@
           url: $thisUrl,
           data: $formData,
           success: function(data){
-            $("#msj-modal").html(data);
-            $("#responsive-modal").modal('hide');
+            if(data.success){
+              $('#calendar').fullCalendar("refetchEvents");
+              $("#responsive-modal").modal('hide');
+              $.toast({
+                heading: 'Mensaje del Sistema',
+                text: 'Se ha Editado la informacion con exito',
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'success',
+                hideAfter: 3500, 
+                stack: 6
+              });
+            }
+            else{
+              $.toast({
+                heading: 'Mensaje del Sistema',
+                text: data.mensaje + data.errores,
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'error',
+                hideAfter: 3500
+              });
+            }
+          },
+          error: function(xhr,errmsg,err) {
+            // Show an error
+            $('#results').html("<div class='alert-box alert radius' data-alert>"+
+            "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+      })
+  });
+  $('#form-servicio-crear').on('submit', function (e) {
+      e.preventDefault();
+      var $formData = $(this).serialize();
+      var $thisUrl = $(this).attr('action');
+      var $thisMethod = $(this).attr('method');
+      $.ajax({
+          method: $thisMethod,
+          url: $thisUrl,
+          data: $formData,
+          success: function(data){
+            $("#servicios").html(data)
             $('#calendar').fullCalendar("refetchEvents");
-            $("#mensaje-modal").modal('show');
+            $.toast({
+              heading: 'Mensaje del Sistema',
+              text: 'Se ha Adicionado un Nuevo Servicio a la Cita',
+              position: 'top-right',
+              loaderBg:'#ff6849',
+              icon: 'success',
+              hideAfter: 3500, 
+              stack: 6
+            });
           },
           error: function(xhr,errmsg,err) {
             // Show an error
@@ -154,4 +226,20 @@
           }
       })
   });
+  $("#id_servicio").on("change", function(){
+  costo();
+  });
+
+  function costo(){
+    var servicioId = $("#id_servicio").val();
+    $.ajax({
+      url: "/servicio-costo",
+      data: {"id": servicioId},
+      type: "get",
+      success: function(data){
+        $("#id_costo").val(data.costo);
+      }
+  });
+
+}
 </script>

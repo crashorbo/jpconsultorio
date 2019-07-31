@@ -27,6 +27,7 @@
               {{ form.tipo }}
               {{ form.prioridad }}
               {{ form.tipo_beneficiario }}
+              {{ form.matricula }}
           </div>
           </div>
         </div>
@@ -244,12 +245,18 @@
             </div>
           </div>
           <div class="row m-b-10">
-            <div class="col-md-12 text-right">
+            <div class="col-md-6">
+            <a href="{% url "agenda-listar" %}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Volver"><i class="fa fa-rotate-left"></i></a>
+            <a href="{% url 'logout' %}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Salir"><i class="mdi mdi-exit-to-app"></i></a>
+            </div>
+            <div class="col-md-6 text-right">
               {% csrf_token %}
               <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historia-lista' pk=consulta.paciente.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
-              <button type="button" class="btn btn-sm btn-danger" id="recetar"  data-toggle="tooltip" data-placement="top" title=""  data-original-title="Receta"><i class="icon-medical-history"></i></button>
+              <button type="button" class="btn btn-sm btn-agenda text-white" id="recetar"  data-toggle="tooltip" data-placement="top" title=""  data-original-title="Receta"><i class="icon-medicine-2"></i></button>
+              {% if consulta.tipo %}
+              <a onclick="imprimirlista(event, this);" href="{% url 'reporterecetaseguro' pk=consulta.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+              {% endif %}
               <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-sm btn-inverse" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
-              <a href="{% url "agenda-listar" %}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Volver"><i class="fa fa-rotate-left"></i></a>
             </div>
           </div>
         </div>
@@ -384,6 +391,40 @@
                   <td width="8%"><h6>{{ forloop.counter }} .-</h6></td>
                   <td><h6>{{ item.detalle }}</h6></td>
                   <td class="text-right"><form action="{% url 'tratamiento-eliminar' pk=item.id %}" method="post" class="form-eliminar-trat">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
+                </tr>
+              {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-sm-2 fixribbon">
+          <div class="row">
+            <div class="miribbon col-md-12">Ctrl.</div>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-10">
+          <form id="controlform" action="{% url 'control-crear' %}" method="post">
+            {% csrf_token %}
+            {{ controlform.agenda}}
+            <div class="row">
+              <div class="col-md-12">
+                <div class="input-group">
+                  {{ controlform.detalle }}
+                  <span class="input-group-btn"><button class="btn btn-success btn-sm" type="submit"><i class="fa fa-plus"></i></span></button>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div id="controles" class="col-md-12">
+              <table class="table table-sm tabla">
+              {% for item in consulta.reconsulta_set.all %}
+                <tr>
+                  <td width="8%"><h6>{{ item.fecha | date:"d/m/Y" }}</h6></td>
+                  <td><h6>{{ item.detalle }}</h6></td>
+                  <td class="text-right"><form action="{% url 'control-eliminar' pk=item.id %}" method="post" class="form-eliminar-control">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-close"></i></button></form></td>
                 </tr>
               {% endfor %}
               </table>

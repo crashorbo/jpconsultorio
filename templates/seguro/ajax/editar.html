@@ -14,7 +14,7 @@
 </div>
 {% endif %}
 <div class="modal-body">
-  <form id="form-servicio" action="{% url "servicio-ajax-editar" pk=servicio.id %}" method="post" novalidate>
+  <form id="form-servicio" action="{% url "seguro-ajax-editar" pk=servicio.id %}" method="post" novalidate>
     {% csrf_token %}
     <div class="form-group">
       <label>Nombre</label>     

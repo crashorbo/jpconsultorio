@@ -3,6 +3,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.views.generic import View
 from django.http import JsonResponse
+import json
 # Create your views here.
 from braces.views import JSONResponseMixin
 from .models import Paciente
@@ -52,10 +53,10 @@ class IndexView(ListView):
   form_class = PacienteForm
 
   def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['pacientes'] = self.model.objects.all()
-        return context
-
+    context = super().get_context_data(**kwargs)
+    context['pacientes'] = self.model.objects.all()
+    return context
+  
 class PacienteRegistrar(CreateView):
   model = Paciente
   form_class = PacienteForm
@@ -63,7 +64,11 @@ class PacienteRegistrar(CreateView):
 
   def form_valid(self, form):
     self.object = form.save()
-    return render(self.request, 'paciente/success.html')
+    return JsonResponse({"success": True})
+  
+  def form_invalid(self, form):
+    return JsonResponse({"success": False, "errores": [(k, v[0]) for k, v in form.errors.items()]})
+
 
 class PacienteEditar(UpdateView):
   model = Paciente
@@ -73,7 +78,10 @@ class PacienteEditar(UpdateView):
 
   def form_valid(self, form):
     self.object = form.save()
-    return render(self.request, 'paciente/success.html')
+    return JsonResponse({"success": True})
+  
+  def form_invalid(self, form):
+    return JsonResponse({"success": False, "errores": [(k, v[0]) for k, v in form.errors.items()]})
 
 class PacienteEliminar(View):
   def get(self, request):

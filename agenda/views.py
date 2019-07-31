@@ -1,5 +1,7 @@
 import json
 import locale
+import os
+from django.conf import settings
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -13,25 +15,27 @@ from datetime import date, datetime
 from django.utils.dateparse import parse_date
 # Create your views here.
 from paciente.models import Paciente
+from paciente.templatetags import paciente_tags
 from configuracion.models import Tipolente
 from core.models import Movdiario
-from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta
-from .forms import AgendaForm, DiagnosticoForm, TratamientoForm, ServicioFormset, RecetaForm
+from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta, Reconsulta, Agendaserv
+from .forms import AgendaForm, DiagnosticoForm, TratamientoForm, ServicioFormset, RecetaForm, ReconsultaForm, AgendaservicioForm
 from io import BytesIO
 from decimal import Decimal, getcontext
 from django.utils import formats
 import textwrap
 
-from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Table, BaseDocTemplate, PageTemplate, NextPageTemplate, PageBreak, Frame, FrameBreak, Flowable, Image, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT, TA_JUSTIFY
 from reportlab.lib.pagesizes import letter, landscape, portrait
 from reportlab.pdfgen import canvas
-from reportlab.lib.units import cm
+from reportlab.lib.units import cm, inch
 from reportlab.graphics.shapes import Drawing 
 from reportlab.graphics.barcode.qr import QrCodeWidget 
 from reportlab.graphics import renderPDF
+from reportlab.lib.utils import ImageReader
 # Vista Inicial de la aplicacion
 class IndexView(CreateView):
     template_name = 'agenda/index.html'
@@ -104,7 +108,7 @@ class AgendaAjaxRegistrar(CreateView):
     model = Agenda
     form_class = AgendaForm
     template_name = 'agenda/ajax/registrar.html'
-  
+
     def get_context_data(self, **kwargs):
         data = super(AgendaAjaxRegistrar, self).get_context_data(**kwargs)
         if self.request.POST:
@@ -148,7 +152,8 @@ class AgendaAjaxRegistrar(CreateView):
 
 class AgendaAjaxLista(View):
     def get(self, *args, **kwargs):
-        qs = Agenda.objects.filter(estado__exact=0)
+        print(self.request.GET['start'])
+        qs = Agenda.objects.filter(fecha__range=(self.request.GET['start'], self.request.GET['end']))
         qs = self.get_results(qs)
         return HttpResponse({
             json.dumps(qs)
@@ -159,7 +164,7 @@ class AgendaAjaxLista(View):
             0: 'bg-success',
             1: 'bg-danger',
         }
-        return [dict(id=x.id,title=x.paciente.nombres+' '+x.paciente.apellidos, start=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_inicio.strftime("%H:%M:%S"), end=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_fin.strftime("%H:%M:%S"), className=TIPO_CHOICE[self.calculo(x)]) for x in results]
+        return [dict(id=x.id,title=x.hora_fin.strftime("%H:%M")+' -> '+x.paciente.nombres+' '+x.paciente.apellidos, start=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_inicio.strftime("%H:%M:%S"), end=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_fin.strftime("%H:%M:%S"), className=TIPO_CHOICE[self.calculo(x)]) for x in results]
 
     def calculo(self, objeto):
         valor = 0
@@ -193,7 +198,7 @@ class AgendaAjaxEspera(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['consultas'] = self.model.objects.filter(fecha__exact=datetime.now(), estado__exact=0)
+        context['consultas'] = self.model.objects.filter(fecha__exact=datetime.now()).order_by('hora_inicio')
         return context
 
 class AgendaAjaxEditar(UpdateView):
@@ -202,11 +207,33 @@ class AgendaAjaxEditar(UpdateView):
     template_name = 'agenda/editarajax.html'
     context_object_name = 'agenda'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        data = {'agenda': self.kwargs['pk']}
+        servicio = AgendaservicioForm(data)
+        context['servicioform'] = servicio
+        return context
+
     def form_valid(self, form):
         model = form.save(commit=False)
-        model.hora_fin = (datetime.combine(datetime.today(), model.hora_inicio)+timedelta(minutes=30)).time()
+        model.hora_fin = (datetime.combine(datetime.today(), model.hora_inicio)+timedelta(minutes=15)).time()
         model.save()
-        return render(self.request, 'paciente/success.html')
+        return JsonResponse({"success": True})
+    
+    def form_invalid(self, form):
+        return JsonResponse({"success": False, "mensaje": "Ha ocurrido un error en el sistema: ", "errores": [(k, v[0]) for k, v in form.errors.items()]})
+
+class AgendaServicioCrear(CreateView):
+    model = Agendaserv
+    form_class = AgendaservicioForm
+    template_name = 'agenda/editarajax.html'
+
+    def form_valid(self, form):
+        model = form.save(commit=False)
+        model.save()
+        agenda = Agenda.objects.get(id=model.agenda.id)
+        return render(self.request, 'agenda/ajax/servicios.html', {'agenda': agenda})
+
 
 class AgendaAjaxDelete(DeleteView):
     model = Agenda
@@ -248,11 +275,13 @@ class AgendaEditar(UpdateView):
         diagnostico = DiagnosticoForm(initial=diag_data)
         tratamiento = TratamientoForm(initial=diag_data)
         receta = RecetaForm(initial=diag_data)
+        control = ReconsultaForm(initial=diag_data)
         tipolentes = Tipolente.objects.all()
         context['tipolentes'] = tipolentes
         context['diagform'] = diagnostico
         context['tratform'] = tratamiento
         context['recetaform'] = receta
+        context['controlform'] = control
         return context
 
     def form_valid(self, form):
@@ -288,6 +317,8 @@ class DiagnosticoCrear(CreateView):
     def form_valid(self, form):
         model = form.save(commit=False)
         consulta = Agenda.objects.get(pk=model.agenda.id)
+        consulta.estado = True
+        consulta.save()
         model.save()
         return render(self.request, 'agenda/ajax/diagnosticos.html', context={'consulta': consulta })
 
@@ -298,6 +329,8 @@ class DiagnosticoEliminar(DeleteView):
     def delete(self, request, *args, **kwargs):
         model = self.get_object()
         consulta = Agenda.objects.get(pk=model.agenda.id)
+        consulta.estado = True
+        consulta.save()
         model.delete()
         return render(self.request, 'agenda/ajax/diagnosticos.html', context={'consulta': consulta })
 
@@ -309,6 +342,8 @@ class TratamientoCrear(CreateView):
     def form_valid(self, form):
         model = form.save(commit=False)
         consulta = Agenda.objects.get(pk=model.agenda.id)
+        consulta.estado = True
+        consulta.save()
         model.save()
         return render(self.request, 'agenda/ajax/tratamientos.html', context={'consulta': consulta })
 
@@ -319,8 +354,35 @@ class TratamientoEliminar(DeleteView):
     def delete(self, request, *args, **kwargs):
         model = self.get_object()
         consulta = Agenda.objects.get(pk=model.agenda.id)
+        consulta.estado = True
+        consulta.save()
         model.delete()
         return render(self.request, 'agenda/ajax/tratamientos.html', context={ 'consulta': consulta })
+
+class ReconsultaCrear(CreateView):
+    model = Reconsulta
+    form_class = ReconsultaForm
+    template_name = 'paciente/success.html'
+
+    def form_valid(self, form):
+        model = form.save(commit=False)
+        consulta = Agenda.objects.get(pk=model.agenda.id)
+        consulta.estado = True
+        consulta.save()
+        model.save()
+        return render(self.request, 'agenda/ajax/controles.html', context={'consulta': consulta })
+
+class ReconsultaEliminar(DeleteView):
+    model = Reconsulta
+    context_object_name = 'diagnostico'
+
+    def delete(self, request, *args, **kwargs):
+        model = self.get_object()
+        consulta = Agenda.objects.get(pk=model.agenda.id)
+        consulta.estado = True
+        consulta.save()
+        model.delete()
+        return render(self.request, 'agenda/ajax/controles.html', context={ 'consulta': consulta })
 
 class RecetaCrear(CreateView):
     model = Receta
@@ -373,6 +435,31 @@ class AgendaservUpdate(View):
                 valor = valor + serv.costo
         movimiento.ingreso = valor
         movimiento.save()
+
+class ControlView(CreateView):
+    model = Agenda
+    form_class = AgendaForm
+    template_name = 'paciente/registrar.html'
+    
+    def form_valid(self, form):
+        model = form.save(commit=False)
+        agendas = Agenda.objects.filter(paciente=model.paciente).order_by('-fecha')
+        if agendas:
+            agenda = agendas[0]
+            if agenda.estado:
+                agenda.hora_inicio = model.hora_inicio
+                agenda.hora_fin = (datetime.combine(datetime.today(), model.hora_inicio)+timedelta(minutes=15)).time()
+                agenda.fecha = model.fecha
+                agenda.estado = False
+                agenda.save()
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"success": False, "mensaje": "Ya se ha registrado el control para "+agenda.paciente.nombres+" "+agenda.paciente.apellidos})
+        else:
+            return JsonResponse({"success": False, "mensaje": model.paciente.nombres+" "+model.paciente.apellidos+" no tiene un Historial"})
+
+    def form_invalid(self, form):
+        return JsonResponse({"success": False, "mensaje": "Ha ocurrido un error con el envio de datos, revise si selecciono un Paciente"})
 
 class Reportemov(View):
     def get(self, *args, **kwargs):
@@ -465,6 +552,94 @@ class Reportemov(View):
         buff.close()
         return response
 
+class Reportemovfecha(View):
+    def get(self, *args, **kwargs):
+        fecha = self.kwargs['date']
+        response = HttpResponse(content_type='application/pdf')
+        pdf_name = "mov_"+fecha+".pdf"  # llamado clientes
+        # la linea 26 es por si deseas descargar el pdf a tu computadora
+        response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
+        buff = BytesIO()
+        doc = SimpleDocTemplate(buff,
+                                pagesize=landscape(letter),
+                                rightMargin=30,
+                                leftMargin=30,
+                                topMargin=30,
+                                bottomMargin=30,
+                                )
+
+        cabeza = ParagraphStyle(name="cabeza", alignment=TA_LEFT, fontSize=14, fontName="Times-Roman", textColor=colors.darkblue)
+        cabecera = ParagraphStyle(name="cabecera", alignment=TA_CENTER, fontSize=12, fontName="Times-Roman", textColor=colors.white)
+        celdaderecha = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=10, fontName="Times-Roman")
+        celdaderechabold = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=12, fontName="Times-Bold")
+        celda = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=10, fontName="Times-Roman")
+        celdabold = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=12, fontName="Times-Bold")
+        celdaverde = ParagraphStyle(name="celdaverde", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.green)
+        celdaroja = ParagraphStyle(name="celdaroja", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.red)
+        celdarojarem = ParagraphStyle(name="celdaroja", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.red, backColor = colors.yellow)
+        celdaremarcada = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman", backColor = colors.yellow)                                
+        styles = getSampleStyleSheet()
+        styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontSize=16))
+        styles.add(ParagraphStyle(name='subtitulo', alignment=TA_LEFT, fontSize=14))
+        header = Paragraph("Reporte Movimientos "+fecha, styles['centered'])
+        subparticular = Paragraph("Particulares:", styles['Heading2'])
+        subasegurados = Paragraph("Asegurados:", styles['Heading2'])
+        movimiento = []
+        particulares = []
+        asegurados = []
+        seguro = []
+        total_particular_costo = 0
+        total_particular_cobrado = 0
+        total_asegurado_costo = 0
+        movimiento.append(header)
+        movimiento.append(subparticular)
+        items = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%d-%m-%Y"))
+        for item in items:
+            if not item.agenda.tipo:
+                if item.estado:
+                    aux = item.costo
+                    total_particular_cobrado = total_particular_cobrado + item.costo
+                else:
+                    aux = Decimal('0.00')
+                this_particular = [Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda), Paragraph(item.servicio.nombre, celda), Paragraph(str(item.costo), celdaderecha), Paragraph(str(aux),celdaderecha)]
+                particulares.append(this_particular)
+                total_particular_costo = total_particular_costo + item.costo
+            else:
+                this_asegurado = [Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda), Paragraph(item.servicio.nombre, celda), Paragraph(str(item.agenda.matricula), celda), Paragraph(item.agenda.tipo_beneficiario, celda), Paragraph(str(item.costo),celdaderecha)]
+                asegurados.append(this_asegurado)
+                total_asegurado_costo = total_asegurado_costo + item.costo
+        this_particular = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph(str(total_particular_costo), celdaderechabold), Paragraph(str(total_particular_cobrado),celdaderechabold)]
+        particulares.append(this_particular)
+        this_asegurado = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph('', celda), Paragraph('', celda), Paragraph(str(total_asegurado_costo),celdaderechabold)]
+        asegurados.append(this_asegurado)
+        
+        headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('Costo', cabecera), Paragraph('SubTotal',cabecera))
+        t1 = Table([headings] + particulares, colWidths=[11 * cm, 8 * cm, 3 * cm, 3 * cm])
+        t1.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (6, -1), 1, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.black)
+        ]
+        ))
+
+        headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('matricula', cabecera), Paragraph('Procede', cabecera), Paragraph('Costo',cabecera))
+        t2 = Table([headings] + asegurados, colWidths=[9 * cm, 7 * cm, 4 * cm, 2 * cm, 3 * cm])
+        t2.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (6, -1), 1, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.black)
+        ]
+        ))
+
+        movimiento.append(t1)
+        movimiento.append(subasegurados)
+        movimiento.append(t2)
+        doc.build(movimiento)
+        response.write(buff.getvalue())
+        buff.close()
+        return response
 class Reporterec(View):
     def subrayar(self, pdf, x, y, texto):
         tam = len(texto)
@@ -728,6 +903,134 @@ class ReporteRecmed(View):
             self.y = self.y-30
             indice = indice+1
         pdf.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+
+class ReporteRecseguro(View):
+    def encabezado(self, canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 9)
+        #try:
+        archivo_imagen1 = os.path.join(settings.MEDIA_ROOT, "imagenes","sistema","logo1.jpg")
+        archivo_imagen2 = os.path.join(settings.MEDIA_ROOT, "imagenes","sistema","logo2.jpg") 
+        #imagen = Image(pil_img, width=90, height=50, hAlign='LEFT')
+        canvas.drawImage(archivo_imagen1, 75, 720,width=60, height=40)
+        canvas.drawImage(archivo_imagen2, 150, 720,width=150, height=40)
+        #except:
+        #canvas.drawString(inch, letter[1] - 50, "Ejemplo de DocTemplate y PageTemplate")
+        #canvas.line(inch, letter[1] - 60, letter[0] - 65, letter[1] - 60)
+        canvas.restoreState()
+
+    def get(self, *args, **kwargs):
+        agenda = Agenda.objects.get(id=self.kwargs['pk'])
+        #Indicamos el tipo de contenido a devolver, en este caso un pdf
+        response = HttpResponse(content_type='application/pdf')
+        pdf_name = "receta.pdf"  # llamado clientes
+        response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
+        buffer = BytesIO()
+        doc = BaseDocTemplate(buffer, pagesize=letter)
+        frame0 = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height-10, showBoundary=0, id='normalBorde')
+        doc.addPageTemplates([
+            PageTemplate(id='principal', frames=frame0, onPage=self.encabezado),
+            ])
+        estilo=getSampleStyleSheet()
+        estilo.add(ParagraphStyle(name = "Titulo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica-Bold"))
+        estilo.add(ParagraphStyle(name = "Titulo2",  alignment=TA_CENTER, fontSize=10, fontName="Helvetica-Bold"))
+        estilo.add(ParagraphStyle(name = "Parrafo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica"))
+           
+        #Iniciamos el platypus story
+        story=[]
+        story.append(NextPageTemplate('principal'))
+        data=[(Paragraph("NOMBRE", estilo['Titulo']),"","","",Paragraph("EDAD",estilo['Titulo']),"")]
+        data.append(((Paragraph(agenda.paciente.nombres+" "+agenda.paciente.apellidos, estilo['Parrafo'])),"","","",Paragraph(paciente_tags.edad(agenda.paciente.fecha_nacimiento), estilo['Parrafo']),""))
+        data.append((Paragraph("SEGURO", estilo['Titulo']),"","","",Paragraph("MATRICULA",estilo['Titulo']),""))
+        data.append(((Paragraph(agenda.seguro.nombre, estilo['Parrafo'])),"","","",Paragraph(agenda.matricula, estilo['Parrafo']),""))
+        data.append((Paragraph("FECHA", estilo['Titulo']),"","","",Paragraph("TIPO",estilo['Titulo']),""))
+        data.append(((Paragraph(agenda.fecha.strftime("%d - %m - %Y"), estilo['Parrafo'])),"","","",Paragraph(agenda.tipo_beneficiario, estilo['Parrafo']),""))
+        data.append((Paragraph("ANTECEDENTES", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph(agenda.antocu, estilo['Parrafo']),"","","","",""))
+        data.append(("","","","","",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("MOTIVO DE CONSULTA", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
+        data.append(("","","","","",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("AGUDEZA VISUAL", estilo['Titulo']),"","","","",""))
+        data.append(("asfsadsad","","","","",""))
+        data.append(("","","","","",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("PIO", estilo['Titulo2']),"","","","",""))
+        data.append((Paragraph("O.I.", estilo['Titulo2']),"","",Paragraph("O.D.", estilo['Titulo2']),"",""))
+        data.append((Paragraph(agenda.ito, estilo['Parrafo']),"","",Paragraph(agenda.dto, estilo['Parrafo']),"",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("BIOMICROSCOPIA", estilo['Titulo2']),"","","","",""))
+        data.append((Paragraph("O.I.", estilo['Titulo2']),"","",Paragraph("O.D.", estilo['Titulo2']),"",""))
+        data.append((Paragraph(agenda.ibio, estilo['Parrafo']),"","",Paragraph(agenda.dbio, estilo['Parrafo']),"",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("FONDO DE OJO", estilo['Titulo2']),"","","","",""))
+        data.append((Paragraph("O.I.", estilo['Titulo2']),"","",Paragraph("O.D.", estilo['Titulo2']),"",""))
+        data.append((Paragraph(agenda.ifdo, estilo['Parrafo']),"","",Paragraph(agenda.dfdo, estilo['Parrafo']),"",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("OTROS", estilo['Titulo2']),"","","","",""))
+        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("DIAGNOSTICO", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
+        data.append(("","","","","",""))
+        data.append((Paragraph("TRATAMIENTO", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
+        data.append(("","","","","",""))
+        
+
+        table = Table(data, colWidths=78, rowHeights=15)
+        table.setStyle(TableStyle([
+            ('GRID', (0, 0), (5, 38), 1, colors.black),
+            ('SPAN',(0,0),(3,0)),
+            ('SPAN',(0,1),(3,1)),
+            ('SPAN',(0,2),(3,2)),
+            ('SPAN',(0,3),(3,3)),
+            ('SPAN',(0,4),(3,4)),
+            ('SPAN',(0,5),(3,5)),
+            ('SPAN',(0,6),(5,6)),
+            ('SPAN',(0,7),(5,9)),
+            ('SPAN',(0,10),(5,10)),
+            ('SPAN',(0,11),(5,13)),
+            ('SPAN',(0,14),(5,14)),
+            ('SPAN',(0,15),(5,17)),
+            ('SPAN',(0,18),(5,18)),
+            ('SPAN',(0,19),(2,19)),
+            ('SPAN',(3,19),(5,19)),
+            ('SPAN',(0,20),(2,21)),
+            ('SPAN',(3,20),(5,21)),
+            ('SPAN',(0,22),(5,22)),
+            ('SPAN',(0,23),(2,23)),
+            ('SPAN',(3,23),(5,23)),
+            ('SPAN',(0,24),(2,25)),
+            ('SPAN',(3,24),(5,25)),
+            ('SPAN',(0,26),(5,26)),
+            ('SPAN',(0,27),(2,27)),
+            ('SPAN',(3,27),(5,27)),
+            ('SPAN',(0,28),(2,29)),
+            ('SPAN',(3,28),(5,29)),
+            ('SPAN',(0,30),(5,30)),
+            ('SPAN',(0,31),(5,32)),
+            ('SPAN',(0,33),(5,33)),
+            ('SPAN',(0,34),(5,35)),
+            ('SPAN',(0,36),(5,36)),
+            ('SPAN',(0,37),(5,38)),
+            ('SPAN',(4,0),(5,0)),
+            ('SPAN',(4,1),(5,1)),
+            ('SPAN',(4,2),(5,2)),
+            ('SPAN',(4,3),(5,3)),
+            ('SPAN',(4,4),(5,4)),
+            ('SPAN',(4,5),(5,5)),
+            ]
+            ))
+        
+        story.append(table)
+        doc.build(story)
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)

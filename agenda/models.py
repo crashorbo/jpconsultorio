@@ -39,7 +39,7 @@ class Agenda(models.Model):
   estado = models.IntegerField(default=0)
   prioridad = models.IntegerField(choices=PRIORIDAD_CHOICE,default=0)
   tipo = models.IntegerField(choices=TIPO_CHOICE, default=0)
-  procedencia = models.CharField(max_length=20, blank=True)
+  procedencia = models.CharField(max_length=100, blank=True)
   matricula = models.CharField(max_length=100, blank=True)
   tipo_beneficiario = models.CharField(max_length=10, choices=BENEFICIARIO_CHOICE, default='BENF')
   antocu = models.TextField(blank=True)
@@ -119,4 +119,4 @@ class Receta(models.Model):
 class Reconsulta(models.Model): 
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
   fecha = models.DateField(auto_now_add=True)
-  detalle = models.TextField(blank=True)
+  detalle = models.TextField()

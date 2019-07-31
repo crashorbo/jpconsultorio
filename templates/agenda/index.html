@@ -16,71 +16,85 @@
   <div class="col-md-4">
       <div class="card m-b-5">
           <div class="card-body">
-              <h4 class="card-title">Agendar Consulta</h4>
               <div class="row">
                 <div class="col-md-12">
                     <form id="form-agenda" action="{% url 'agenda-registrar' %}" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
+                                <small>Paciente</small>
                                 {{ form.paciente }}
                             </div>
                         </div>
-                        <div class="row m-t-5">
-                            <div class="col-md-6">    
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small>Fecha</small>
                                 {{ form.fecha}}
                             </div>
                             <div class="col-md-6">
+                                <small>Prioridad</small>
                                 {{ form.prioridad}}
                             </div>
                         </div>
-                        <div class="row m-t-5">
+                        <div class="row">
                             <div class="col-md-6">
+                                <small>Hora</small>
                                 {{ form.hora_inicio}}
                             </div>
                             <div class="col-md-6">
+                                <small>Tipo de Paciente</small>
                                 {{ form.tipo}}
                             </div>
                         </div>
-                        <div class="row m-t-5 seguro-seleccion">
-                            
+                        <div class="row seguro-seleccion">
                             <div class="col-md-6">
+                                <small>Matricula</small>
                                 {{ form.matricula}}
                             </div>
                             <div class="col-md-6">
+                                <small>Tipo de Beneficiario</small>
                                 {{ form.tipo_beneficiario}}
                             </div>
                         </div>
-                        <div class="row m-t-5 seguro-seleccion">
+                        <div class="row seguro-seleccion">
                             <div class="col-md-12">
+                                <small>Caja</small>
                                 {{ form.seguro }}
                             </div>
                         </div>
                         {{ agendaserv.management_form }}
 
                         {% for form in agendaserv.forms %}
-                            <div class="row m-t-5">
+                            <div class="row">
                                 <div class="col-md-12">
+                                <small>Tipo de Servicio</small>
                                 {{ form.visible_fields.0 }}
                                 </div>
                             </div>
-                            <div class="row m-t-5">
+                            <div class="row">
                                 <div class="col-md-6">
-                                {{ form.visible_fields.1 }}
+                                    <small>Costo</small>
+                                    {{ form.visible_fields.1 }}
                                 </div>
-                                <div class="col-md-6 text-center">
-                                {{ form.visible_fields.2 }}
-                                <label for="id_agendaserv-0-estado" class="form-control-sm fixmt4 m-b-0">Cancelado</label>
+                                <div class="col-md-6 p-t-30">
+                                    {{ form.visible_fields.2 }}
+                                    <label for="id_agendaserv-0-estado" class="form-control-sm fixmt4 m-b-0">Cancelado</label>
                                 </div>
                             </div>
                         {% endfor %}
                         <div class="row">
                             <div class="col-md-6">
-                                <button data-toggle="modal" data-target="#responsive-modal" id="registro-paciente" class="btn btn-lg m-t-20 btn-info btn-block waves-effect waves-light" type="button"><i class="ti-plus"></i> Paciente</button>
+                                <button id="controlagenda" class="btn btn-agenda btn-block waves-effect waves-light m-t-10 text-white">Control</button>
                             </div>          
                             <div class="col-md-6">
-                                <button class="btn btn-lg m-t-20 btn-success btn-block waves-effect waves-light" type="submit"><i class="ti-plus"></i> Cita</button>
+                                <button class="btn m-t-10 btn-success btn-block waves-effect waves-light" type="submit"> Agendar</button>
                             </div>          
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button data-toggle="modal" data-target="#responsive-modal" id="registro-paciente" class="btn m-t-10 btn-info btn-block waves-effect waves-light" type="button">Nuevo Paciente</button>
+                                
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -89,17 +103,8 @@
       </div>
       <div class="card">
           <div class="card-body">
-                <h4 class="card-title">Movimientos</h4>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-6 text-success">Ingresos:</div>
-                            <div class="col-md-6 text-right text-success"><h3 id="sis_ingresos" class="text-success">0 Bs.</h4></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 text-danger">Egresos:</div>
-                            <div class="col-md-6 text-right"><h3 id="sis_egresos" class="text-danger">0 Bs.</h4></div>
-                        </div>
                         <div class="row">
                             <div class="col-md-6"><h3><strong>TOTAL:</strong></h3></div>
                             <div class="col-md-6 text-right"><h3 id="sis_total"><strong>0 Bs.</strong></h4></div>
@@ -108,13 +113,13 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-4">
-                                <a onclick="imprimirlista(event, this);" href="{% url 'reportemov' %}" class="btn btn-lg m-t-20 btn-inverse btn-block waves-effect waves-light"><i class="fa fa-print"></i></a>
+                                <a onclick="imprimirlista(event, this);" href="{% url 'reportemov' %}" class="btn m-t-20 btn-inverse btn-block waves-effect waves-light"><i class="fa fa-print"></i></a>
                             </div>          
                             <div class="col-md-4">
-                                <button class="btn btn-lg m-t-20 btn-danger btn-block waves-effect waves-light"><i class="ti-money"></i></button>
+                                <button class="btn m-t-20 btn-danger btn-block waves-effect waves-light"><i class="ti-money"></i></button>
                             </div> 
                             <div class="col-md-4">
-                                <a href="{% url 'index' %}" class="btn btn-lg m-t-20 btn-warning btn-block waves-effect waves-light"><i class="ti-back-left"></i></a>
+                                <a href="{% url 'index' %}" class="btn m-t-20 btn-warning btn-block waves-effect waves-light"><i class="ti-back-left"></i></a>
                             </div>          
                         </div>
                     </div>

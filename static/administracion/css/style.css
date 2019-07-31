@@ -1026,8 +1026,8 @@ Buttons
 
 .btn-info,
 .btn-info.disabled {
-  background: #1e88e5;
-  border: 1px solid #1e88e5;
+  background: #052952;
+  border: 1px solid #052952;
   -webkit-box-shadow: 0 2px 2px 0 rgba(66, 165, 245, 0.14), 0 3px 1px -2px rgba(66, 165, 245, 0.2), 0 1px 5px 0 rgba(66, 165, 245, 0.12);
   box-shadow: 0 2px 2px 0 rgba(66, 165, 245, 0.14), 0 3px 1px -2px rgba(66, 165, 245, 0.2), 0 1px 5px 0 rgba(66, 165, 245, 0.12);
   -webkit-transition: 0.2s ease-in;
@@ -1035,14 +1035,14 @@ Buttons
   transition: 0.2s ease-in; }
   .btn-info:hover,
   .btn-info.disabled:hover {
-    background: #1e88e5;
-    border: 1px solid #1e88e5;
+    background: #052952;
+    border: 1px solid #052952;
     -webkit-box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2);
     box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2); }
   .btn-info.active, .btn-info:focus,
   .btn-info.disabled.active,
   .btn-info.disabled:focus {
-    background: #028ee1;
+    background: #052952;
     -webkit-box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2);
     box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2); }
 
@@ -1295,8 +1295,8 @@ Buttons
 .open > .dropdown-toggle.btn-info:hover,
 .btn-info.focus,
 .btn-info:focus {
-  background-color: #028ee1;
-  border: 1px solid #028ee1; }
+  background-color: #052952;
+  border: 1px solid #052952; }
 
 .btn-warning.active.focus,
 .btn-warning.active:focus,
@@ -5407,7 +5407,7 @@ sidebar navigation
         border-radius: 4px;
         white-space: nowrap; }
         .sidebar-nav ul li a.active, .sidebar-nav ul li a:hover {
-          color: #26c6da; }
+          color: #263238; }
         .sidebar-nav ul li a.active {
           font-weight: 500;
           color: #263238; }
@@ -5437,9 +5437,9 @@ sidebar navigation
       -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); }
       .sidebar-nav > ul > li.active > a i {
-        color: #26c6da; }
+        color: #263238; }
   .sidebar-nav > ul > li > a.active i, .sidebar-nav > ul > li > a:hover i {
-    color: #26c6da; }
+    color: #263238; }
   .sidebar-nav > ul > li > a i {
     width: 27px;
     height: 27px;
@@ -5454,7 +5454,7 @@ sidebar navigation
   .sidebar-nav > ul > li > a.active {
     font-weight: 400;
     background: #ffffff;
-    color: #26c6da; }
+    color: #263238; }
 
 .sidebar-nav .has-arrow {
   position: relative; }

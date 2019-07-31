@@ -20,7 +20,7 @@
   <div class="col-md-12 p-0">
     <div class="card"> 
       <div class="card-body">
-      <table id="myTable" class="table table-sm table-bordered table-striped">
+      <table id="myTable" class="table table-sm table-bordered table-hover">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -99,6 +99,15 @@
       data: {'id': $thisId},
       success: function(data){
         $('#myTable').DataTable().ajax.reload(null, false);
+        $.toast({
+          heading: 'Mensaje del Sistema',
+          text: 'El Tipo de Lente se ha eliminado con exito',
+          position: 'top-right',
+          loaderBg:'#ff6849',
+          icon: 'success',
+          hideAfter: 3500, 
+          stack: 6
+        });
       }
     }));
   });

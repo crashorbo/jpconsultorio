@@ -1,0 +1,9 @@
+<table class="table tabla table-sm">
+{% for item in consulta.reconsulta_set.all %}
+  <tr>
+    <td width="8%"><h6>{{ item.fecha | date:"d/m/Y" }}</h6></td>
+    <td><h6>{{ item.detalle }}</h6></td>
+    <td class="text-right"><form action="{% url 'control-eliminar' pk=item.id %}" method="post" class="form-eliminar-control">{% csrf_token %}<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-close"></i></button></form></td>
+  </tr>
+{% endfor %}
+</table>
