@@ -51,7 +51,7 @@ class Agenda(models.Model):
   dre2 = models.CharField(max_length=50, blank=True)
   dre3 = models.CharField(max_length=50, blank=True)
   dau = models.CharField(max_length=50, blank=True)
-  ddc1 = models.CharField(max_length=50, blank=True, choices=DECERCA_CHOICE)
+  ddc1 = models.CharField(max_length=50, choices=DECERCA_CHOICE, default="J1")
   ddc2 = models.CharField(max_length=50, blank=True)
   dph = models.CharField(max_length=50, blank=True)
   dci = models.CharField(max_length=50, blank=True)
@@ -65,7 +65,7 @@ class Agenda(models.Model):
   ire2 = models.CharField(max_length=50, blank=True)
   ire3 = models.CharField(max_length=50, blank=True)
   iau = models.CharField(max_length=50, blank=True)
-  idc1 = models.CharField(max_length=50, blank=True, choices=DECERCA_CHOICE)
+  idc1 = models.CharField(max_length=50, choices=DECERCA_CHOICE, default="J1")
   idc2 = models.CharField(max_length=50, blank=True)
   iph = models.CharField(max_length=50, blank=True)
   ici = models.CharField(max_length=50, blank=True)
@@ -84,6 +84,7 @@ class Agenda(models.Model):
   tipo_lente = models.TextField(blank=True)
   codigo = models.TextField(blank=True, null=True)
   impav = models.BooleanField(default=False)
+  control = models.BooleanField(default=False)
 
   def __str__(self):
     return self.fecha.strftime('%d/%m/%Y')
@@ -108,6 +109,7 @@ class Agendaserv(models.Model):
   fecha = models.DateField(default=timezone.now)
   hora = models.DateTimeField(default=timezone.now)
   estado = models.BooleanField(default=False)
+  descuento = models.BooleanField(default=False)
 
 class Receta(models.Model):
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)

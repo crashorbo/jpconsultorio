@@ -74,7 +74,6 @@ $(document).ready(function(){
   $('#form-agenda').on('submit', function (e) {
     e.preventDefault();
     var $formData = $(this).serialize();
-    var $formArray = $(this).serializeArray();
     var $formArray = {};
     $.each($(this).serializeArray(), function (i, field) {
       $formArray[field.name] = field.value; 
@@ -122,7 +121,7 @@ $(document).ready(function(){
           "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
           console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
-    })
+    });
   });
 
   $("#registro-paciente").click(function(){
@@ -133,7 +132,7 @@ $(document).ready(function(){
       success: function(data){
           $('#contenido-modal').html(data);
       }
-    })
+    });
   });
   document.addEventListener('keypress', function(evt) {
 
@@ -161,10 +160,12 @@ $(document).ready(function(){
   });
   $(".seguro-seleccion").hide();
   $('#id_tipo').change(function(e){
-    if($(this).val() == 0)
+    if($(this).val() == 0) {
       $(".seguro-seleccion").hide();
-    else
+    }
+    else {
       $(".seguro-seleccion").show();
+      }
   });
   costo();
   setInterval(function(){
@@ -180,8 +181,8 @@ function costo(){
   var servicioId = $("#id_agendaserv-0-servicio").val();
   $.ajax({
     url: "/servicio-costo",
-    data: {"id": servicioId},
-    type: "get",
+    data: {'id': servicioId},
+    type: 'get',
     success: function(data){
       $("#id_agendaserv-0-costo").val(data.costo);
     }
@@ -210,7 +211,6 @@ function imprimirlista(e, obj)
 $("#controlagenda").on('click', function(e){
   e.preventDefault();
   var $formData = $("#form-agenda").serialize();
-  var $formArray = $("#form-agenda").serializeArray();
   var $formArray = {};
   $.each($("#form-agenda").serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -227,6 +227,7 @@ $("#controlagenda").on('click', function(e){
           $('#form-agenda')[0].reset();
           $("#id_paciente").val("").trigger("change");
           $(".seguro-seleccion").hide();
+          costo();
           $.toast({
             heading: 'Mensaje del Sistema',
             text: 'Se ha registrado el control con exito.',
@@ -255,4 +256,12 @@ $("#controlagenda").on('click', function(e){
         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
       }
   })
-})
+});
+$("#id_agendaserv-0-descuento").on("change", function (e) {
+  if ( $(this).is(":checked") ){
+      $('#id_agendaserv-0-costo').prop('readonly', false);
+  } else {
+    $('#id_agendaserv-0-costo').prop("readonly", true);
+    costo();
+  }
+});

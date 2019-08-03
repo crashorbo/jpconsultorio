@@ -1,7 +1,11 @@
 from django.urls import path
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, PacienteAutocomplete, AgendaRegistrar, AgendaAjaxEditar, AgendaAjaxLista, AgendaListar, AgendaEditar, DiagnosticoCrear, DiagnosticoEliminar, TratamientoCrear, TratamientoEliminar, AgendaAjaxDelete, AgendaAjaxEspera, Reportemov, AgendaservUpdate, Reporterec, AgendaFechaListar, HistoriaListar, HistoriaVer, AgendaAjaxRegistrar, RecetaCrear, RecetaEliminar, ReporteRecmed, Reportemovfecha, ControlView, ReconsultaCrear, ReconsultaEliminar, AgendaServicioCrear, ReporteRecseguro
+from .views import IndexView, PacienteAutocomplete, AgendaRegistrar, AgendaAjaxEditar, AgendaAjaxLista, AgendaListar, \
+    AgendaEditar, DiagnosticoCrear, DiagnosticoEliminar, TratamientoCrear, TratamientoEliminar, AgendaAjaxDelete, \
+    AgendaAjaxEspera, Reportemov, AgendaservUpdate, Reporterec, AgendaFechaListar, HistoriaListar, HistoriaVer, \
+    AgendaAjaxRegistrar, RecetaCrear, RecetaEliminar, ReporteRecmed, Reportemovfecha, ControlView, ReconsultaCrear, \
+    ReconsultaEliminar, AgendaServicioCrear, ReporteRecseguro, HistoriamListar
 
 
 urlpatterns = [
@@ -21,6 +25,7 @@ urlpatterns = [
     path('control',login_required(ControlView.as_view()), name='agenda_control'),
     path('consulta/<pk>', login_required(AgendaEditar.as_view()), name='agenda-editar'),
     path('historias/<pk>', login_required(HistoriaListar.as_view()), name='historia-lista'),
+    path('historiasm/<pk>/<int:id>', login_required(HistoriamListar.as_view()), name='historiam-lista'),
     path('historiaver/<pk>', login_required(HistoriaVer.as_view()), name='historia-ver'),
     path('eliminarajax/<pk>', login_required(AgendaAjaxDelete.as_view()), name='agenda-eliminarajax'),
     path('editarajax/<pk>', login_required(AgendaAjaxEditar.as_view()), name='agenda-editarajax'),

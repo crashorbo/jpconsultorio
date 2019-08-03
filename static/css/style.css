@@ -2041,7 +2041,7 @@ File: scss
   float: left;
   width: 100%; }
   .chatonline li a span {
-    color: #99abb4; }
+    color: #6fadb4; }
     .chatonline li a span small {
       display: block;
       font-size: 10px; }
@@ -5271,7 +5271,9 @@ chat application Page
               background: #ebf3f5; }
   .chat-main-box .chat-right-aside {
     width: calc(100% - 250px);
-    float: left; }
+    float: left;
+    border-left: 3px solid #052952;
+    }
     .chat-main-box .chat-right-aside .chat-list {
       max-height: none;
       height: 100%;
@@ -8012,24 +8014,30 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
     background-color: rgba(255, 255, 255, 0.5); }
     .switch label input[type=checkbox]:checked + .lever.switch-col-white:after {
       background-color: #ffffff; }
-
 .icono-main {
   font-size: 60px !important;
 }
-
 .errorlist{
   list-style-type:none;
   color: red !important;
 }
-
 .fixribbon{
   padding: 0;
   text-align: center;
   padding: 0 5px;
 }
-
 .miribbon{
   background-color: #1e88e5;
+  color: #fff;
+  padding: 5px;
+}
+.miribbondesc{
+  background-color: #F3943D;
+  color: #fff;
+  padding: 5px;
+}
+.miribbonav{
+  background-color: #E6384B;
   color: #fff;
   padding: 5px;
 }
@@ -8038,16 +8046,26 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
   background-color: #FFFFFF;
   margin-bottom: 5px;
 }
-
 .fixmt4 {
   margin-top: 4px;
 }
-
 .col-form-label {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-
 .historiaver{
   padding: 20px 4px;
+}
+.modal-body-receta{
+  background: #052952;
+  padding: 3px !important;
+}
+.modal-footer-receta{
+  background: #052952;
+}
+.receta-lineaizq{
+  border-left:1px solid #052952 !important;
+}
+.hrborder-top{
+  border-top: 1px solid #052952;
 }

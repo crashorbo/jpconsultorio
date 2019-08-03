@@ -243,7 +243,7 @@ class AgendaAjaxDelete(DeleteView):
     def delete(self, request, *args, **kwargs):
         borrar = self.get_object()
         print(borrar.estado)
-        if not borrar.estado: 
+        if (not borrar.estado) and (not borrar.control):
             borrar.delete()
             self.recalculo()
         return render(self.request, 'paciente/success.html')
@@ -271,24 +271,39 @@ class AgendaEditar(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        agenda = Agenda.objects.get(id=self.kwargs['pk'])
+        visor = Agenda.objects.filter(paciente=agenda.paciente).exclude(id=agenda.id).order_by('-fecha')
         diag_data = {'agenda': self.kwargs['pk']}
+        descuento = False
+        for item in agenda.agendaserv_set.all():
+            if item.descuento:
+                descuento = True
+                break
         diagnostico = DiagnosticoForm(initial=diag_data)
         tratamiento = TratamientoForm(initial=diag_data)
         receta = RecetaForm(initial=diag_data)
         control = ReconsultaForm(initial=diag_data)
         tipolentes = Tipolente.objects.all()
+        if len(visor) > 0:
+            context['visor'] = visor[0]
+        else:
+            context['visor'] = None
         context['tipolentes'] = tipolentes
         context['diagform'] = diagnostico
         context['tratform'] = tratamiento
         context['recetaform'] = receta
         context['controlform'] = control
+        context['descuento'] = descuento
         return context
 
     def form_valid(self, form):
         model = form.save(commit=False)
         model.estado = 1
         model.save()
-        return render(self.request, 'paciente/success.html')
+        return JsonResponse({"success": True})
+
+    def form_invalid(self, form):
+        return JsonResponse({"success": False})
 
 class HistoriaListar(ListView):
     template_name = 'agenda/ajax/historia.html'
@@ -297,6 +312,24 @@ class HistoriaListar(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         historias = self.model.objects.filter(paciente__exact=self.kwargs['pk'], estado__exact=1).order_by('-fecha')
+        context['historias'] = historias
+        if len(historias) > 0:
+            context['historia'] = historias[0]
+        else:
+            context['historia'] = None
+        return context
+
+class HistoriamListar(ListView):
+    template_name = 'agenda/ajax/historia.html'
+    model = Agenda
+
+    def get_context_data(self, **kwargs):
+        persona, agenda = [self.kwargs[x] for x in ['pk', 'id']]
+        print(persona)
+        print(agenda)
+        context = super().get_context_data(**kwargs)
+        agenda = Agenda.objects.get(id=agenda)
+        historias = self.model.objects.filter(paciente__exact=persona, estado__exact=1).exclude(id=agenda.id).order_by('-fecha')
         context['historias'] = historias
         if len(historias) > 0:
             context['historia'] = historias[0]
@@ -416,6 +449,7 @@ class AgendaservUpdate(View):
     def get(self, *args, **kwargs):
         servicio = Agendaserv.objects.get(id=self.kwargs['pk'])
         servicio.estado = True
+        servicio.fecha = datetime.now()
         servicio.save()
         agenda = Agenda.objects.get(id=servicio.agenda.id)
         self.recalculo()
@@ -451,6 +485,7 @@ class ControlView(CreateView):
                 agenda.hora_fin = (datetime.combine(datetime.today(), model.hora_inicio)+timedelta(minutes=15)).time()
                 agenda.fecha = model.fecha
                 agenda.estado = False
+                agenda.control = True
                 agenda.save()
                 return JsonResponse({"success": True})
             else:
@@ -976,8 +1011,11 @@ class ReporteRecseguro(View):
         data.append((Paragraph("OTROS", estilo['Titulo2']),"","","","",""))
         data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
         data.append(("","","","","",""))
+        diagnosticos = ''
+        for idx, item in enumerate(agenda.diagnostico_set.all()):
+            diagnosticos = diagnosticos + str(idx + 1) + '.- ' + item.detalle + ', '
         data.append((Paragraph("DIAGNOSTICO", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
+        data.append((Paragraph(diagnosticos, estilo['Parrafo']),"","","","",""))
         data.append(("","","","","",""))
         data.append((Paragraph("TRATAMIENTO", estilo['Titulo']),"","","","",""))
         data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
@@ -986,7 +1024,8 @@ class ReporteRecseguro(View):
 
         table = Table(data, colWidths=78, rowHeights=15)
         table.setStyle(TableStyle([
-            ('GRID', (0, 0), (5, 38), 1, colors.black),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('GRID', (0, 0), (5, -1), 1, colors.black),
             ('SPAN',(0,0),(3,0)),
             ('SPAN',(0,1),(3,1)),
             ('SPAN',(0,2),(3,2)),

@@ -62,10 +62,14 @@
       <form id="form-servicio-crear" action="{% url "servicioajax-crear" %}" method="post" >
         {% csrf_token %}
         <div class="row">
-          <div class="col-md-7">
+          <div class="col-md-6">
             {{ servicioform.servicio }}
           </div>
-          <div class="col-md-4">
+          <div class="col-md-2">
+            {{ servicioform.descuento }}
+            <label for="id_descuento" class="form-control-sm fixmt4 m-b-0"><small>Desc.</small></label>
+          </div>
+          <div class="col-md-3">
             {{ servicioform.costo }}
           </div>
           {{ servicioform.agenda }}
@@ -241,5 +245,13 @@
       }
   });
 
+  $("#id_descuento").on("change", function (e) {
+  if ( $(this).is(":checked") ){
+      $('#id_costo').prop('readonly', false);
+  } else {
+    $('#id_costo').prop("readonly", true);
+    costo();
+  }
+});
 }
 </script>

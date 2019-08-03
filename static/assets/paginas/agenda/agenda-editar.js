@@ -6,45 +6,43 @@ $(document).ready(function(){
       success: function(data){
         $('.chatonline').html(data);
       }
-    })
+    });
   });
   selectipo();
   $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+  agudezaclose();
 });
 
 $(document).keydown(function(e) { 
   if (e.keyCode == 38) {
     $(this).next('.form-control').focus();
-    console.log('arriba')
   } 
   if (e.keyCode == 40) {
     $(this).prev('.form-control').focus();
-    console.log('abajo')
   }
 });
 
 $('#historiac').on('click', function(e){
-  $this_url = $(this).attr('data-url');
+  $thisUrl = $(this).attr('data-url');
   $.ajax({
-    url: $this_url,
+    url: $thisUrl,
     type: 'get',  
     success: function(data){
       $('#lmcontenido').html(data);
       $('#lmodal').modal('show');
     }
-  })
+  });
 });
 
 $('#recetar').on('click', function(e){
   $('#recetaform')[0].reset();
-  $("#id_medicamento").val("").trigger("change");
+  $("#id_medicamento").val('').trigger("change");
   $('#receta-modal').modal('show');
 });
 
 $('#form-guardar').on('submit', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -78,7 +76,6 @@ $('#form-guardar').on('submit', function (e) {
 $('#diagform').on('submit', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -105,7 +102,6 @@ $('#diagform').on('submit', function (e) {
 $('#recetaform').on('submit', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -132,7 +128,6 @@ $('#recetaform').on('submit', function (e) {
 
 var autoguardado = function(){
   var $formData = $("#form-guardar").serialize();
-  var $formArray = $("#form-guardar").serializeArray();
   var $formArray = {};
   $.each($("#diagform").serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -144,21 +139,34 @@ var autoguardado = function(){
       url: $thisUrl,
       data: $formData,
       success: function(data){
-        console.log("guardado");
+        if(!data.success){
+            $.toast({
+            heading: 'Mensaje del Sistema',
+            text: "Esta historia no existe, ha sido borrado",
+            position: 'top-right',
+            loaderBg:'#ff6849',
+            icon: 'error',
+            hideAfter: 3500
+          });
+        }
       },
       error: function(xhr,errmsg,err) {
         // Show an error
-        $('#results').html("<div class='alert-box alert radius' data-alert>"+
-        "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
-        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        $.toast({
+            heading: 'Mensaje del Sistema',
+            text: "El Servidor ha caido, o esta Historia a sido Eliminada, los datos no han sido guardados",
+            position: 'top-right',
+            loaderBg:'#ff6849',
+            icon: 'error',
+            hideAfter: 3500
+          });
       }
-  })
-}
+  });
+};
 
 $('#tratform').on('submit', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -179,13 +187,12 @@ $('#tratform').on('submit', function (e) {
         "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
       }
-  })
+  });
 });
 
 $('#controlform').on('submit', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -212,7 +219,6 @@ $('#controlform').on('submit', function (e) {
 $('#diagnosticos').on('submit', '.form-eliminar-diag', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -238,7 +244,6 @@ $('#diagnosticos').on('submit', '.form-eliminar-diag', function (e) {
 $('#tratamientos').on('submit', '.form-eliminar-trat', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -264,7 +269,6 @@ $('#tratamientos').on('submit', '.form-eliminar-trat', function (e) {
 $('#controles').on('submit', '.form-eliminar-control', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -290,7 +294,6 @@ $('#controles').on('submit', '.form-eliminar-control', function (e) {
 $('#recetas').on('submit', '.form-eliminar-receta', function (e) {
   e.preventDefault();
   var $formData = $(this).serialize();
-  var $formArray = $(this).serializeArray();
   var $formArray = {};
   $.each($(this).serializeArray(), function (i, field) {
     $formArray[field.name] = field.value; 
@@ -322,7 +325,6 @@ function imprimirlista(e, obj)
 
 
 $('#selectipo').on('change', function(){
-  var aux = [];
   var valor = "";
   aux = $(this).val();
   aux.forEach(element => {
@@ -336,10 +338,8 @@ $('#selectipo').on('change', function(){
 });
 
 function selectipo(){
-  var valor = "";
-  var aux = [];
   valor = $('#id_tipo_lente').val();
-  aux = valor.split(",")
+  aux = valor.split(",");
   $('#selectipo').selectpicker('val', aux);
 }
 $('.autoguardado').on('change', function(){
@@ -433,3 +433,11 @@ $('#id_medicamento').select2({
   minimumInputLength: 2,
   
 });
+function agudeza() {
+    $(".agudeza").hide();
+    $("#visor").show();
+}
+function agudezaclose() {
+    $(".agudeza").show();
+    $("#visor").hide();
+}

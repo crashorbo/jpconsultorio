@@ -89,20 +89,22 @@ class AgendaservicioForm(forms.ModelForm):
   servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
   class Meta:
     model = Agendaserv
-    fields = ('agenda','servicio', 'costo')
+    fields = ('agenda','servicio', 'costo', 'descuento')
     widgets = {
       'agenda': forms.HiddenInput(),
-      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'readonly': True}),
+      'descuento': forms.CheckboxInput(attrs={'class': 'form-control form-control-sm'}),
     }
 
 class AgendaservForm(forms.ModelForm):
   servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
   class Meta:
     model = Agendaserv
-    fields = ('servicio', 'costo', 'estado')
+    fields = ('servicio', 'costo', 'estado', 'descuento')
     widgets = {
-      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
-      'estado': forms.CheckboxInput(attrs={'class': 'filled-in chk-col-blue form-control-sm'}),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'readonly': True}),
+      'estado': forms.CheckboxInput(attrs={'class': 'filled-in chk-col-red form-control-sm'}),
+      'descuento': forms.CheckboxInput(attrs={'class': 'filled-in chk-col-blue form-control-sm'}),
     }
 
 ServicioFormset = inlineformset_factory(Agenda, Agendaserv, AgendaservForm, can_delete=False, extra=1)

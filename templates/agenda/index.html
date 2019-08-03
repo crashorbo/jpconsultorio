@@ -20,6 +20,10 @@
                 <div class="col-md-12">
                     <form id="form-agenda" action="{% url 'agenda-registrar' %}" method="post">
                         {% csrf_token %}
+                        <div class="hide">
+                            {{ form.ddc1 }}
+                            {{ form.idc1 }}
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <small>Paciente</small>
@@ -72,13 +76,18 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <small>Costo</small>
+
                                     {{ form.visible_fields.1 }}
                                 </div>
-                                <div class="col-md-6 p-t-30">
+                                <div class="col-md-4 p-t-30">
+                                    {{ form.visible_fields.3 }}
+                                    <label for="id_agendaserv-0-descuento" class="form-control-sm fixmt4 m-b-0"><small>Descuento</small></label>
+                                </div>
+                                <div class="col-md-4 p-t-30">
                                     {{ form.visible_fields.2 }}
-                                    <label for="id_agendaserv-0-estado" class="form-control-sm fixmt4 m-b-0">Cancelado</label>
+                                    <label for="id_agendaserv-0-estado" class="form-control-sm fixmt4 m-b-0 hide"><small>Cancelado</small></label>
                                 </div>
                             </div>
                         {% endfor %}
