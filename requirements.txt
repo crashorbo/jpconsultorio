@@ -3,7 +3,7 @@ astroid==2.2.5
 certifi==2019.6.16
 dataset==1.1.2
 dbfread==2.0.7
-Django==2.2.1
+Django==2.2.3
 django-appconf==1.0.3
 django-autocomplete-light==3.4.1
 django-braces==1.13.0
