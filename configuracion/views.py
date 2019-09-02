@@ -4,13 +4,18 @@ from braces.views import JSONResponseMixin
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.shortcuts import render
-
+import datetime
 from .models import Tipolente
 from .forms import TipolenteForm
 
 # Create your views here.
-class IndexView(TemplateView):
-    template_name = 'configuracion/index.html'
+class IndexView(View):
+    def get(self, *args, **kwargs):
+      now = datetime.date.today().year
+      frango = list(range(now, 2007, -1))
+      print(frango)
+      return render(self.request, 'configuracion/index.html', {'frango': frango})
+
 
 class TableAsJSON(JSONResponseMixin, View):
   model = Tipolente

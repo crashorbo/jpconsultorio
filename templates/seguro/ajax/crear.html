@@ -16,14 +16,16 @@
 <div class="modal-body">
   <form id="form-servicio" action="{% url "seguro-ajax-registrar" %}" method="post" novalidate>
     {% csrf_token %}
-    <div class="form-group">
-      <label>Nombre</label>     
+    <div class="col-md-12">
+      <small><strong>Nombre</strong></small>
       {{ form.nombre }}
     </div>
-    <div class="form-group">        
+    <div class="col-md-12">
+        <small><strong>Direccion</strong></small>
         {{ form.direccion }}
     </div>
-    <div class="form-group">        
+    <div class="col-md-12">
+        <small><strong>Telefono</strong></small>
         {{ form.telefono }}
     </div>
     <div class="modal-footer">
@@ -53,5 +55,8 @@
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
           }
       })
+  });
+  $("input").keyup(function(e){
+      this.value = this.value.toUpperCase();
   });
 </script>

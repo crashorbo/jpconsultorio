@@ -16,7 +16,20 @@
       <div class="row">
         <div class="col-md-1 col-sm-2 fixribbon">
           <div class="row">
-            <div class="{% if descuento %}miribbondesc{% else %}miribbon{% endif %} col-md-12">D.P.</div>
+            <div class="{% if descuento %}miribbondesc{% else %}miribbon{% endif %} col-md-12 mytooltip">D.P.
+                <span class="tooltip-content5 tooltip-bottom">
+                    <span class="tooltip-text3">
+                        <span class="tooltip-inner2">
+                            <p><strong>Procedencia: </strong>{{ consulta.procedencia }}</p>
+                            <hr style="border-top:1px solid #2A88E6;"/>
+                            <p><strong>Servicios:</strong></p>
+                            {% for item in consulta.agendaserv_set.all %}
+                                <p>-> {{ item.servicio.nombre }} = {{ item.servicio.costo }}</p>
+                            {% endfor %}
+                        </span>
+                    </span>
+                </span>
+            </div>
             <div class="hide">
               {{ form.paciente }}
               {{ form.procedencia }}
@@ -28,22 +41,23 @@
               {{ form.prioridad }}
               {{ form.tipo_beneficiario }}
               {{ form.matricula }}
+              {{ form.fecha_consulta }}
           </div>
           </div>
         </div>
         <div class="col-md-11 col-sm-10">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-9 col-sm-12">
               <h6>Nombre: <strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong></h6>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-12 text-right">
               <h6>Edad: <strong>{{ consulta.paciente.fecha_nacimiento|edad }}</strong></h6>
             </div>
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-8 col-sm-12">
               <h6>Ocupacion: <em>{{ consulta.paciente.ocupacion }}</em></h6>
             </div>
-            <div class="col-md-6 col-sm-6">
-              <h6>Procedencia: <em>{{ consulta.procedencia }}</em></h6>
+            <div class="col-md-4 col-sm-12 text-right">
+              <h6>Fecha: <em>{{ consulta.fecha_consulta|date:"d/m/Y"}}</em></h6>
             </div>
             {% if form.errors %}
             <div class="alert alert-danger">
@@ -254,7 +268,7 @@
               <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historiam-lista' pk=consulta.paciente.id id=consulta.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
               <button type="button" class="btn btn-sm btn-agenda text-white" id="recetar"  data-toggle="tooltip" data-placement="top" title=""  data-original-title="Receta"><i class="icon-medicine-2"></i></button>
               {% if consulta.tipo %}
-              <a onclick="imprimirlista(event, this);" href="{% url 'reporterecetaseguro' pk=consulta.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+              <a onclick="imprimirlista(event, this);" href="{% url 'reporterecetasegurob' pk=consulta.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
               {% endif %}
               <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-sm btn-inverse" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
             </div>
@@ -553,12 +567,25 @@
                 </div>
               </div>
           {% else %}
-            NO existen datos anteriores.
+          <div onclick="agudezaclose();" class="col-md-1 col-sm-2 fixribbon">
+                <div class="row">
+                  <div class="miribbonav col-md-12">A.V</div>
+                </div>
+            </div>
+          <div class="col-md-11 col-sm-10">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12 text-center m-t-10">
+                        No existen datos anteriores.
+                    </div>
+                </div>
+            </div>
+          </div>
           {% endif %}
       </div>
     </div> 
   </div>
-  <div data-backdrop="static" data-keyboard="false"  id="receta-modal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none;">
+  <div data-keyboard="true"  id="receta-modal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none;">
     <div class="modal-dialog modal-lg">
       <div id="contenido-modal" class="modal-content">
         <div class="modal-header">

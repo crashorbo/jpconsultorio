@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, View, CreateView, ListView, UpdateView, DeleteView, DetailView
+from django.views.generic import View, CreateView, ListView, UpdateView, DeleteView, DetailView
 from dal import autocomplete
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -18,6 +18,7 @@ from paciente.models import Paciente
 from paciente.templatetags import paciente_tags
 from configuracion.models import Tipolente
 from core.models import Movdiario
+from paciente.forms import PacienteForm
 from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta, Reconsulta, Agendaserv
 from .forms import AgendaForm, DiagnosticoForm, TratamientoForm, ServicioFormset, RecetaForm, ReconsultaForm, AgendaservicioForm
 from io import BytesIO
@@ -49,8 +50,12 @@ class IndexView(CreateView):
 class PacienteAutocomplete(View):
     def get(self, *args, **kwargs):
         q = self.request.GET['q']
-        qs = Paciente.objects.filter(Q(nombres__icontains=q) | Q(apellidos__icontains=q) | Q(nro_documento__istartswith=q))
-        qs = self.get_results(qs)        
+        object_list = Paciente.objects.all()
+        filtered_object_list = object_list
+        if len(q) > 0:
+            filtered_object_list = object_list.filter_on_search(q)
+        qs = filtered_object_list
+        qs = self.get_results(qs)
         return JsonResponse({
             'results': qs
         }, content_type='application/json')
@@ -62,31 +67,16 @@ class AgendaRegistrar(CreateView):
     model = Agenda
     form_class = AgendaForm
     template_name = 'paciente/registrar.html'
-  
-    def get_context_data(self, **kwargs):
-        data = super(AgendaRegistrar, self).get_context_data(**kwargs)
-        if self.request.POST:
-            data['agendaserv'] = ServicioFormset(self.request.POST, prefix='agendaserv')
-        else:
-            data['agendaserv'] = ServicioFormset(prefix='agendaserv')
-        return data
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        servicios = context['agendaserv']    
-        if servicios.is_valid():
-            with transaction.atomic():
-                self.object = form.save(commit=False)
-                self.object.hora_fin = (datetime.combine(datetime.today(), self.object.hora_inicio)+timedelta(minutes=15)).time()
-                if self.object.tipo == 0:
-                    self.object.procedencia = 'PARTICULAR'
-                elif self.object.tipo == 1:
-                    self.object.procedencia = self.object.seguro.nombre
-                self.object.save()
-                if servicios.is_valid():
-                    servicios.instance = self.object
-                    servicios.save()
-                self.recalculo()
+        self.object = form.save(commit=False)
+        self.object.hora_fin = (datetime.combine(datetime.today(), self.object.hora_inicio)+timedelta(minutes=15)).time()
+        if self.object.tipo == 0:
+            self.object.procedencia = 'PARTICULAR'
+        elif self.object.tipo == 1:
+            self.object.procedencia = self.object.seguro.nombre
+        self.object.save()
+        self.recalculo()
         return render(self.request, 'paciente/success.html')
 
     def recalculo(self):
@@ -152,8 +142,7 @@ class AgendaAjaxRegistrar(CreateView):
 
 class AgendaAjaxLista(View):
     def get(self, *args, **kwargs):
-        print(self.request.GET['start'])
-        qs = Agenda.objects.filter(fecha__range=(self.request.GET['start'], self.request.GET['end']))
+        qs = Agenda.objects.filter(fecha__range=(self.request.GET['start'], self.request.GET['end']), deleted=False)
         qs = self.get_results(qs)
         return HttpResponse({
             json.dumps(qs)
@@ -161,20 +150,23 @@ class AgendaAjaxLista(View):
 
     def get_results(self, results):
         TIPO_CHOICE = {
-            0: 'bg-success',
-            1: 'bg-danger',
+            0: 'bg-warning',
+            1: 'bg-success',
+            2: 'bg-danger'
         }
-        return [dict(id=x.id,title=x.hora_fin.strftime("%H:%M")+' -> '+x.paciente.nombres+' '+x.paciente.apellidos, start=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_inicio.strftime("%H:%M:%S"), end=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_fin.strftime("%H:%M:%S"), className=TIPO_CHOICE[self.calculo(x)]) for x in results]
+        return [dict(id=x.id,title=x.paciente.nombres+' '+x.paciente.apellidos, start=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_inicio.strftime("%H:%M:%S"), end=x.fecha.strftime("%Y-%m-%d" )+' '+x.hora_fin.strftime("%H:%M:%S"), className=TIPO_CHOICE[self.calculo(x)]) for x in results]
 
     def calculo(self, objeto):
+        fecha = date.today()
         valor = 0
-        for item in objeto.agendaserv_set.all():
-            if not item.estado:
-                valor = valor + item.costo
-        if valor > 0:
-            return 1
+        if objeto.estado:
+            valor = 2
         else:
-            return 0
+            for item in objeto.agendaserv_set.all():
+                if item.fecha == fecha:
+                    valor = 1
+                    break
+        return valor
 
 class AgendaListar(ListView):
     template_name = 'agenda/listar.html'
@@ -182,15 +174,26 @@ class AgendaListar(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['consultas'] = self.model.objects.filter(fecha__exact=datetime.now(), estado__exact=0)
+        context['consultas'] = self.model.objects.filter(fecha__exact=datetime.now(), deleted=False)
         return context
 
 class AgendaFechaListar(View):
     def get(self, *args, **kwargs):
         q = self.request.GET['fecha']
         fecha = datetime.strptime(q, "%d-%m-%Y")
-        qs = Agenda.objects.filter(fecha=fecha)       
-        return render(self.request, 'agenda/ajax/listaconsultas.html', {'consultas': qs})
+        qs = Agenda.objects.filter(fecha=fecha, deleted=False)
+        fecha_aux = date.today()
+        final = []
+        for item in qs:
+            if item.estado:
+                final.append(item)
+            else:
+                for x in item.agendaserv_set.all():
+                    if x.fecha == fecha_aux:
+                        final.append(item)
+                        break
+
+        return render(self.request, 'agenda/ajax/listaconsultas.html', {'consultas': final})
 
 class AgendaAjaxEspera(ListView):
     template_name = 'agenda/ajax/listar.html'
@@ -198,7 +201,15 @@ class AgendaAjaxEspera(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['consultas'] = self.model.objects.filter(fecha__exact=datetime.now()).order_by('hora_inicio')
+        qs = self.model.objects.filter(fecha__exact=datetime.now(), deleted=False).order_by('hora_inicio')
+        fecha = date.today()
+        final = []
+        for item in qs:
+            for x in item.agendaserv_set.all():
+                if x.fecha == fecha:
+                    final.append(item)
+                    break
+        context['consultas'] = final
         return context
 
 class AgendaAjaxEditar(UpdateView):
@@ -210,13 +221,23 @@ class AgendaAjaxEditar(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         data = {'agenda': self.kwargs['pk']}
+        agenda = Agenda.objects.get(id=self.kwargs['pk'])
+        paciente = Paciente.objects.get(id=agenda.paciente.id)
+        pacienteForm = PacienteForm(instance=paciente)
         servicio = AgendaservicioForm(data)
         context['servicioform'] = servicio
+        context['pacienteform'] = pacienteForm
+        context['paciente'] = paciente
         return context
 
     def form_valid(self, form):
         model = form.save(commit=False)
-        model.hora_fin = (datetime.combine(datetime.today(), model.hora_inicio)+timedelta(minutes=15)).time()
+        agenda = Agenda.objects.get(id=model.id)
+        if not agenda.estado:
+            model.hora_fin = (datetime.combine(datetime.today(), model.hora_inicio)+timedelta(minutes=15)).time()
+        else:
+            model.fecha = agenda.fecha
+            model.hora_inicio = agenda.hora_inicio
         model.save()
         return JsonResponse({"success": True})
     
@@ -232,8 +253,23 @@ class AgendaServicioCrear(CreateView):
         model = form.save(commit=False)
         model.save()
         agenda = Agenda.objects.get(id=model.agenda.id)
+        self.recalculo()
         return render(self.request, 'agenda/ajax/servicios.html', {'agenda': agenda})
 
+    def recalculo(self):
+        hoy = datetime.now()
+        fecha = hoy.strftime("%Y-%m-%d")
+        try:
+            movimiento = Movdiario.objects.get(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
+        except Movdiario.DoesNotExist:
+            movimiento = Movdiario(fecha=datetime.strptime(fecha, "%Y-%m-%d"), ingreso=0, egreso=0, estado=True)
+        servicios = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
+        valor = 0
+        for serv in servicios:
+            if serv.estado and (not serv.agenda.tipo):
+                valor = valor + serv.costo
+        movimiento.ingreso = valor
+        movimiento.save()
 
 class AgendaAjaxDelete(DeleteView):
     model = Agenda
@@ -242,9 +278,9 @@ class AgendaAjaxDelete(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         borrar = self.get_object()
-        print(borrar.estado)
         if (not borrar.estado) and (not borrar.control):
-            borrar.delete()
+            borrar.deleted = True
+            borrar.save()
             self.recalculo()
         return render(self.request, 'paciente/success.html')
     
@@ -298,6 +334,12 @@ class AgendaEditar(UpdateView):
 
     def form_valid(self, form):
         model = form.save(commit=False)
+        agenda = Agenda.objects.get(id=model.id)
+        print(agenda.fecha_consulta)
+        if agenda.control:
+            model.fecha_consulta = agenda.fecha_consulta
+            model.fecha = datetime.today()
+        print(model.fecha)
         model.estado = 1
         model.save()
         return JsonResponse({"success": True})
@@ -311,7 +353,7 @@ class HistoriaListar(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        historias = self.model.objects.filter(paciente__exact=self.kwargs['pk'], estado__exact=1).order_by('-fecha')
+        historias = self.model.objects.filter(paciente__exact=self.kwargs['pk'], estado__exact=1, deleted=False).order_by('-fecha')
         context['historias'] = historias
         if len(historias) > 0:
             context['historia'] = historias[0]
@@ -325,11 +367,9 @@ class HistoriamListar(ListView):
 
     def get_context_data(self, **kwargs):
         persona, agenda = [self.kwargs[x] for x in ['pk', 'id']]
-        print(persona)
-        print(agenda)
         context = super().get_context_data(**kwargs)
         agenda = Agenda.objects.get(id=agenda)
-        historias = self.model.objects.filter(paciente__exact=persona, estado__exact=1).exclude(id=agenda.id).order_by('-fecha')
+        historias = self.model.objects.filter(paciente__exact=persona, estado__exact=1, deleted=False).exclude(id=agenda.id).order_by('-fecha')
         context['historias'] = historias
         if len(historias) > 0:
             context['historia'] = historias[0]
@@ -444,7 +484,6 @@ class DiagnosticoListar(ListView):
     def get_queryset(self, *args, **kwargs):
         self.agenda = get_object_or_404(Agenda, pk=self.kwargs['pk'])
         return Diagnostico.objects.filter(agenda=self.agenda)
-
 class AgendaservUpdate(View):
     def get(self, *args, **kwargs):
         servicio = Agendaserv.objects.get(id=self.kwargs['pk'])
@@ -477,7 +516,7 @@ class ControlView(CreateView):
     
     def form_valid(self, form):
         model = form.save(commit=False)
-        agendas = Agenda.objects.filter(paciente=model.paciente).order_by('-fecha')
+        agendas = Agenda.objects.filter(paciente=model.paciente, deleted=False).order_by('-fecha')
         if agendas:
             agenda = agendas[0]
             if agenda.estado:
@@ -506,7 +545,7 @@ class Reportemov(View):
         response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
         buff = BytesIO()
         doc = SimpleDocTemplate(buff,
-                                pagesize=landscape(letter),
+                                pagesize=portrait(letter),
                                 rightMargin=30,
                                 leftMargin=30,
                                 topMargin=30,
@@ -514,15 +553,17 @@ class Reportemov(View):
                                 )
 
         cabeza = ParagraphStyle(name="cabeza", alignment=TA_LEFT, fontSize=14, fontName="Times-Roman", textColor=colors.darkblue)
-        cabecera = ParagraphStyle(name="cabecera", alignment=TA_CENTER, fontSize=12, fontName="Times-Roman", textColor=colors.white)
-        celdaderecha = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=10, fontName="Times-Roman")
-        celdaderechabold = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=12, fontName="Times-Bold")
-        celda = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=10, fontName="Times-Roman")
-        celdabold = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=12, fontName="Times-Bold")
+        cabecera = ParagraphStyle(name="cabecera", alignment=TA_CENTER, fontSize=10, fontName="Times-Roman", textColor=colors.white)
+        celdaderecha = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=8, fontName="Times-Roman")
+        celdaderechabold = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=10, fontName="Times-Bold")
+        celda = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman")
+        celdabold = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=10, fontName="Times-Bold")
         celdaverde = ParagraphStyle(name="celdaverde", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.green)
         celdaroja = ParagraphStyle(name="celdaroja", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.red)
         celdarojarem = ParagraphStyle(name="celdaroja", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.red, backColor = colors.yellow)
-        celdaremarcada = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman", backColor = colors.yellow)                                
+        celdaremarcada = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman", backColor=colors.yellow)
+        celdaremarcadader = ParagraphStyle(name="celdader", alignment=TA_RIGHT, fontsize=8, fontName="Times-Roman",
+                                           backColor=colors.yellow)
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontSize=16))
         styles.add(ParagraphStyle(name='subtitulo', alignment=TA_LEFT, fontSize=14))
@@ -532,14 +573,13 @@ class Reportemov(View):
         movimiento = []
         particulares = []
         asegurados = []
-        seguro = []
         total_particular_costo = 0
         total_particular_cobrado = 0
         total_asegurado_costo = 0
         movimiento.append(header)
         movimiento.append(subparticular)
         
-        items = Agendaserv.objects.filter(fecha=datetime.strptime(hoy.strftime("%Y-%m-%d"), "%Y-%m-%d"))
+        items = Agendaserv.objects.filter(fecha=datetime.strptime(hoy.strftime("%Y-%m-%d"), "%Y-%m-%d"), agenda__deleted=False)
         for item in items:
             if not item.agenda.tipo:
                 if item.estado:
@@ -547,20 +587,39 @@ class Reportemov(View):
                     total_particular_cobrado = total_particular_cobrado + item.costo
                 else:
                     aux = Decimal('0.00')
-                this_particular = [Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda), Paragraph(item.servicio.nombre, celda), Paragraph(str(item.costo), celdaderecha), Paragraph(str(aux),celdaderecha)]
+                if item.descuento:
+                    this_particular = [
+                        Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celdaremarcada),
+                        Paragraph(item.servicio.nombre, celdaremarcada), Paragraph(str(item.costo), celdaremarcadader),
+                    ]
+                else:
+                    this_particular = [
+                        Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda),
+                        Paragraph(item.servicio.nombre, celda), Paragraph(str(item.costo), celdaderecha),
+                    ]
                 particulares.append(this_particular)
                 total_particular_costo = total_particular_costo + item.costo
             else:
-                this_asegurado = [Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda), Paragraph(item.servicio.nombre, celda), Paragraph(str(item.agenda.matricula), celda), Paragraph(item.agenda.tipo_beneficiario, celda), Paragraph(str(item.costo),celdaderecha)]
+                if item.descuento:
+                    this_asegurado = [
+                        Paragraph((item.agenda.paciente.nombres+' '+item.agenda.paciente.apellidos), celdaremarcada),
+                        Paragraph(item.servicio.nombre, celdaremarcada), Paragraph(str(item.agenda.procedencia), celdaremarcada),
+                        Paragraph(str(item.costo), celdaremarcadader)
+                    ]
+                else:
+                    this_asegurado = [
+                        Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda),
+                        Paragraph(item.servicio.nombre, celda), Paragraph(str(item.agenda.procedencia), celda),
+                        Paragraph(str(item.costo), celdaderecha)
+                    ]
                 asegurados.append(this_asegurado)
                 total_asegurado_costo = total_asegurado_costo + item.costo
-        this_particular = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph(str(total_particular_costo), celdaderechabold), Paragraph(str(total_particular_cobrado),celdaderechabold)]
+        this_particular = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph(str(total_particular_costo), celdaderechabold)]
         particulares.append(this_particular)
-        this_asegurado = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph('', celda), Paragraph('', celda), Paragraph(str(total_asegurado_costo),celdaderechabold)]
+        this_asegurado = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph('', celda), Paragraph(str(total_asegurado_costo),celdaderechabold)]
         asegurados.append(this_asegurado)
-        
-        headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('Costo', cabecera), Paragraph('SubTotal',cabecera))
-        t1 = Table([headings] + particulares, colWidths=[11 * cm, 8 * cm, 3 * cm, 3 * cm])
+        headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('Costo', cabecera))
+        t1 = Table([headings] + particulares, colWidths=[11 * cm, 6 * cm, 2 * cm])
         t1.setStyle(TableStyle(
         [
             ('GRID', (0, 0), (6, -1), 1, colors.black),
@@ -569,8 +628,8 @@ class Reportemov(View):
         ]
         ))
 
-        headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('matricula', cabecera), Paragraph('Procede', cabecera), Paragraph('Costo',cabecera))
-        t2 = Table([headings] + asegurados, colWidths=[9 * cm, 7 * cm, 4 * cm, 2 * cm, 3 * cm])
+        headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('Procedencia', cabecera), Paragraph('Costo',cabecera))
+        t2 = Table([headings] + asegurados, colWidths=[8 * cm, 3 * cm, 6 * cm, 2 * cm])
         t2.setStyle(TableStyle(
         [
             ('GRID', (0, 0), (6, -1), 1, colors.black),
@@ -578,6 +637,7 @@ class Reportemov(View):
             ('BACKGROUND', (0, 0), (-1, 0), colors.black)
         ]
         ))
+
 
         movimiento.append(t1)
         movimiento.append(subasegurados)
@@ -591,12 +651,11 @@ class Reportemovfecha(View):
     def get(self, *args, **kwargs):
         fecha = self.kwargs['date']
         response = HttpResponse(content_type='application/pdf')
-        pdf_name = "mov_"+fecha+".pdf"  # llamado clientes
-        # la linea 26 es por si deseas descargar el pdf a tu computadora
+        pdf_name = "mov_"+fecha+".pdf"
         response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
         buff = BytesIO()
         doc = SimpleDocTemplate(buff,
-                                pagesize=landscape(letter),
+                                pagesize=portrait(letter),
                                 rightMargin=30,
                                 leftMargin=30,
                                 topMargin=30,
@@ -604,31 +663,34 @@ class Reportemovfecha(View):
                                 )
 
         cabeza = ParagraphStyle(name="cabeza", alignment=TA_LEFT, fontSize=14, fontName="Times-Roman", textColor=colors.darkblue)
-        cabecera = ParagraphStyle(name="cabecera", alignment=TA_CENTER, fontSize=12, fontName="Times-Roman", textColor=colors.white)
-        celdaderecha = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=10, fontName="Times-Roman")
-        celdaderechabold = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=12, fontName="Times-Bold")
-        celda = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=10, fontName="Times-Roman")
-        celdabold = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=12, fontName="Times-Bold")
+        cabecera = ParagraphStyle(name="cabecera", alignment=TA_CENTER, fontSize=10, fontName="Times-Roman", textColor=colors.white)
+        celdaderecha = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=8, fontName="Times-Roman")
+        celdaderechabold = ParagraphStyle(name="celdaderecha",alignment=TA_RIGHT, fontsize=10, fontName="Times-Bold")
+        celda = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman")
+        celdabold = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=10, fontName="Times-Bold")
         celdaverde = ParagraphStyle(name="celdaverde", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.green)
         celdaroja = ParagraphStyle(name="celdaroja", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.red)
         celdarojarem = ParagraphStyle(name="celdaroja", alignment=TA_CENTER, fontSize=8, fontName="Times-Roman", textColor=colors.red, backColor = colors.yellow)
-        celdaremarcada = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman", backColor = colors.yellow)                                
+        celdaremarcada = ParagraphStyle(name="celda", alignment=TA_LEFT, fontsize=8, fontName="Times-Roman", backColor = colors.yellow)
+        celdaremarcadader = ParagraphStyle(name="celdader", alignment=TA_RIGHT, fontsize=8, fontName="Times-Roman",
+                                           backColor=colors.yellow)
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontSize=16))
         styles.add(ParagraphStyle(name='subtitulo', alignment=TA_LEFT, fontSize=14))
         header = Paragraph("Reporte Movimientos "+fecha, styles['centered'])
         subparticular = Paragraph("Particulares:", styles['Heading2'])
         subasegurados = Paragraph("Asegurados:", styles['Heading2'])
+        subcontroles = Paragraph("Controles:", styles['Heading2'])
         movimiento = []
         particulares = []
         asegurados = []
-        seguro = []
+        controles = []
         total_particular_costo = 0
         total_particular_cobrado = 0
         total_asegurado_costo = 0
         movimiento.append(header)
         movimiento.append(subparticular)
-        items = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%d-%m-%Y"))
+        items = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%d-%m-%Y"), agenda__deleted=False)
         for item in items:
             if not item.agenda.tipo:
                 if item.estado:
@@ -636,20 +698,44 @@ class Reportemovfecha(View):
                     total_particular_cobrado = total_particular_cobrado + item.costo
                 else:
                     aux = Decimal('0.00')
-                this_particular = [Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda), Paragraph(item.servicio.nombre, celda), Paragraph(str(item.costo), celdaderecha), Paragraph(str(aux),celdaderecha)]
+                if item.descuento:
+                    this_particular = [
+                        Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celdaremarcada),
+                        Paragraph(item.servicio.nombre, celdaremarcada), Paragraph(str(item.costo), celdaremarcadader),
+                        Paragraph(str(aux), celdaremarcadader)
+                    ]
+                else:
+                    this_particular = [
+                        Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda),
+                        Paragraph(item.servicio.nombre, celda), Paragraph(str(item.costo), celdaderecha),
+                        Paragraph(str(aux), celdaderecha)
+                    ]
                 particulares.append(this_particular)
                 total_particular_costo = total_particular_costo + item.costo
             else:
-                this_asegurado = [Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda), Paragraph(item.servicio.nombre, celda), Paragraph(str(item.agenda.matricula), celda), Paragraph(item.agenda.tipo_beneficiario, celda), Paragraph(str(item.costo),celdaderecha)]
+                if item.descuento:
+                    this_asegurado = [
+                        Paragraph((item.agenda.paciente.nombres+' '+item.agenda.paciente.apellidos), celdaremarcada),
+                        Paragraph(item.servicio.nombre, celdaremarcada), Paragraph(str(item.agenda.matricula), celdaremarcada),
+                        Paragraph(item.agenda.tipo_beneficiario, celdaremarcada), Paragraph(str(item.costo), celdaremarcadader)
+                    ]
+                else:
+                    this_asegurado = [
+                        Paragraph((item.agenda.paciente.nombres + ' ' + item.agenda.paciente.apellidos), celda),
+                        Paragraph(item.servicio.nombre, celda), Paragraph(str(item.agenda.matricula), celda),
+                        Paragraph(item.agenda.tipo_beneficiario, celda), Paragraph(str(item.costo), celdaderecha)
+                    ]
                 asegurados.append(this_asegurado)
                 total_asegurado_costo = total_asegurado_costo + item.costo
         this_particular = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph(str(total_particular_costo), celdaderechabold), Paragraph(str(total_particular_cobrado),celdaderechabold)]
         particulares.append(this_particular)
         this_asegurado = [Paragraph('TOTAL', celdabold), Paragraph('', celda), Paragraph('', celda), Paragraph('', celda), Paragraph(str(total_asegurado_costo),celdaderechabold)]
         asegurados.append(this_asegurado)
-        
+        itemss = Agenda.objects.filter(fecha=datetime.strptime(fecha, "%d-%m-%Y"), control=True)
+        for item in itemss:
+            controles.append([Paragraph(item.paciente.nombres + ' ' + item.paciente.apellidos, celda), ])
         headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('Costo', cabecera), Paragraph('SubTotal',cabecera))
-        t1 = Table([headings] + particulares, colWidths=[11 * cm, 8 * cm, 3 * cm, 3 * cm])
+        t1 = Table([headings] + particulares, colWidths=[10 * cm, 5 * cm, 2 * cm, 2 * cm])
         t1.setStyle(TableStyle(
         [
             ('GRID', (0, 0), (6, -1), 1, colors.black),
@@ -659,7 +745,7 @@ class Reportemovfecha(View):
         ))
 
         headings = (Paragraph('Nombre', cabecera), Paragraph('Consulta', cabecera), Paragraph('matricula', cabecera), Paragraph('Procede', cabecera), Paragraph('Costo',cabecera))
-        t2 = Table([headings] + asegurados, colWidths=[9 * cm, 7 * cm, 4 * cm, 2 * cm, 3 * cm])
+        t2 = Table([headings] + asegurados, colWidths=[8 * cm, 4 * cm, 3 * cm, 2 * cm, 2 * cm])
         t2.setStyle(TableStyle(
         [
             ('GRID', (0, 0), (6, -1), 1, colors.black),
@@ -668,9 +754,21 @@ class Reportemovfecha(View):
         ]
         ))
 
+        headings = (Paragraph('Nombre', cabecera),)
+        t3 = Table([headings] + controles, colWidths=[19 * cm, ])
+        t3.setStyle(TableStyle(
+            [
+                ('GRID', (0, 0), (6, -1), 1, colors.black),
+                ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.black)
+            ]
+        ))
+
         movimiento.append(t1)
         movimiento.append(subasegurados)
         movimiento.append(t2)
+        movimiento.append(subcontroles)
+        movimiento.append(t3)
         doc.build(movimiento)
         response.write(buff.getvalue())
         buff.close()
@@ -966,7 +1064,7 @@ class ReporteRecseguro(View):
         response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
         buffer = BytesIO()
         doc = BaseDocTemplate(buffer, pagesize=letter)
-        frame0 = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height-10, showBoundary=0, id='normalBorde')
+        frame0 = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, showBoundary=0, id='normalBorde')
         doc.addPageTemplates([
             PageTemplate(id='principal', frames=frame0, onPage=self.encabezado),
             ])
@@ -974,6 +1072,7 @@ class ReporteRecseguro(View):
         estilo.add(ParagraphStyle(name = "Titulo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica-Bold"))
         estilo.add(ParagraphStyle(name = "Titulo2",  alignment=TA_CENTER, fontSize=10, fontName="Helvetica-Bold"))
         estilo.add(ParagraphStyle(name = "Parrafo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica"))
+        estilo.add(ParagraphStyle(name="ParrafoCentro", alignment=TA_CENTER, fontSize=10, fontName="Helvetica"))
            
         #Iniciamos el platypus story
         story=[]
@@ -984,31 +1083,64 @@ class ReporteRecseguro(View):
         data.append(((Paragraph(agenda.seguro.nombre, estilo['Parrafo'])),"","","",Paragraph(agenda.matricula, estilo['Parrafo']),""))
         data.append((Paragraph("FECHA", estilo['Titulo']),"","","",Paragraph("TIPO",estilo['Titulo']),""))
         data.append(((Paragraph(agenda.fecha.strftime("%d - %m - %Y"), estilo['Parrafo'])),"","","",Paragraph(agenda.tipo_beneficiario, estilo['Parrafo']),""))
-        data.append((Paragraph("ANTECEDENTES", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph("ANTECEDENTES OCULARES", estilo['Titulo']),"","","","",""))
         data.append((Paragraph(agenda.antocu, estilo['Parrafo']),"","","","",""))
-        data.append(("","","","","",""))
-        data.append(("","","","","",""))
+        data.append(("", "", "", "", "", ""))
+        data.append((Paragraph("ANTECEDENTES SISTEMICOS", estilo['Titulo']), "", "", "", "", ""))
+        data.append((Paragraph(agenda.antsis, estilo['Parrafo']), "", "", "", "", ""))
+        data.append(("", "", "", "", "", ""))
         data.append((Paragraph("MOTIVO DE CONSULTA", estilo['Titulo']),"","","","",""))
         data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
-        data.append(("","","","","",""))
-        data.append(("","","","","",""))
+        data.append(("", "", "", "", "", ""))
         data.append((Paragraph("AGUDEZA VISUAL", estilo['Titulo']),"","","","",""))
-        data.append(("asfsadsad","","","","",""))
+        data.append(("", "", Paragraph("O.D.", estilo['Titulo2']), "", Paragraph("O.I.", estilo['Titulo2']), ""))
+        data.append(("", Paragraph("S/C", estilo['Titulo']), Paragraph(agenda.dsc, estilo['ParrafoCentro'],""),
+                     Paragraph(agenda.isc, estilo['ParrafoCentro']),""))
+        data.append(("", Paragraph("C/C", estilo['Titulo']),Paragraph(agenda.dcc, estilo['ParrafoCentro']), "",
+                     Paragraph(agenda.icc, estilo['ParrafoCentro']),""))
+        refracd = ""
+        if agenda.dre1:
+            refracd = refracd+agenda.dre1+", "
+        else:
+            refracd = refracd+"---, "
+        if agenda.dre2:
+            refracd = refracd+agenda.dre2+", "
+        else:
+            refracd = refracd+"---, "
+        if agenda.dre3:
+            refracd = refracd+agenda.dre3+"°"
+        else:
+            refracd = refracd+"---"
+        refraci = ""
+        if agenda.ire1:
+            refraci = refraci + agenda.ire1 + ", "
+        else:
+            refraci = refraci + "---, "
+        if agenda.ire2:
+            refraci = refraci + agenda.ire2 + ", "
+        else:
+            refraci = refraci + "---, "
+        if agenda.ire3:
+            refraci = refraci + agenda.ire3 + "°"
+        else:
+            refraci = refraci + "---"
+        data.append(("",Paragraph("Refrac.", estilo['Titulo']),Paragraph(refracd, estilo['ParrafoCentro']), "",
+                     Paragraph(refraci, estilo['ParrafoCentro']),""))
+        data.append(("",Paragraph("Cerca", estilo['Titulo']), Paragraph(agenda.ddc1, estilo['ParrafoCentro']), "",
+                     Paragraph(agenda.ddc2, estilo['ParrafoCentro']), ""))
+        data.append((Paragraph("PIO", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph("O.D.", estilo['Titulo2']),"","",Paragraph("O.I.", estilo['Titulo2']),"",""))
+        data.append((Paragraph(agenda.dto, estilo['Parrafo']),"","",Paragraph(agenda.ito, estilo['Parrafo']),"",""))
         data.append(("","","","","",""))
+        data.append((Paragraph("BIOMICROSCOPIA", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph("O.D.", estilo['Titulo2']),"","",Paragraph("O.I.", estilo['Titulo2']),"",""))
+        data.append((Paragraph(agenda.dbio, estilo['Parrafo']),"","",Paragraph(agenda.ibio, estilo['Parrafo']),"",""))
         data.append(("","","","","",""))
-        data.append((Paragraph("PIO", estilo['Titulo2']),"","","","",""))
-        data.append((Paragraph("O.I.", estilo['Titulo2']),"","",Paragraph("O.D.", estilo['Titulo2']),"",""))
-        data.append((Paragraph(agenda.ito, estilo['Parrafo']),"","",Paragraph(agenda.dto, estilo['Parrafo']),"",""))
+        data.append((Paragraph("FONDO DE OJO", estilo['Titulo']),"","","","",""))
+        data.append((Paragraph("O.D.", estilo['Titulo2']),"","",Paragraph("O.I.", estilo['Titulo2']),"",""))
+        data.append((Paragraph(agenda.dfdo, estilo['Parrafo']),"","",Paragraph(agenda.ifdo, estilo['Parrafo']),"",""))
         data.append(("","","","","",""))
-        data.append((Paragraph("BIOMICROSCOPIA", estilo['Titulo2']),"","","","",""))
-        data.append((Paragraph("O.I.", estilo['Titulo2']),"","",Paragraph("O.D.", estilo['Titulo2']),"",""))
-        data.append((Paragraph(agenda.ibio, estilo['Parrafo']),"","",Paragraph(agenda.dbio, estilo['Parrafo']),"",""))
-        data.append(("","","","","",""))
-        data.append((Paragraph("FONDO DE OJO", estilo['Titulo2']),"","","","",""))
-        data.append((Paragraph("O.I.", estilo['Titulo2']),"","",Paragraph("O.D.", estilo['Titulo2']),"",""))
-        data.append((Paragraph(agenda.ifdo, estilo['Parrafo']),"","",Paragraph(agenda.dfdo, estilo['Parrafo']),"",""))
-        data.append(("","","","","",""))
-        data.append((Paragraph("OTROS", estilo['Titulo2']),"","","","",""))
+        data.append((Paragraph("OTROS", estilo['Titulo']),"","","","",""))
         data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
         data.append(("","","","","",""))
         diagnosticos = ''
@@ -1017,8 +1149,11 @@ class ReporteRecseguro(View):
         data.append((Paragraph("DIAGNOSTICO", estilo['Titulo']),"","","","",""))
         data.append((Paragraph(diagnosticos, estilo['Parrafo']),"","","","",""))
         data.append(("","","","","",""))
+        tratamientos = ''
+        for idx, item in enumerate(agenda.tratamiento_set.all()):
+            tratamientos = tratamientos + str(idx + 1) + '.- ' + item.detalle + ', '
         data.append((Paragraph("TRATAMIENTO", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
+        data.append((Paragraph(tratamientos, estilo['Parrafo']),"","","","",""))
         data.append(("","","","","",""))
         
 
@@ -1033,32 +1168,44 @@ class ReporteRecseguro(View):
             ('SPAN',(0,4),(3,4)),
             ('SPAN',(0,5),(3,5)),
             ('SPAN',(0,6),(5,6)),
-            ('SPAN',(0,7),(5,9)),
-            ('SPAN',(0,10),(5,10)),
-            ('SPAN',(0,11),(5,13)),
-            ('SPAN',(0,14),(5,14)),
-            ('SPAN',(0,15),(5,17)),
-            ('SPAN',(0,18),(5,18)),
-            ('SPAN',(0,19),(2,19)),
-            ('SPAN',(3,19),(5,19)),
-            ('SPAN',(0,20),(2,21)),
-            ('SPAN',(3,20),(5,21)),
-            ('SPAN',(0,22),(5,22)),
-            ('SPAN',(0,23),(2,23)),
-            ('SPAN',(3,23),(5,23)),
-            ('SPAN',(0,24),(2,25)),
-            ('SPAN',(3,24),(5,25)),
-            ('SPAN',(0,26),(5,26)),
-            ('SPAN',(0,27),(2,27)),
-            ('SPAN',(3,27),(5,27)),
-            ('SPAN',(0,28),(2,29)),
-            ('SPAN',(3,28),(5,29)),
-            ('SPAN',(0,30),(5,30)),
-            ('SPAN',(0,31),(5,32)),
+            ('SPAN',(0,7),(5,8)),
+            ('SPAN', (0, 9), (5, 9)),
+            ('SPAN', (0, 10), (5, 11)),
+            ('SPAN',(0,12),(5,12)),
+            ('SPAN',(0,13),(5,14)),
+            ('SPAN',(0,15),(5,15)),
+            ('SPAN',(0,16),(0,20)),
+            ('SPAN', (2, 16), (3, 16)),
+            ('SPAN', (2, 17), (3, 17)),
+            ('SPAN', (2, 18), (3, 18)),
+            ('SPAN', (2, 19), (3, 19)),
+            ('SPAN', (2, 20), (3, 20)),
+            ('SPAN', (4, 16), (5, 16)),
+            ('SPAN', (4, 17), (5, 17)),
+            ('SPAN', (4, 18), (5, 18)),
+            ('SPAN', (4, 19), (5, 19)),
+            ('SPAN', (4, 20), (5, 20)),
+            ('SPAN',(0,21),(5,21)),
+            ('SPAN',(0,22),(2,22)),
+            ('SPAN',(3,22),(5,22)),
+            ('SPAN',(0,23),(2,24)),
+            ('SPAN',(3,23),(5,24)),
+            ('SPAN',(0,25),(5,25)),
+            ('SPAN',(0,26),(2,26)),
+            ('SPAN',(3,26),(5,26)),
+            ('SPAN',(0,27),(2,28)),
+            ('SPAN',(3,27),(5,28)),
+            ('SPAN',(0,29),(5,29)),
+            ('SPAN',(0,30),(2,30)),
+            ('SPAN',(3,30),(5,30)),
+            ('SPAN',(0,31),(2,32)),
+            ('SPAN',(3,31),(5,32)),
             ('SPAN',(0,33),(5,33)),
             ('SPAN',(0,34),(5,35)),
             ('SPAN',(0,36),(5,36)),
             ('SPAN',(0,37),(5,38)),
+            ('SPAN',(0,39),(5,39)),
+            ('SPAN',(0,40),(5,41)),
             ('SPAN',(4,0),(5,0)),
             ('SPAN',(4,1),(5,1)),
             ('SPAN',(4,2),(5,2)),
@@ -1069,6 +1216,253 @@ class ReporteRecseguro(View):
             ))
         
         story.append(table)
+        doc.build(story)
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+
+class ReporteRecsegurob(View):
+    def encabezado(self, canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 9)
+        #try:
+        archivo_imagen1 = os.path.join(settings.MEDIA_ROOT, "imagenes","sistema","logo1.jpg")
+        archivo_imagen2 = os.path.join(settings.MEDIA_ROOT, "imagenes","sistema","logo2.jpg") 
+        #imagen = Image(pil_img, width=90, height=50, hAlign='LEFT')
+        canvas.drawImage(archivo_imagen1, 75, 720,width=60, height=40)
+        canvas.drawImage(archivo_imagen2, 150, 720,width=150, height=40)
+        #except:
+        #canvas.drawString(inch, letter[1] - 50, "Ejemplo de DocTemplate y PageTemplate")
+        #canvas.line(inch, letter[1] - 60, letter[0] - 65, letter[1] - 60)
+        canvas.restoreState()
+
+
+    def cabecera(self, story, estilo, agenda):
+        data = []
+        story.append(NextPageTemplate('principal'))
+        data.append((Paragraph("NOMBRE", estilo['Titulo']),Paragraph("EDAD",estilo['Titulo']),))
+        data.append((Paragraph(agenda.paciente.nombres+" "+agenda.paciente.apellidos, estilo['Parrafo']),Paragraph(paciente_tags.edad(agenda.paciente.fecha_nacimiento), estilo['Parrafo']),))
+        data.append((Paragraph("SEGURO", estilo['Titulo']), Paragraph("MATRICULA",estilo['Titulo']),))
+        data.append((Paragraph(agenda.seguro.nombre, estilo['Parrafo']), Paragraph(agenda.matricula, estilo['Parrafo']),))
+        data.append((Paragraph("FECHA", estilo['Titulo']), Paragraph("TIPO",estilo['Titulo']),))
+        data.append((Paragraph(agenda.fecha.strftime("%d - %m - %Y"), estilo['Parrafo']), Paragraph(agenda.tipo_beneficiario, estilo['Parrafo']),))
+
+        table = Table(data, colWidths=[12*cm, 6*cm])
+        table.setStyle(TableStyle([
+            ('BOX', (1, 1), (0, 1), 1, colors.black),
+            ('BOX', (0, 1), (1, 1), 1, colors.black),
+            ('BOX', (1, 3), (0, 3), 1, colors.black),
+            ('BOX', (0, 3), (1, 3), 1, colors.black),
+            ('BOX', (1, 5), (0, 5), 1, colors.black),
+            ('BOX', (0, 5), (1, 5), 1, colors.black),
+            ]
+        ))
+        story.append(table)
+
+    def antecedentes(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        x = 1
+        if agenda.antocu:
+            data.append((Paragraph("ANTECEDENTES OCULARES", estilo['Titulo']),))
+            data.append((Paragraph(agenda.antocu, estilo['Parrafo']),))
+            datastyle.append(('BOX', (0, x), (0, x), 1, colors.black))
+            x = x + 2
+        if agenda.antsis:
+            data.append((Paragraph("ANTECEDENTES SISTEMICOS", estilo['Titulo']),))
+            data.append((Paragraph(agenda.antsis, estilo['Parrafoj']),))
+            datastyle.append(('BOX', (0, x), (0, x), 1, colors.black))
+        if data:
+            table = Table(data, colWidths=[18*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+    
+    def motivoconsulta(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        x = 1
+        if agenda.motivo:
+            data.append((Paragraph("MOTIVO DE CONSULTA", estilo['Titulo']),))
+            data.append((Paragraph(agenda.motivo, estilo['Parrafoj']),))
+            datastyle.append(('BOX', (0, x), (0, x), 1, colors.black))
+        if data:
+            table = Table(data, colWidths=[18*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+
+    def agudezavisual(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        datastyle.append(('GRID', (2, 1), (5, 5), 1, colors.black))
+        datastyle.append(('GRID', (1, 2), (1, 5), 1, colors.black))
+        datastyle.append(('SPAN', (0, 0), (5, 0)))
+        datastyle.append(('SPAN', (2, 1), (3, 1)))
+        datastyle.append(('SPAN', (2, 2), (3, 2)))
+        datastyle.append(('SPAN', (2, 3), (3, 3)))
+        datastyle.append(('SPAN', (2, 4), (3, 4)))
+        datastyle.append(('SPAN', (4, 1), (5, 1)))
+        datastyle.append(('SPAN', (4, 2), (5, 2)))
+        datastyle.append(('SPAN', (4, 3), (5, 3)))
+        datastyle.append(('SPAN', (4, 4), (5, 4)))
+
+        data.append((Paragraph("AGUDEZA VISUAL", estilo['Titulo']),"","","","",""))
+        data.append(("", "", Paragraph("O.D.", estilo['Titulo2']), "", Paragraph("O.I.", estilo['Titulo2']), ""))
+        data.append(("", Paragraph("S/C", estilo['Titulo']), Paragraph(agenda.dsc, estilo['ParrafoCentro']),"",
+                     Paragraph(agenda.isc, estilo['ParrafoCentro']),""))
+        data.append(("", Paragraph("C/C", estilo['Titulo']),Paragraph(agenda.dcc, estilo['ParrafoCentro']), "",
+                     Paragraph(agenda.icc, estilo['ParrafoCentro']),""))
+        refracd = ""
+        if agenda.dre1:
+            refracd = refracd+agenda.dre1+", "
+        else:
+            refracd = refracd+"---, "
+        if agenda.dre2:
+            refracd = refracd+agenda.dre2+", "
+        else:
+            refracd = refracd+"---, "
+        if agenda.dre3:
+            refracd = refracd+agenda.dre3+"°"
+        else:
+            refracd = refracd+"---"
+        refraci = ""
+        if agenda.ire1:
+            refraci = refraci + agenda.ire1 + ", "
+        else:
+            refraci = refraci + "---, "
+        if agenda.ire2:
+            refraci = refraci + agenda.ire2 + ", "
+        else:
+            refraci = refraci + "---, "
+        if agenda.ire3:
+            refraci = refraci + agenda.ire3 + "°"
+        else:
+            refraci = refraci + "---"
+        data.append(("",Paragraph("Refrac.", estilo['Titulo']),Paragraph(refracd, estilo['ParrafoCentro']), "",
+                     Paragraph(refraci, estilo['ParrafoCentro']),""))
+        if agenda.ddc2:             
+            data.append(("",Paragraph("Cerca", estilo['Titulo']), Paragraph(agenda.ddc1, estilo['ParrafoCentro']), "",
+                     Paragraph(agenda.ddc2, estilo['ParrafoCentro']), ""))
+            datastyle.append(('SPAN', (2, 5), (3, 5)))
+            datastyle.append(('SPAN', (4, 5), (5, 5)))
+            datastyle.append(('BOX', (0, 1), (5, 5), 1, colors.black))
+        else:
+            datastyle.append(('BOX', (0, 1), (5, 4), 1, colors.black))
+
+        table = Table(data, colWidths=[3*cm, 3*cm, 3*cm, 3*cm, 3*cm, 3*cm,])
+        table.setStyle(TableStyle(datastyle))
+        story.append(table)
+
+    def pio(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        if (agenda.dto or agenda.ito):
+            data.append((Paragraph("PIO", estilo['Titulo']),"",))
+            data.append((Paragraph("OD", estilo['Titulo2']),(Paragraph("OI", estilo['Titulo2'])),))
+            data.append((Paragraph(agenda.dto, estilo['Parrafoj']),(Paragraph(agenda.ito, estilo['Parrafoj'])),))
+            datastyle.append(('GRID', (0, 1), (1, 2), 1, colors.black))
+            table = Table(data, colWidths=[9*cm, 9*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+    
+    def bio(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        if (agenda.dbio or agenda.ibio):
+            data.append((Paragraph("BIOMICROSCOPIA", estilo['Titulo']),"",))
+            data.append((Paragraph("OD", estilo['Titulo2']),(Paragraph("OI", estilo['Titulo2'])),))
+            data.append((Paragraph(agenda.dbio, estilo['Parrafoj']),(Paragraph(agenda.ibio, estilo['Parrafoj'])),))
+            datastyle.append(('GRID', (0, 1), (1, 2), 1, colors.black))
+            table = Table(data, colWidths=[9*cm, 9*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+    def fdo(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        if (agenda.dfdo or agenda.ifdo):
+            data.append((Paragraph("FONDO DE OJO", estilo['Titulo']),"",))
+            data.append((Paragraph("OD", estilo['Titulo2']),(Paragraph("OI", estilo['Titulo2'])),))
+            data.append((Paragraph(agenda.dfdo, estilo['Parrafoj']),(Paragraph(agenda.ifdo, estilo['Parrafoj'])),))
+            datastyle.append(('GRID', (0, 1), (1, 2), 1, colors.black))
+            table = Table(data, colWidths=[9*cm, 9*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+
+    def otros(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        x = 1
+        if agenda.otros:
+            data.append((Paragraph("OTROS", estilo['Titulo']),))
+            data.append((Paragraph(agenda.otros, estilo['Parrafoj']),))
+            datastyle.append(('BOX', (0, x), (0, x), 1, colors.black))
+            table = Table(data, colWidths=[18*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+
+    def diagnosticos(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        diagnosticos = ''
+        x = 1
+        for idx, item in enumerate(agenda.diagnostico_set.all()):
+            diagnosticos = diagnosticos + str(idx + 1) + '.- ' + item.detalle + ', '
+        if diagnosticos:
+            data.append((Paragraph("DIAGNOSTICO", estilo['Titulo']),))
+            data.append((Paragraph(diagnosticos, estilo['Parrafo']),))
+            datastyle.append(('BOX', (0, x), (0, x), 1, colors.black))
+            table = Table(data, colWidths=[18*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)
+
+    def tratamientos(self, story, estilo, agenda):
+        data = []
+        datastyle = []
+        tratamientos = ''
+        x = 1
+        for idx, item in enumerate(agenda.tratamiento_set.all()):
+            tratamientos = tratamientos + str(idx + 1) + '.- ' + item.detalle + ', '
+        if tratamientos:
+            data.append((Paragraph("TRATAMIENTO", estilo['Titulo']),))
+            data.append((Paragraph(tratamientos, estilo['Parrafo']),))
+            datastyle.append(('BOX', (0, x), (0, x), 1, colors.black))
+            table = Table(data, colWidths=[18*cm])
+            table.setStyle(TableStyle(datastyle))
+            story.append(table)        
+
+    def get(self, *args, **kwargs):
+        agenda = Agenda.objects.get(id=self.kwargs['pk'])
+        #Indicamos el tipo de contenido a devolver, en este caso un pdf
+        response = HttpResponse(content_type='application/pdf')
+        pdf_name = "receta.pdf"  # llamado clientes
+        response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
+        buffer = BytesIO()
+        doc = BaseDocTemplate(buffer, pagesize=letter)
+        frame0 = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, showBoundary=0, id='normalBorde')
+        doc.addPageTemplates([
+            PageTemplate(id='principal', frames=frame0, onPage=self.encabezado),
+            ])
+        estilo=getSampleStyleSheet()
+        estilo.add(ParagraphStyle(name = "Tituloc",  alignment=TA_CENTER, fontSize=18, leading=22, fontName="Helvetica-Bold"))
+        estilo.add(ParagraphStyle(name = "Titulo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica-Bold"))
+        estilo.add(ParagraphStyle(name = "Titulo2",  alignment=TA_CENTER, fontSize=10, fontName="Helvetica-Bold"))
+        estilo.add(ParagraphStyle(name = "Parrafo",  alignment=TA_LEFT, fontSize=8, fontName="Helvetica"))
+        estilo.add(ParagraphStyle(name="ParrafoCentro", alignment=TA_CENTER, fontSize=8, fontName="Helvetica"))
+        estilo.add(ParagraphStyle(name = "Parrafoj", alignment=TA_JUSTIFY, fontSize=8, fontName="Helvetica"))
+
+        story = []
+        
+        story.append(Paragraph("HISTORIA CLINICA", estilo['Tituloc']))
+        self.cabecera(story, estilo, agenda)
+        self.antecedentes(story, estilo, agenda)
+        self.motivoconsulta(story, estilo, agenda)
+        self.agudezavisual(story, estilo, agenda)
+        self.pio(story, estilo, agenda)
+        self.bio(story, estilo, agenda)
+        self.fdo(story, estilo, agenda)
+        self.otros(story, estilo, agenda)
+        self.diagnosticos(story, estilo, agenda)
+        self.tratamientos(story, estilo, agenda)
         doc.build(story)
         pdf = buffer.getvalue()
         buffer.close()

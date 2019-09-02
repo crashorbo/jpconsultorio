@@ -13,7 +13,11 @@ class AgendaForm(forms.ModelForm):
   
   class Meta:
     model = Agenda
-    fields = ('paciente', 'seguro', 'fecha', 'hora_inicio', 'hora_fin', 'tipo', 'prioridad', 'procedencia', 'matricula', 'tipo_beneficiario', 'antocu', 'antsis', 'motivo', 'dsc', 'dcc', 'dre1', 'dre2', 'dre3', 'dau', 'ddc1', 'ddc2', 'dph', 'dci', 'dcl', 'drc1', 'drc2', 'drc3', 'isc', 'icc', 'ire1', 'ire2', 'ire3', 'iau', 'idc1', 'idc2', 'iph', 'ici', 'icl', 'irc1', 'irc2', 'irc3', 'adicion', 'tipo_lente', 'dto', 'ito', 'dbio', 'ibio', 'dfdo', 'ifdo', 'otros', 'impav')
+    fields = ('paciente', 'seguro', 'fecha', 'fecha_consulta', 'hora_inicio', 'hora_fin', 'tipo', 'prioridad', 'procedencia',
+              'matricula', 'tipo_beneficiario', 'antocu', 'antsis', 'motivo', 'dsc', 'dcc', 'dre1', 'dre2', 'dre3', 'dau',
+              'ddc1', 'ddc2', 'dph', 'dci', 'dcl', 'drc1', 'drc2', 'drc3', 'isc', 'icc', 'ire1', 'ire2', 'ire3', 'iau',
+              'idc1', 'idc2', 'iph', 'ici', 'icl', 'irc1', 'irc2', 'irc3', 'adicion', 'tipo_lente', 'dto', 'ito', 'dbio',
+              'ibio', 'dfdo', 'ifdo', 'otros', 'impav', 'control')
 
     widgets = {
       'fecha': forms.DateInput(attrs={'class': 'form-control fecha form-control-sm'}),
@@ -22,7 +26,7 @@ class AgendaForm(forms.ModelForm):
       'tipo': forms.Select(attrs={'class': 'form-control form-control-sm'}),
       'prioridad': forms.Select(attrs={'class': 'form-control form-control-sm'}),
       'procedencia': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
-      'matricula': forms.TextInput(attrs={'class': 'form-control form-control-sm', 'placeholder': 'Matricula'}),
+      'matricula': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
       'tipo_beneficiario': forms.Select(attrs={'class': 'form-control form-control-sm'}),
       'antocu': forms.Textarea(attrs={'class': 'form-control form-control-sm autoguardado', 'tabindex': 1, 'rows': 2}),
       'antsis': forms.Textarea(attrs={'class': 'form-control form-control-sm autoguardado', 'tabindex': 2, 'rows': 2}),
@@ -86,23 +90,23 @@ class TratamientoForm(forms.ModelForm):
     }
 
 class AgendaservicioForm(forms.ModelForm):
-  servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+  servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm costoserv'}))
   class Meta:
     model = Agendaserv
     fields = ('agenda','servicio', 'costo', 'descuento')
     widgets = {
       'agenda': forms.HiddenInput(),
-      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'readonly': True}),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm addcosto', 'readonly': True}),
       'descuento': forms.CheckboxInput(attrs={'class': 'form-control form-control-sm'}),
     }
 
 class AgendaservForm(forms.ModelForm):
-  servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+  servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control form-control-sm costoserv'}))
   class Meta:
     model = Agendaserv
     fields = ('servicio', 'costo', 'estado', 'descuento')
     widgets = {
-      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm', 'readonly': True}),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm addcosto', 'readonly': True}),
       'estado': forms.CheckboxInput(attrs={'class': 'filled-in chk-col-red form-control-sm'}),
       'descuento': forms.CheckboxInput(attrs={'class': 'filled-in chk-col-blue form-control-sm'}),
     }

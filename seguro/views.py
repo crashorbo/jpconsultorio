@@ -5,8 +5,8 @@ from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Seguro
-from .forms import SeguroForm
+from .models import Seguro, Segurocosto
+from .forms import SeguroForm, SegurocostoForm
 # Create your views here.
 
 class TableAsJSON(JSONResponseMixin, View):
@@ -63,7 +63,15 @@ class AjaxEditarView(UpdateView):
   template_name = 'seguro/ajax/editar.html'
   model = Seguro
   form_class = SeguroForm
-  context_object_name = "servicio"
+  context_object_name = "seguro"
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    print(self.kwargs['pk'])
+    data = {'seguro': self.kwargs['pk']}
+    segurocosto = SegurocostoForm(initial=data)
+    context['segurocostoform'] = segurocosto
+    return context
 
   def form_valid(self, form):
     model = form.save(commit=False)
@@ -78,3 +86,16 @@ class AjaxEliminarView(View):
     seguro = Seguro.objects.get(pk=request.GET.get('id'))
     seguro.delete()
     return JsonResponse(data)
+
+class AjaxSegurocostoCrear(CreateView):
+  model = Segurocosto
+  form_class = SegurocostoForm
+  template_name = 'seguro/ajax/crear.html'
+
+  def form_valid(self, form):
+    model = form.save(commit=False)
+    serviciocosto = Segurocosto.objects.filter(seguro=model.seguro.id, servicio=model.servicio.id)
+    if not serviciocosto:
+      model.save()
+    servicios = Segurocosto.objects.filter(seguro=model.seguro.id)
+    return render(self.request, 'seguro/ajax/listaservicios.html', {'servicios': servicios})

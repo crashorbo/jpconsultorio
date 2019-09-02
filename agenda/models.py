@@ -6,6 +6,7 @@ from seguro.models import Seguro
 from servicio.models import Servicio
 from configuracion.models import Tipolente
 from medicamento.models import Medicamento
+
 class Agenda(models.Model):
   TIPO_CHOICE = (
     (0, 'PARTICULAR'),
@@ -34,9 +35,11 @@ class Agenda(models.Model):
   paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
   seguro = models.ForeignKey(Seguro, on_delete=models.CASCADE)
   fecha = models.DateField(default=datetime.now)
+  fecha_consulta = models.DateField(default=datetime.now)
   hora_inicio = models.TimeField(default=datetime.now())
   hora_fin = models.TimeField(default=datetime.now(), blank=True)
   estado = models.IntegerField(default=0)
+  deleted = models.BooleanField(default=False)
   prioridad = models.IntegerField(choices=PRIORIDAD_CHOICE,default=0)
   tipo = models.IntegerField(choices=TIPO_CHOICE, default=0)
   procedencia = models.CharField(max_length=100, blank=True)
@@ -85,6 +88,7 @@ class Agenda(models.Model):
   codigo = models.TextField(blank=True, null=True)
   impav = models.BooleanField(default=False)
   control = models.BooleanField(default=False)
+  cobrar = models.DecimalField(decimal_places=2, max_digits=10, default=0)
 
   def __str__(self):
     return self.fecha.strftime('%d/%m/%Y')
@@ -97,10 +101,15 @@ class Diagnostico(models.Model):
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
   detalle = models.CharField(max_length=200)
 
+  class Meta:
+    ordering = ['id']
+
 class Tratamiento(models.Model):
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
   detalle = models.CharField(max_length=200)
-
+  
+  class Meta:
+    ordering = ['id']
 
 class Agendaserv(models.Model):
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
@@ -108,14 +117,14 @@ class Agendaserv(models.Model):
   costo = models.DecimalField(max_digits=5, decimal_places=2)
   fecha = models.DateField(default=timezone.now)
   hora = models.DateTimeField(default=timezone.now)
-  estado = models.BooleanField(default=False)
+  estado = models.BooleanField(default=True)
   descuento = models.BooleanField(default=False)
 
 class Receta(models.Model):
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
   medicamento = models.ForeignKey(Medicamento, on_delete=models.CASCADE)
   presentacion = models.CharField(blank=True, max_length=100)
-  cantidad = models.IntegerField(default=0)
+  cantidad = models.IntegerField(default=1)
   indicacion = models.TextField(blank=True)
 
 class Reconsulta(models.Model): 

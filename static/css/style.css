@@ -4870,13 +4870,13 @@ Stylish tooltip
 .tooltip-content5 {
   position: absolute;
   z-index: 9999;
-  width: 300px;
-  left: 50%;
-  bottom: 100%;
-  font-size: 20px;
+  width: 250px;
+  left: 205%;
+  top: 100%;
+  font-size: 12px;
   line-height: 1.4;
-  text-align: center;
-  font-weight: 400;
+  text-align: justify;
+  font-weight: 200;
   color: #ffffff;
   background: transparent;
   opacity: 0;
@@ -4890,7 +4890,7 @@ Stylish tooltip
     display: block; }
 
 .tooltip-text3 {
-  border-bottom: 10px solid #009efb;
+  border-top: 10px solid #2A88E6;
   overflow: hidden;
   -webkit-transform: scale3d(0, 1, 1);
   transform: scale3d(0, 1, 1);
@@ -4902,7 +4902,7 @@ Stylish tooltip
 
 .tooltip-inner2 {
   background: #2b2b2b;
-  padding: 40px;
+  padding: 20px;
   -webkit-transform: translate3d(0, 100%, 0);
   transform: translate3d(0, 100%, 0);
   -webkit-transition: -webkit-transform 0.3s;
@@ -4914,15 +4914,15 @@ Stylish tooltip
 .tooltip-content5::after {
   content: '';
   bottom: -20px;
-  left: 50%;
+  left:100%;
   border: solid transparent;
   height: 0;
   width: 0;
   position: absolute;
   pointer-events: none;
   border-color: transparent;
-  border-top-color: #009efb;
-  border-width: 10px;
+  border-color: #2A88E6;
+  border-width: 0px;
   margin-left: -10px; }
 
 .tooltip-effect-1 .tooltip-content {
@@ -8068,4 +8068,7 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
 }
 .hrborder-top{
   border-top: 1px solid #052952;
+}
+#registro-paciente {
+
 }

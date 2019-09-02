@@ -66,8 +66,8 @@ $(document).ready(function(){
     }), $(function() {
         function resize() {
             setTimeout(function() {
-                myChart.resize()
-            }, 100)
+                myChart.resize();
+            }, 100);
         }
         $(window).on("resize", resize), $(".sidebartoggler").on("click", resize)
     });
@@ -145,4 +145,77 @@ $(function() {
     $(this).addClass("active");
   });
 
+});
+$('#gestionsel').on('change', function (e) {
+   $.get('/graficofecha/'+$(this).val()).done(function(data){
+    myChart.setOption({
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['Particular','Seguro']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+            }
+        },
+        color: ["#55ce63", "#009efb"],
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                data : ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'Particular',
+                type:'bar',
+                data:data.particular,
+                markPoint : {
+                    data : [
+                        {type : 'max', name: 'Max'},
+                        {type : 'min', name: 'Min'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: 'Media'}
+                    ]
+                }
+            },
+            {
+                name:'Seguro',
+                type:'bar',
+                data:data.seguro,
+                markPoint : {
+                    data : [
+                        {type : 'average', name: 'Media'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name : 'Media'}
+                    ]
+                }
+            }
+        ]
+    }), $(function() {
+        function resize() {
+            setTimeout(function() {
+                myChart.resize();
+            }, 100);
+        }
+        $(window).on("resize", resize), $(".sidebartoggler").on("click", resize)
+    });
+  });
 });

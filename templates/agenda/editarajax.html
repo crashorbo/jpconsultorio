@@ -5,16 +5,79 @@
 <link rel="stylesheet" href="{% static "assets/plugins/clockpicker/dist/clockfix.css" %}">
 {% endblock %}
 <div class="modal-body">
-  <div class="row">
-    <div class="col-md-8">
+  <div id="paciente" class="row">
+      <div class="col-md-12">
+      <form id="form-paciente" action="{% url "paciente-editar" pk=paciente.id %}" method="post">
+          {% csrf_token %}
+            <div class="row">
+              <div class="col-md-12">
+                <small>Nombres</small>
+                {{ pacienteform.nombres }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <small>Apellidos</small>
+                {{ pacienteform.apellidos }}
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                  <small>Documento</small>
+                  {{ pacienteform.documento }}
+                </div>
+                <div class="col-md-6"> 
+                  <small>Numero Documento</small>
+                  {{ pacienteform.nro_documento }}
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <small>Ocupacion</small>
+                  {{ pacienteform.ocupacion }}
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                  <small>Fecha Nacimiento</small>
+                  {{ pacienteform.fecha_nacimiento }}
+                </div>
+                <div class="col-md-6">
+                  <small>Telefono</small>
+                  {{ pacienteform.telefono }}
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <small>Direccion</small>
+                {{ pacienteform.direccion }}
+              </div>
+            </div>
+          <div class="modal-footer">
+      <button id="edagenda" type="button" class="btn btn-default waves-effect" >Cancelar</button>
+      <button type="submit" class="btn btn-success waves-effect">Guardar</button>
+          </div>
+      </form>
+    </div>
+  </div>
+  <div class="row edagendaform">
+    <div class="col-md-7">
     <h6><strong>Nombre:</strong> {{ agenda.paciente.nombres }} {{ agenda.paciente.apellidos }}</h6>
     </div>
     <div class="col-md-4">
     <h6><strong>Edad: </strong>{{ agenda.paciente.fecha_nacimiento|edad }}</h6>
     </div>
+      <div class="col-md-1 p-0">
+        <button id="verpaciente" type="button" class="btn btn-warning btn-sm waves-effect waves-light"><i class="fa fa-user"></i></button>
+    </div>
   </div>
-  <hr class="m-t-0" />
-  <form id="form-ajaxeliminar" class="form-paciente" action="{% url "agenda-editarajax" pk=agenda.id %}" method="post" novalidate>
+<div class="row edagendaform">
+    <div class="col-md-11">
+        <h6><strong>Procedencia: </strong>{{ agenda.procedencia }}</h6>
+    </div>
+</div>
+  <hr class="m-t-0 edagendaform" />
+  <form id="form-ajaxeliminar" class="form-paciente edagendaform" action="{% url "agenda-editarajax" pk=agenda.id %}" method="post" novalidate>
     {% csrf_token %}
     <div class="row hide">
         {{ form }}
@@ -33,31 +96,8 @@
       </div>
     </div>
   </form>
-  <hr/>
-  <div id="servicios" class="row">
-    <div class="col-md-12">
-      <table class="table table-sm table-striped color-table dark-table m-b-0">
-        <thead>
-          <tr>
-            <th>Servicio</th>
-            <th>Costo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in agenda.agendaserv_set.all %}
-            <tr>
-              <th><h6>{{ item.servicio.nombre }}</h6></th>
-              <th><h6>{{ item.costo }}</h6></th>
-              <th class="text-right">{% if item.estado %}<i class="fa fa-check text-success"></i>
-              {% else %}<button class="btn btn-danger btn-xs cobrar" data-url="{% url 'agendaserv-cobrar' pk=item.id %}"><i class="ti-money"></i></button>{% endif %}</th>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="row m-b-10">
+  <hr class="edagendaform"/>
+<div class="row m-b-10 edagendaform">
     <div class="col-md-12">
       <form id="form-servicio-crear" action="{% url "servicioajax-crear" %}" method="post" >
         {% csrf_token %}
@@ -80,7 +120,31 @@
       </form>
     </div>
   </div>
-  <div class="modal-footer">
+<hr class="edagendaform"/>
+  <div id="servicios" class="row edagendaform">
+    <div class="col-md-12">
+      <table class="table table-sm table-striped color-table dark-table m-b-0">
+        <thead>
+          <tr>
+            <th>Servicio</th>
+            <th>Costo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in agenda.agendaserv_set.all %}
+            <tr>
+              <th><h6>{{ item.servicio.nombre }}</h6></th>
+              <th><h6>{{ item.costo }}</h6></th>
+              <th class="text-right">{% if item.estado %}<i class="fa fa-check text-success"></i>
+              {% else %}<button class="btn btn-danger btn-xs cobrar" data-url="{% url 'agendaserv-cobrar' pk=item.id %}"><i class="ti-money"></i></button>{% endif %}</th>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer edagendaform">
       <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
       <button id="eliminar" data-url="{% url 'agenda-eliminarajax' pk=agenda.id %}" type="button" class="btn btn-danger waves-effect">Eliminar</button>
   </div>
@@ -94,8 +158,27 @@
 <script src="{% static "assets/plugins/bootstrap-datepicker/dist/es.js" %}"></script>
 <script>
   $(document).ready(function(){
-    costo();
-  })
+      $("#paciente").hide();
+      val = $('#form-ajaxeliminar').find('#id_tipo');
+      seguro = $('#form-ajaxeliminar').find('#id_seguro');
+      if (val.val() > 0){
+          costoseguroajax(seguro.val())
+      }
+      else
+      {
+          costoajax();
+      }
+  });
+  $("#verpaciente").on("click", function(e){
+      e.preventDefault();
+     $("#paciente").show();
+     $(".edagendaform").hide();
+  });
+  $("#edagenda").on("click", function (e) {
+      e.preventDefault();
+      $("#paciente").hide();
+      $(".edagendaform").show();
+  });
   $('.clockpicker').clockpicker({
     autoclose: true
   });
@@ -117,6 +200,48 @@
     }
   });
 
+  $('#form-paciente').on('submit', function (e) {
+      e.preventDefault();
+      var $formData = $(this).serialize();
+      var $thisUrl = $(this).attr('action');
+      var $thisMethod = $(this).attr('method');
+      $.ajax({
+          method: $thisMethod,
+          url: $thisUrl,
+          data: $formData,
+          success: function(data){
+            if(data.success){
+              $("#paciente").hide();
+              $(".edagendaform").show();
+              $.toast({
+                heading: 'Mensaje del Sistema',
+                text: 'Los datos del Paciente se han modificado con exito.',
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'success',
+                hideAfter: 3500,
+                stack: 6
+              });
+            }
+            else{
+              $.toast({
+              heading: 'Mensaje del Sistema',
+              text: 'Ha ocurrido un error, por favor revise los parametros ingresados: \u003C Nombres \u003E y \u003C Apellidos \u003E no deben estar vacios.',
+              position: 'top-right',
+              loaderBg:'#ff6849',
+              icon: 'error',
+              hideAfter: 3500
+              });
+            }
+          },
+          error: function(xhr,errmsg,err) {
+            // Show an error
+            $('#results').html("<div class='alert-box alert radius' data-alert>"+
+            "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+      })
+  });
   $('#form-ajaxeliminar').on('submit', function (e) {
       e.preventDefault();
       var $formData = $(this).serialize();
@@ -171,6 +296,10 @@
           success: function(data){
             $("#servicios").html(data)
             $('#calendar').fullCalendar("refetchEvents");
+            $('#form-servicio-crear')[0].reset();
+            $('#id_costo').prop('readonly', true);
+            costoajax();
+            window.recalculo();
             $.toast({
               heading: 'Mensaje del Sistema',
               text: 'Se ha Adicionado un Nuevo Servicio a la Cita',
@@ -231,27 +360,47 @@
       })
   });
   $("#id_servicio").on("change", function(){
-  costo();
-  });
-
-  function costo(){
-    var servicioId = $("#id_servicio").val();
-    $.ajax({
-      url: "/servicio-costo",
-      data: {"id": servicioId},
-      type: "get",
-      success: function(data){
-        $("#id_costo").val(data.costo);
+      val = $('#form-ajaxeliminar').find('#id_tipo');
+      seguro = $('#form-ajaxeliminar').find('#id_seguro');
+      if (val.val() > 0){
+          costoseguroajax(seguro.val())
+      }
+      else
+      {
+          costoajax();
       }
   });
 
-  $("#id_descuento").on("change", function (e) {
-  if ( $(this).is(":checked") ){
-      $('#id_costo').prop('readonly', false);
-  } else {
-    $('#id_costo').prop("readonly", true);
-    costo();
+  function costoajax() {
+      var servicioId = $("#id_servicio").val();
+      $.ajax({
+          url: "/servicio-costo",
+          data: {"id": servicioId},
+          type: "get",
+          success: function (data) {
+              $("#id_costo").val(data.costo);
+          }
+      });
   }
-});
-}
+
+  function costoseguroajax(seguro){
+    var servicioId = $("#id_servicio").val();
+    $.ajax({
+          url: "/seguro-servicio-costo",
+          data: {"servicio": servicioId, "seguro": seguro},
+          type: "get",
+          success: function (data) {
+              $("#id_costo").val(data.costo);
+          }
+      });
+  }
+
+  $("#id_descuento").on("change", function (e) {
+      if ( $(this).is(":checked") ){
+          $('#id_costo').prop('readonly', false);
+      } else {
+        $('#id_costo').prop("readonly", true);
+        costoajax();
+      }
+  });
 </script>

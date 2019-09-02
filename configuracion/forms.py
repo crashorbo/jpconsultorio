@@ -7,6 +7,6 @@ class TipolenteForm(forms.ModelForm):
     fields = ('nombre', 'descripcion')
 
     widgets = {
-      'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-      'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2,}),
+      'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+      'descripcion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 2}),
     }

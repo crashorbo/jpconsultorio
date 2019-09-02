@@ -1,25 +1,25 @@
 <div class="col-md-6">
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>ANTECEDENTES</strong></h6></th>
+      <th><h6 class="m-0"><strong>ANT.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
     <tbody>
-      <tr>
-        <td width="15%" ><strong><h6 class="m-0"><u>Sistemicos:</u></h6></strong></td>
-        <td><h6 class="m-0">{{ historia.antsis }}</h6></td>
-      </tr>
-      <tr>
-        <td width="15%" ><strong><h6 class="m-0"><u>Oculares:</u></h6></strong></td>
-        <td><h6 class="m-0">{{ historia.antocu }}</h6></td>
-      </tr>
-    </tbody>
+        <tr>
+          <td width="15%"><strong><h6 class="m-0"><u>Ocu.:</u></h6></strong></td>
+          <td><h6 class="m-0">{{ historia.antocu }}</h6></td>
+        </tr>
+        <tr>
+          <td width="15%"><strong><h6 class="m-0"><u>Sis.:</u></h6></strong></td>
+          <td><h6 class="m-0">{{ historia.antsis }}</h6></td>
+        </tr>
+      </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>MOTIVO DE CONSULTA</strong></h6></th>
+      <th><h6 class="m-0"><strong>M.C.</strong></h6></th>
     </thead>
     <tbody>
       <tr>
@@ -27,10 +27,10 @@
       </tr>
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>AGUDEZA VISUAL</strong></h6></th>
+      <th><h6 class="m-0"><strong>A.V.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm table-bordered m-b-0">
@@ -130,6 +130,9 @@
   </table>
   <div class="row m-t-10">
     <div class="col-md-12 text-right">
+      {% if historia.tipo %}
+        <a onclick="imprimirlista(event, this);" href="{% url 'reporterecetasegurob' pk=historia.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+      {% endif %}
       <a onclick="imprimirlista(event, this);" href="{% url 'reportereceta' pk=historia.id %}" class="btn btn-sm btn-agenda text-white" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="icon-medicine-2"></i></a>
       <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=historia.id %}" class="btn btn-sm btn-inverse" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
     </div>
@@ -138,7 +141,7 @@
 <div class="col-md-6">
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>TENSION OCULAR</strong></h6></th>
+      <th><h6 class="m-0"><strong>T.O.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -153,10 +156,10 @@
       </tr>
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>BIOMICROSCOPIA</strong></h6></th>
+      <th><h6 class="m-0"><strong>BIO.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -171,10 +174,10 @@
       </tr>
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>FONDO DE OJO</strong></h6></th>
+      <th><h6 class="m-0"><strong>F.O.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -189,7 +192,7 @@
       </tr>
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
       <th><h6 class="m-0"><strong>OTROS</strong></h6></th>
@@ -200,10 +203,10 @@
       </tr>
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>DIAGNOSTICO</strong></h6></th>
+      <th><h6 class="m-0"><strong>DIAG.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -216,10 +219,10 @@
     {% endfor %}
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless table-striped m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>TRATAMIENTO</strong></h6></th>
+      <th><h6 class="m-0"><strong>TRAT.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0 ">
@@ -232,10 +235,10 @@
     {% endfor %}
     </tbody>
   </table>
-  <hr class="m-0" />
+  <hr class="m-0 hrborder-top" />
   <table class="table table-sm table-borderless table-striped m-b-0 color-table">
     <thead>
-      <th><h6 class="m-0"><strong>CONTROL</strong></h6></th>
+      <th><h6 class="m-0"><strong>CTRL.</strong></h6></th>
     </thead>
   </table>
   <table class="table table-sm m-b-0">
@@ -249,4 +252,3 @@
     </tbody>
   </table>
 </div>
-              

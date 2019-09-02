@@ -3,179 +3,184 @@
 <html lang="es">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Favicon icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static "assets/images/favicon/apple-touch-icon.png" %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static "assets/images/favicon/favicon-32x32.png" %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static "assets/images/favicon/favicon-16x16.png" %}">
-    <link rel="manifest" href="{% static "assets/images/favicon/site.webmanifest" %}">
-    <link rel="mask-icon" href="{% static "assets/images/favicon/safari-pinned-tab.svg" %}" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <title>{% block titulo %}{% endblock %}</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="{% static "assets/plugins/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
-    <!-- toast CSS -->
-    <link href="{% static "assets/plugins/toast-master/css/jquery.toast.css" %}" rel="stylesheet">
-    <!-- Estilo de componentes -->
-    {% block css %}{% endblock %}
-    <!-- Custom CSS -->
-    <link href="{% static "administracion/css/style.css" %}" rel="stylesheet">
-    <!-- You can change the theme colors from here -->
-    <link href="{% static "administracion/css/colors/blue.css" %}" id="theme" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- Favicon icon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static "assets/images/favicon/apple-touch-icon.png" %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static "assets/images/favicon/favicon-32x32.png" %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static "assets/images/favicon/favicon-16x16.png" %}">
+  <link rel="manifest" href="{% static "assets/images/favicon/site.webmanifest" %}">
+  <link rel="mask-icon" href="{% static "assets/images/favicon/safari-pinned-tab.svg" %}" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>{% block titulo %}{% endblock %}</title>
+  <!-- Bootstrap Core CSS -->
+  <link href="{% static "assets/plugins/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+  <!-- toast CSS -->
+  <link href="{% static "assets/plugins/toast-master/css/jquery.toast.css" %}" rel="stylesheet">
+  <!-- Estilo de componentes -->
+  {% block css %}{% endblock %}
+  <!-- Custom CSS -->
+  <link href="{% static "administracion/css/style.css" %}" rel="stylesheet">
+  <!-- You can change the theme colors from here -->
+  <link href="{% static "administracion/css/colors/blue.css" %}" id="theme" rel="stylesheet">
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
 
 <body class="fix-sidebar fix-header card-no-border">
+  <!-- ============================================================== -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- ============================================================== -->
+  <div class="preloader">
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+  </div>
+  <!-- ============================================================== -->
+  <!-- Main wrapper - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <div id="main-wrapper">
     <!-- ============================================================== -->
-    <!-- Preloader - style you can find in spinners.css -->
+    <!-- Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
-    <div class="preloader">
-        <svg class="circular" viewBox="25 25 50 50">
-            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
-    </div>
-    <!-- ============================================================== -->
-    <!-- Main wrapper - style you can find in pages.scss -->
-    <!-- ============================================================== -->
-    <div id="main-wrapper">
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <aside class="left-sidebar p-t-0">
-            <!-- Sidebar scroll-->
-            <div class="scroll-sidebar">
-                <!-- User profile -->
-                <div class="user-profile p-10" style="background: #fff; height: 140px;">
-                    <img src="{% static "assets/images/logoiso.png" %}" class="img-fluid" />
-                </div>
-                <!-- End User profile text-->
-                <!-- Sidebar navigation-->
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="nav-small-cap">CONFIGURACION</li>
-                        <li><a class="waves-effect waves-dark" href="{% url "configuracion" %}"><i class="mdi mdi-gauge"></i><span class="hide-menu">INICIO</span></a></li>
-                        <li>
-                            <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">MODULOS</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a id="seguros" href="{% url "seguro-ajax-lista" %}">Seguros</a></li>
-                                <li><a id="servicios" href="{% url "servicio-ajax-lista" %}">Servicios</a></li>
-                                <li><a id="tipolentes" href="{% url "tipolente-ajax-lista" %}">Tipo Lentes</a></li>
-                                <li><a id="medicamentos" href="{% url "medicamento-ajax-lista" %}">Medicamentos</a></li>
-                            </ul>
-                        </li>
-                        <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-laptop-windows"></i><span class="hide-menu">REPORTES</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="../minisidebar/index.html">Minisidebar</a></li>
-                                <li><a href="../horizontal/index2.html">Horizontal</a></li>
-                                <li><a href="../dark/index3.html">Dark Version</a></li>
-                                <li><a href="../material-rtl/index4.html">RTL Version</a></li>
-                                <li><a href="javascript:angular">Anuglar-CLI Starter kit</a></li>
-                            </ul>
-                        </li>
-                        <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-laptop-windows"></i><span class="hide-menu">Usuarios</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="../minisidebar/index.html">Minisidebar</a></li>
-                                <li><a href="../horizontal/index2.html">Horizontal</a></li>
-                                <li><a href="../dark/index3.html">Dark Version</a></li>
-                                <li><a href="../material-rtl/index4.html">RTL Version</a></li>
-                                <li><a href="javascript:angular">Anuglar-CLI Starter kit</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- End Sidebar navigation -->
-            </div>
-
-            
-            <!-- End Sidebar scroll-->
-            <!-- Bottom points-->
-            <div class="sidebar-footer">
-                <!-- item-->
-                <a href="{% url 'index' %}" class="link" data-toggle="tooltip" title="Volver"><i class="ti-back-left"></i></a>
-                <!-- item-->
-                <a href="{% url 'logout' %}" class="link" data-toggle="tooltip" title="Salir"><i class="mdi mdi-power"></i></a>
-            </div>
-            <!-- End Bottom points-->
-        </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
-        <div class="page-wrapper">
-            <!-- ============================================================== -->
-            <!-- Container fluid  -->
-            <!-- ============================================================== -->
-            <div id="mainbody" class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Start Page Content -->
-                <!-- ============================================================== -->
-                {% block contenido %}
-                {% endblock %}
-                <!-- ============================================================== -->
-                <!-- End PAge Content -->
-                <!-- ============================================================== -->
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- Modal -->
-            <div data-backdrop="static" data-keyboard="false"  id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                <div class="modal-dialog">
-                    <div id="contenido-modal" class="modal-content">
-                        
-                    </div>
-                </div>
-            </div>
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <footer class="footer">
-                © <span id="ano"></span> Wilder Alexander Calani Apaza, <strong>Telefono: </strong>77145554
-            </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
+    <aside class="left-sidebar p-t-0">
+      <!-- Sidebar scroll-->
+      <div class="scroll-sidebar">
+        <!-- User profile -->
+        <div class="user-profile p-10" style="background: #fff; height: 140px;">
+          <img src="{% static "assets/images/logoiso.png" %}" class="img-fluid" />
         </div>
+        <!-- End User profile text-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">CONFIGURACION</li>
+            <li><a class="waves-effect waves-dark" href="{% url "configuracion" %}"><i class="mdi mdi-gauge"></i><span
+                  class="hide-menu">INICIO</span></a></li>
+            <li>
+              <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i
+                  class="mdi mdi-gauge"></i><span class="hide-menu">MODULOS</span></a>
+              <ul aria-expanded="false" class="collapse">
+                <li><a id="seguros" href="{% url "seguro-ajax-lista" %}">Seguros</a></li>
+                <li><a id="servicios" href="{% url "servicio-ajax-lista" %}">Servicios</a></li>
+                <li><a id="tipolentes" href="{% url "tipolente-ajax-lista" %}">Tipo Lentes</a></li>
+                <li><a id="medicamentos" href="{% url "medicamento-ajax-lista" %}">Medicamentos</a></li>
+              </ul>
+            </li>
+            <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i
+                  class="mdi mdi-laptop-windows"></i><span class="hide-menu">REPORTES</span></a>
+              <ul aria-expanded="false" class="collapse">
+                <li><a href="../minisidebar/index.html">Minisidebar</a></li>
+                <li><a href="../horizontal/index2.html">Horizontal</a></li>
+                <li><a href="../dark/index3.html">Dark Version</a></li>
+                <li><a href="../material-rtl/index4.html">RTL Version</a></li>
+                <li><a href="javascript:angular">Anuglar-CLI Starter kit</a></li>
+              </ul>
+            </li>
+            <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i
+                  class="mdi mdi-laptop-windows"></i><span class="hide-menu">Usuarios</span></a>
+              <ul aria-expanded="false" class="collapse">
+                <li><a href="../minisidebar/index.html">Minisidebar</a></li>
+                <li><a href="../horizontal/index2.html">Horizontal</a></li>
+                <li><a href="../dark/index3.html">Dark Version</a></li>
+                <li><a href="../material-rtl/index4.html">RTL Version</a></li>
+                <li><a href="javascript:angular">Anuglar-CLI Starter kit</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+
+
+      <!-- End Sidebar scroll-->
+      <!-- Bottom points-->
+      <div class="sidebar-footer">
+        <!-- item-->
+        <a href="{% url 'index' %}" class="link" data-toggle="tooltip" title="Volver"><i class="ti-back-left"></i></a>
+        <!-- item-->
+        <a href="{% url 'logout' %}" class="link" data-toggle="tooltip" title="Salir"><i class="mdi mdi-power"></i></a>
+      </div>
+      <!-- End Bottom points-->
+    </aside>
+    <!-- ============================================================== -->
+    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Page wrapper  -->
+    <!-- ============================================================== -->
+    <div class="page-wrapper">
+      <!-- ============================================================== -->
+      <!-- Container fluid  -->
+      <!-- ============================================================== -->
+      <div id="mainbody" class="container-fluid">
         <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
+        <!-- Start Page Content -->
         <!-- ============================================================== -->
+        {% block contenido %}
+        {% endblock %}
+        <!-- ============================================================== -->
+        <!-- End PAge Content -->
+        <!-- ============================================================== -->
+      </div>
+      <!-- ============================================================== -->
+      <!-- End Container fluid  -->
+      <!-- ============================================================== -->
+      <!-- Modal -->
+      <div data-backdrop="static" data-keyboard="false" id="responsive-modal" class="modal fade" tabindex="-1"
+        role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div id="contenido-modal" class="modal-content">
+
+          </div>
+        </div>
+      </div>
+      <!-- ============================================================== -->
+      <!-- footer -->
+      <!-- ============================================================== -->
+      <footer class="footer">
+        © <span id="ano"></span> Wilder Alexander Calani Apaza, <strong>Telefono: </strong>77145554
+      </footer>
+      <!-- ============================================================== -->
+      <!-- End footer -->
+      <!-- ============================================================== -->
     </div>
     <!-- ============================================================== -->
-    <!-- End Wrapper -->
+    <!-- End Page wrapper  -->
     <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
-    <script src="{% static "assets/plugins/jquery/jquery.min.js" %}"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="{% static "assets/plugins/bootstrap/js/popper.min.js" %}"></script>
-    <script src="{% static "assets/plugins/bootstrap/js/bootstrap.min.js" %}"></script>
-    <!-- slimscrollbar scrollbar JavaScript -->
-    <script src="{% static "administracion/js/jquery.slimscroll.js" %}"></script>
-    <!--Wave Effects -->
-    <script src="{% static "administracion/js/waves.js" %}"></script>
-    <!--Menu sidebar -->
-    <script src="{% static "administracion/js/sidebarmenu.js" %}"></script>
-    <!--stickey kit -->
-    <script src="{% static "assets/plugins/sticky-kit-master/dist/sticky-kit.min.js" %}"></script>
-    <script src="{% static "assets/plugins/sparkline/jquery.sparkline.min.js" %}"></script>
-    <!--Custom JavaScript -->
-    <script src="{% static "administracion/js/custom.min.js" %}"></script>
-    <script src="{% static "assets/plugins/toast-master/js/jquery.toast.js" %}"></script>
-    <!--otros componentes -->
-    {% block js %}{% endblock %}
+  </div>
+  <!-- ============================================================== -->
+  <!-- End Wrapper -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- All Jquery -->
+  <!-- ============================================================== -->
+  <script src="{% static "assets/plugins/jquery/jquery.min.js" %}"></script>
+  <!-- Bootstrap tether Core JavaScript -->
+  <script src="{% static "assets/plugins/bootstrap/js/popper.min.js" %}"></script>
+  <script src="{% static "assets/plugins/bootstrap/js/bootstrap.min.js" %}"></script>
+  <!-- slimscrollbar scrollbar JavaScript -->
+  <script src="{% static "administracion/js/jquery.slimscroll.js" %}"></script>
+  <!--Wave Effects -->
+  <script src="{% static "administracion/js/waves.js" %}"></script>
+  <!--Menu sidebar -->
+  <script src="{% static "administracion/js/sidebarmenu.js" %}"></script>
+  <!--stickey kit -->
+  <script src="{% static "assets/plugins/sticky-kit-master/dist/sticky-kit.min.js" %}"></script>
+  <script src="{% static "assets/plugins/sparkline/jquery.sparkline.min.js" %}"></script>
+  <!--Custom JavaScript -->
+  <script src="{% static "administracion/js/custom.min.js" %}"></script>
+  <script src="{% static "assets/plugins/toast-master/js/jquery.toast.js" %}"></script>
+  <!--otros componentes -->
+  {% block js %}{% endblock %}
 </body>
 
 </html>

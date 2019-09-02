@@ -7,6 +7,6 @@ class ServicioForm(forms.ModelForm):
     fields = ('nombre', 'costo')
 
     widgets = {
-      'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-      'costo': forms.NumberInput(attrs={'class': 'form-control'}),
+      'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+      'costo': forms.NumberInput(attrs={'class': 'form-control form-control-sm'}),
     }

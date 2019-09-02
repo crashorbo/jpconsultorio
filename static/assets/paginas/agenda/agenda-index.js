@@ -20,14 +20,22 @@ $(document).ready(function(){
             $('#contenido-modal').html(data);
             $('#responsive-modal').modal('show');
         }
-      })
+      });
     }
   });
-
+  var resolucion = $(document).width();
+  var maxancho = '89%';
+  if (resolucion <= 1366){
+    maxancho='89%';
+    }
+  if (resolucion <= 1024){
+    maxancho='86%';
+    }
   recalculo();
 
   $('#id_paciente').select2({
     language: 'es',
+    width: maxancho,
     ajax: {
       url: "paciente-autocomplete/",
       dataType: 'json',
@@ -101,7 +109,6 @@ $(document).ready(function(){
               stack: 6
             });
             window.recalculo();
-            costo();
           }
           else{
             $.toast({
@@ -127,7 +134,7 @@ $(document).ready(function(){
   $("#registro-paciente").click(function(){
     var getUrl = window.location;
     $.ajax({
-      url: getUrl.protocol + "//" + getUrl.host+'/paciente/registrar',
+      url: '/paciente/registrar',
       type: 'get',  
       success: function(data){
           $('#contenido-modal').html(data);
@@ -167,33 +174,14 @@ $(document).ready(function(){
       $(".seguro-seleccion").show();
       }
   });
-  costo();
   setInterval(function(){
     $('#calendar').fullCalendar("refetchEvents");    
   },180000);
 });
 
-$("#id_agendaserv-0-servicio").on("change", function(){
-  costo();
-});
-
-function costo(){
-  var servicioId = $("#id_agendaserv-0-servicio").val();
-  $.ajax({
-    url: "/servicio-costo",
-    data: {'id': servicioId},
-    type: 'get',
-    success: function(data){
-      $("#id_agendaserv-0-costo").val(data.costo);
-    }
-  });
-
-}
-
 window.recalculo = function (){
-  var getUrl = window.location;
   $.ajax({
-    url: getUrl.protocol + "//" + getUrl.host+'/movcalculo', 
+    url: '/movcalculo',
     type: 'get',  
     success: function(data){
         $("#sis_total").text((Number(data.ingreso) - Number(data.egreso)).toFixed(2) + ' Bs.');
@@ -227,7 +215,8 @@ $("#controlagenda").on('click', function(e){
           $('#form-agenda')[0].reset();
           $("#id_paciente").val("").trigger("change");
           $(".seguro-seleccion").hide();
-          costo();
+          $('.addcosto').prop("readonly", true);
+          costo($('.costoserv').val());
           $.toast({
             heading: 'Mensaje del Sistema',
             text: 'Se ha registrado el control con exito.',
@@ -256,12 +245,4 @@ $("#controlagenda").on('click', function(e){
         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
       }
   })
-});
-$("#id_agendaserv-0-descuento").on("change", function (e) {
-  if ( $(this).is(":checked") ){
-      $('#id_agendaserv-0-costo').prop('readonly', false);
-  } else {
-    $('#id_agendaserv-0-costo').prop("readonly", true);
-    costo();
-  }
 });

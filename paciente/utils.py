@@ -87,3 +87,9 @@ def migrartratamientos():
     except Exception as e:      
       print(e)
   return len(tratamientos)
+
+def fechaconsulta():
+  historias = Agenda.objects.all()
+  for item in historias:
+    item.fecha_consulta = item.fecha
+    item.save()

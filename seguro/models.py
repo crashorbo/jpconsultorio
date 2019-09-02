@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.db.models import Q
 from django.db.models.query import QuerySet
+from servicio.models import Servicio
 
 class MyModelMixin(object):
 
@@ -47,3 +48,8 @@ class Seguro(models.Model):
   class Meta:
     ordering = ('nombre',)
 
+class Segurocosto(models.Model):
+  seguro = models.ForeignKey(Seguro, on_delete=models.CASCADE)
+  servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
+  costo = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+  estado = models.BooleanField(default=True)

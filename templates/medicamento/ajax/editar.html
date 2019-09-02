@@ -17,15 +17,15 @@
   <form id="form-medicamento" action="{% url "medicamento-ajax-editar" pk=medicamento.id %}" method="post" novalidate>
     {% csrf_token %}
     <div class="col-md-12">
-      <small>Nombre</small>     
+      <small><strong>Nombre</strong></small>
       {{ form.nombre }}
     </div>
     <div class="col-md-12">
-      <small>Presentacion</small>         
+      <small><strong>Presentacion</strong></small>
       {{ form.presentacion }}
     </div>
     <div class="col-md-12">
-      <small>Indicacion</small>     
+      <small><strong>Indicacion</strong></small>
       {{ form.indicacion }}
     </div>
     <div class="modal-footer">

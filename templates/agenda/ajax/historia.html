@@ -18,7 +18,7 @@
                   <ul class="chatonline style-none ">
                     {% for item in historias %}
                     <li>
-                      <a class="historiaver" href="javascript:void(0)" data-url="{% url 'historia-ver' pk=item.id %}"><span><h5 class="m-0">{{ item.fecha }}</h5></span></a>
+                      <a class="historiaver" href="javascript:void(0)" data-url="{% url 'historia-ver' pk=item.id %}"><span><h5 class="m-0">{{ item.fecha_consulta }}</h5></span></a>
                     </li>
                     {% endfor %}
                   </ul>
@@ -53,12 +53,12 @@
                         <table class="table table-sm m-b-0">
                           <tbody>
                             <tr>
-                              <td width="15%"><strong><h6 class="m-0"><u>Sistemicos:</u></h6></strong></td>
-                              <td><h6 class="m-0">{{ historia.antsis }}</h6></td>
+                              <td width="15%"><strong><h6 class="m-0"><u>Ocu.:</u></h6></strong></td>
+                              <td><h6 class="m-0">{{ historia.antocu }}</h6></td>
                             </tr>
                             <tr>
-                              <td width="15%"><strong><h6 class="m-0"><u>Oculares:</u></h6></strong></td>
-                              <td><h6 class="m-0">{{ historia.antocu }}</h6></td>
+                              <td width="15%"><strong><h6 class="m-0"><u>Sis.:</u></h6></strong></td>
+                              <td><h6 class="m-0">{{ historia.antsis }}</h6></td>
                             </tr>
                           </tbody>
                         </table>
@@ -176,8 +176,10 @@
                         </table>
                         <div class="row m-t-10">
                           <div class="col-md-12 text-right">
+                            {% if historia.tipo %}
+                              <a onclick="imprimirlista(event, this);" href="{% url 'reporterecetasegurob' pk=historia.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
+                            {% endif %}
                             <a onclick="imprimirlista(event, this);" href="{% url 'reportereceta' pk=historia.id %}" class="btn btn-sm btn-agenda text-white" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="icon-medicine-2"></i></a>
-
                             <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=historia.id %}" class="btn btn-sm btn-inverse" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
                           </div>
                         </div>

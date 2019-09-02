@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
 from datetime import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Movdiario
 from servicio.models import Servicio
+from seguro.models import Segurocosto
 from agenda.models import Agenda
 # Create your views here.
 
@@ -32,11 +33,12 @@ class MovimientoCalculoView(View):
 class ServicioCostoView(View):
     def get(self, *args, **kwargs):        
         servicio = Servicio.objects.get(id=self.request.GET['id'])
-        servicio = self.get_results(servicio)
-        return HttpResponse( json.dumps(servicio, cls=DjangoJSONEncoder), content_type='application/json')
+        return JsonResponse({"success": True, "costo": servicio.costo})
 
-    def get_results(self, x):
-        return dict(costo=x.costo)
+class ServicioSeguroCosto(View):
+    def get(self, *args, **kwargs):
+        segurocosto = Segurocosto.objects.get(seguro=self.request.GET['seguro'], servicio=self.request.GET['servicio'])
+        return JsonResponse({"success": True, "costo": segurocosto.costo})
 
 class GraficoView(View):
     def get(self, *args, **kwargs):
@@ -46,6 +48,16 @@ class GraficoView(View):
         for i in range(12):
             particular.append(Agenda.objects.filter(fecha__year=now.year, fecha__month=i+1, tipo=0, estado=1).count())
             seguro.append(Agenda.objects.filter(fecha__year=now.year, fecha__month=i+1, tipo=1, estado=1).count())
-
         grafico = {"particular": particular, "seguro": seguro}
         return HttpResponse( json.dumps(grafico, cls=DjangoJSONEncoder), content_type='application/json')
+
+class GraficoFechaView(View):
+    def get(self, *args, **kwargs):
+        year = self.kwargs['year']
+        particular = []
+        seguro = []
+        for i in range(12):
+            particular.append(Agenda.objects.filter(fecha__year=year, fecha__month=i + 1, tipo=0, estado=1).count())
+            seguro.append(Agenda.objects.filter(fecha__year=year, fecha__month=i + 1, tipo=1, estado=1).count())
+        grafico = {"particular": particular, "seguro": seguro}
+        return HttpResponse(json.dumps(grafico, cls=DjangoJSONEncoder), content_type='application/json')

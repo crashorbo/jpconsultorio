@@ -1,0 +1,18 @@
+<div class="col-md-12">
+  <table class="table table-sm table-striped color-table dark-table m-b-0">
+    <thead>
+      <tr>
+        <th>Servicio</th>
+        <th>Costo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in servicios %}
+        <tr>
+          <th><h6>{{ item.servicio.nombre }}</h6></th>
+          <th class="text-right"><h6>{{ item.costo }}</h6></th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
