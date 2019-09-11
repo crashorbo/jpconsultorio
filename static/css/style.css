@@ -2041,6 +2041,7 @@ File: scss
   float: left;
   width: 100%; }
   .chatonline li a span {
+    font-size: 12px;
     color: #6fadb4; }
     .chatonline li a span small {
       display: block;

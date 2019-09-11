@@ -784,144 +784,144 @@ class Reporterec(View):
 
     def paciente(self, pdf):
         pdf.setFont("Times-Bold", 12)
-        pdf.drawCentredString(220,430, self.agenda.paciente.nombres + ' ' + self.agenda.paciente.apellidos)
-        self.subrayar(pdf, 220,430,self.agenda.paciente.nombres + ' ' +self.agenda.paciente.apellidos)
+        pdf.drawCentredString(210,430, self.agenda.paciente.nombres + ' ' + self.agenda.paciente.apellidos)
+        self.subrayar(pdf, 210,430,self.agenda.paciente.nombres + ' ' +self.agenda.paciente.apellidos)
 
     def encabezado(self, pdf):
         pdf.setFont("Times-Bold", 12)
-        pdf.drawCentredString(220,400, "RECETA DE LENTES")
-        self.subrayar(pdf, 220,400, "RECETA DE LENTES")
+        pdf.drawCentredString(210,400, "RECETA DE LENTES")
+        self.subrayar(pdf, 210,400, "RECETA DE LENTES")
 
     def subtitulo(self, pdf):
         pdf.setFont("Times-Bold", 12)
         if (self.agenda.adicion):
-            pdf.drawString(65,370, "PARA LEJOS:")
-            self.subrayar2(pdf, 65,370, "PARA LEJOS")
+            pdf.drawString(55,370, "PARA LEJOS:")
+            self.subrayar2(pdf, 55,370, "PARA LEJOS")
         else:
-            pdf.drawString(65,370, "USO PERMANENTE:")
-            self.subrayar2(pdf, 65,370, "USO PERMANENTE")
+            pdf.drawString(55,370, "USO PERMANENTE:")
+            self.subrayar2(pdf, 55,370, "USO PERMANENTE")
 
     def medida(self,pdf):
         if (self.agenda.impav):
             pdf.setFont("Times-Bold", 16)
-            pdf.drawCentredString(85,305, "OD.")
-            pdf.drawCentredString(85,275, "OI.")
+            pdf.drawCentredString(75,305, "OD.")
+            pdf.drawCentredString(75,275, "OI.")
             pdf.setFont("Times-Roman", 12)
-            pdf.drawCentredString(140,335, "ESFERICO")
-            pdf.drawCentredString(215,335, "CILINDRICO")
-            pdf.drawCentredString(295,335, "EJE")
-            pdf.drawCentredString(363,335, "A.V.")
-            pdf.drawString(65, 255, "Favor Medir D.P.")
+            pdf.drawCentredString(130,335, "ESFERICO")
+            pdf.drawCentredString(205,335, "CILINDRICO")
+            pdf.drawCentredString(285,335, "EJE")
+            pdf.drawCentredString(353,335, "A.V.")
+            pdf.drawString(55, 255, "Favor Medir D.P.")
             pdf.setFont("Times-Roman", 16)
             if(self.agenda.drc1):
-                pdf.drawCentredString(140,305, self.agenda.drc1)
+                pdf.drawCentredString(130,305, self.agenda.drc1)
             else:
-                pdf.drawCentredString(140,305, '------')
+                pdf.drawCentredString(130,305, '------')
             if(self.agenda.drc2):
-                pdf.drawCentredString(215,305, self.agenda.drc2)
+                pdf.drawCentredString(205,305, self.agenda.drc2)
             else:
-                pdf.drawCentredString(215,305, '------')
+                pdf.drawCentredString(205,305, '------')
             if(self.agenda.irc1):
-                pdf.drawCentredString(140,275, self.agenda.irc1)
+                pdf.drawCentredString(130,275, self.agenda.irc1)
             else:
-                pdf.drawCentredString(140,275, '------')
+                pdf.drawCentredString(130,275, '------')
             if(self.agenda.irc2):
-                pdf.drawCentredString(215,275, self.agenda.irc2)
+                pdf.drawCentredString(205,275, self.agenda.irc2)
             else:
-                pdf.drawCentredString(215,275, '------')
+                pdf.drawCentredString(205,275, '------')
             pdf.setFont("Times-Bold", 16)
             if(self.agenda.drc3):
-                pdf.drawCentredString(295,305, self.agenda.drc3+'°')
+                pdf.drawCentredString(285,305, self.agenda.drc3+'°')
             else:
-                pdf.drawCentredString(295,305, '------')
+                pdf.drawCentredString(285,305, '------')
             if(self.agenda.irc3):
-                pdf.drawCentredString(295,275, self.agenda.irc3+'°')
+                pdf.drawCentredString(285,275, self.agenda.irc3+'°')
             else:
-                pdf.drawCentredString(295,275, '------')
+                pdf.drawCentredString(285,275, '------')
             pdf.setFont("Times-Roman", 16)
             if(self.agenda.dcc):
-                pdf.drawCentredString(363,305, '20/'+self.agenda.dcc)
+                pdf.drawCentredString(353,305, '20/'+self.agenda.dcc)
             else:
-                pdf.drawCentredString(363,305, '------')
+                pdf.drawCentredString(353,305, '------')
             if(self.agenda.irc3):
-                pdf.drawCentredString(363,275, '20/'+self.agenda.icc)
+                pdf.drawCentredString(353,275, '20/'+self.agenda.icc)
             else:
-                pdf.drawCentredString(363,275, '------')
+                pdf.drawCentredString(353,275, '------')
         else:
             pdf.setFont("Times-Bold", 16)
-            pdf.drawCentredString(100,305, "OD.")
-            pdf.drawCentredString(100,275, "OI.")
+            pdf.drawCentredString(90,305, "OD.")
+            pdf.drawCentredString(90,275, "OI.")
             pdf.setFont("Times-Roman", 12)
-            pdf.drawCentredString(160,335, "ESFERICO")
-            pdf.drawCentredString(240,335, "CILINDRICO")
-            pdf.drawCentredString(320,335, "EJE")
-            pdf.drawString(80, 255, "Favor Medir D.P.")
+            pdf.drawCentredString(150,335, "ESFERICO")
+            pdf.drawCentredString(230,335, "CILINDRICO")
+            pdf.drawCentredString(310,335, "EJE")
+            pdf.drawString(70, 255, "Favor Medir D.P.")
             pdf.setFont("Times-Roman", 16)
             if(self.agenda.drc1):
-                pdf.drawCentredString(160,305, self.agenda.drc1)
+                pdf.drawCentredString(150,305, self.agenda.drc1)
             else:
-                pdf.drawCentredString(160,305, '------')
+                pdf.drawCentredString(150,305, '------')
             if(self.agenda.drc2):
-                pdf.drawCentredString(240,305, self.agenda.drc2)
+                pdf.drawCentredString(230,305, self.agenda.drc2)
             else:
-                pdf.drawCentredString(240,305, '------')
+                pdf.drawCentredString(230,305, '------')
             if(self.agenda.irc1):
-                pdf.drawCentredString(160,275, self.agenda.irc1)
+                pdf.drawCentredString(150,275, self.agenda.irc1)
             else:
-                pdf.drawCentredString(160,275, '------')
+                pdf.drawCentredString(150,275, '------')
             if(self.agenda.irc2):
-                pdf.drawCentredString(240,275, self.agenda.irc2)
+                pdf.drawCentredString(230,275, self.agenda.irc2)
             else:
-                pdf.drawCentredString(240,275, '------')
+                pdf.drawCentredString(230,275, '------')
             pdf.setFont("Times-Bold", 16)
             if(self.agenda.drc3):
-                pdf.drawCentredString(320,305, self.agenda.drc3+'°')
+                pdf.drawCentredString(310,305, self.agenda.drc3+'°')
             else:
-                pdf.drawCentredString(320,305, self.agenda.drc3+'------')
+                pdf.drawCentredString(310,305, self.agenda.drc3+'------')
             if(self.agenda.irc3):
-                pdf.drawCentredString(320,275, self.agenda.irc3+'°')
+                pdf.drawCentredString(310,275, self.agenda.irc3+'°')
             else:
-                pdf.drawCentredString(320,275, '------')
+                pdf.drawCentredString(310,275, '------')
         
     def observaciones(self, pdf, y):
         adicion = self.agenda.tipo_lente.split(",")
         pdf.setFont("Times-Bold", 12)
-        pdf.drawString(80, y, "Obs.")
+        pdf.drawString(70, y, "Obs.")
         pdf.setFont("Times-Roman", 10)
         pdf.setFillColorRGB(1,0,0)
         for item in adicion:
-            pdf.drawString(140, y, item)
+            pdf.drawString(130, y, item)
             y = y - 15
         y = y - 5
         pdf.setFillColorRGB(0,0,0)
-        pdf.drawString(80, y, "No olvide traer sus lentes a control.")
-        pdf.drawString(80, y-15, "No olvide traer su receta en la proxima consulta.")
+        pdf.drawString(70, y, "No olvide traer sus lentes a control.")
+        pdf.drawString(70, y-15, "No olvide traer su receta en la proxima consulta.")
         mes = {1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abril", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"}
-        pdf.drawString(80, 50, str(date.today().day)+" - "+mes[date.today().month]+" - "+str(date.today().year))
-        pdf.drawRightString(360, 50, datetime.now().strftime("(%H:%M:%S)"))
+        pdf.drawString(70, 55, str(date.today().day)+" - "+mes[date.today().month]+" - "+str(date.today().year))
+        pdf.drawRightString(350, 55, datetime.now().strftime("(%H:%M:%S)"))
 
     def tabla(self, pdf):
         if (self.agenda.impav):
-            pdf.line(65, 350 ,390, 350)
-            pdf.line(65, 325 ,390, 325)
-            pdf.line(65, 295 ,390, 295)
-            pdf.line(65, 265 ,390, 265)
-            pdf.line(65, 350 ,65, 265)
-            pdf.line(105, 350 ,105, 265)
-            pdf.line(175, 350 ,175, 265)
-            pdf.line(255, 350 ,255, 265)
-            pdf.line(335, 350 ,335, 265)
-            pdf.line(390, 350 ,390, 265)
+            pdf.line(55, 350 ,380, 350)
+            pdf.line(55, 325 ,380, 325)
+            pdf.line(55, 295 ,380, 295)
+            pdf.line(55, 265 ,380, 265)
+            pdf.line(55, 350 ,55, 265)
+            pdf.line(95, 350 ,95, 265)
+            pdf.line(165, 350 ,165, 265)
+            pdf.line(245, 350 ,245, 265)
+            pdf.line(325, 350 ,325, 265)
+            pdf.line(380, 350 ,380, 265)
         else:
-            pdf.line(80, 350 ,360, 350)
-            pdf.line(80, 325 ,360, 325)
-            pdf.line(80, 295 ,360, 295)
-            pdf.line(80, 265 ,360, 265)
-            pdf.line(80, 350 ,80, 265)
-            pdf.line(120, 350 ,120, 265)
-            pdf.line(200, 350 ,200, 265)
-            pdf.line(280, 350 ,280, 265)
-            pdf.line(360, 350 ,360, 265)
+            pdf.line(70, 350 ,350, 350)
+            pdf.line(70, 325 ,350, 325)
+            pdf.line(70, 295 ,350, 295)
+            pdf.line(70, 265 ,350, 265)
+            pdf.line(70, 350 ,70, 265)
+            pdf.line(110, 350 ,110, 265)
+            pdf.line(190, 350 ,190, 265)
+            pdf.line(270, 350 ,270, 265)
+            pdf.line(350, 350 ,350, 265)
 
     def tablaa(self, pdf):
         if (self.agenda.impav):
@@ -990,31 +990,31 @@ class ReporteRecmed(View):
 
     def paciente(self, pdf):
         pdf.setFont("Times-Bold", 12)
-        pdf.drawCentredString(220,430, self.agenda.paciente.nombres + ' ' + self.agenda.paciente.apellidos)
-        self.subrayar(pdf, 220,430,self.agenda.paciente.nombres + ' ' +self.agenda.paciente.apellidos)
+        pdf.drawCentredString(210,430, self.agenda.paciente.nombres + ' ' + self.agenda.paciente.apellidos)
+        self.subrayar(pdf, 210,430,self.agenda.paciente.nombres + ' ' +self.agenda.paciente.apellidos)
         pdf.setFont("Times-Roman", 10)
         mes = {1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abril", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"}
-        pdf.drawString(80, 50, str(date.today().day)+" - "+mes[date.today().month]+" - "+str(date.today().year))
-        pdf.drawRightString(360, 50, datetime.now().strftime("(%H:%M:%S)"))
+        pdf.drawString(70, 55, str(date.today().day)+" - "+mes[date.today().month]+" - "+str(date.today().year))
+        pdf.drawRightString(350, 55, datetime.now().strftime("(%H:%M:%S)"))
 
-    def receta(self, pdf, numero, rec):
+    def receta(self, pdf, numero, rec, factory):
         pdf.setFont("Times-Bold", 16)
-        pdf.drawString(80, self.y, str(numero)+'.- '+rec.medicamento.nombre)
+        pdf.drawString(70, self.y, str(numero)+'.- '+rec.medicamento.nombre)
         pdf.setFont("Times-Bold", 12)
         pdf.setFillColorRGB(1,0,0)
-        pdf.drawRightString(360, self.y, '('+rec.presentacion+')')
-        self.y = self.y - 20
-        pdf.drawRightString(360, self.y, '#'+str(rec.cantidad))
+        pdf.drawRightString(350, self.y, '('+rec.presentacion+')')
+        self.y = self.y - factory
+        pdf.drawRightString(350, self.y, '#'+str(rec.cantidad))
         pdf.setFillColorRGB(0,0,0)
         pdf.setFont("Times-Roman", 12)
         texto = textwrap.wrap(rec.indicacion, 50)
-        self.y = self.y - 20
+        self.y = self.y - factory
         pdf.setFont("Times-Bold", 12)
-        pdf.drawString(100, self.y, ">")
+        pdf.drawString(90, self.y, ">")
         pdf.setFont("Times-Roman", 12)
         x = 0
         for item in texto:            
-            pdf.drawString(115, self.y, texto[x])
+            pdf.drawString(105, self.y, texto[x])
             x = x+1
             self.y = self.y-15
 
@@ -1031,9 +1031,21 @@ class ReporteRecmed(View):
         pdf = canvas.Canvas(buffer, pagesize=recetam)
         self.paciente(pdf)
         indice=1
+        factory = 30
+        x = self.agenda.receta_set.all().count()
+        if x == 1:
+            factory = 70
+            self.y = self.y - 60        
+        if x == 2:
+            factory = 40
+            self.y = self.y - 40        
+        if x == 3:
+            factory = 30
+            self.y = self.y - 20 
+
         for item in self.agenda.receta_set.all():
-            self.receta(pdf, indice, item)
-            self.y = self.y-30
+            self.receta(pdf, indice, item, factory)
+            self.y = self.y-factory-5
             indice = indice+1
         pdf.save()
         pdf = buffer.getvalue()
@@ -1041,186 +1053,6 @@ class ReporteRecmed(View):
         response.write(pdf)
         return response
 
-class ReporteRecseguro(View):
-    def encabezado(self, canvas, doc):
-        canvas.saveState()
-        canvas.setFont('Times-Roman', 9)
-        #try:
-        archivo_imagen1 = os.path.join(settings.MEDIA_ROOT, "imagenes","sistema","logo1.jpg")
-        archivo_imagen2 = os.path.join(settings.MEDIA_ROOT, "imagenes","sistema","logo2.jpg") 
-        #imagen = Image(pil_img, width=90, height=50, hAlign='LEFT')
-        canvas.drawImage(archivo_imagen1, 75, 720,width=60, height=40)
-        canvas.drawImage(archivo_imagen2, 150, 720,width=150, height=40)
-        #except:
-        #canvas.drawString(inch, letter[1] - 50, "Ejemplo de DocTemplate y PageTemplate")
-        #canvas.line(inch, letter[1] - 60, letter[0] - 65, letter[1] - 60)
-        canvas.restoreState()
-
-    def get(self, *args, **kwargs):
-        agenda = Agenda.objects.get(id=self.kwargs['pk'])
-        #Indicamos el tipo de contenido a devolver, en este caso un pdf
-        response = HttpResponse(content_type='application/pdf')
-        pdf_name = "receta.pdf"  # llamado clientes
-        response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
-        buffer = BytesIO()
-        doc = BaseDocTemplate(buffer, pagesize=letter)
-        frame0 = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, showBoundary=0, id='normalBorde')
-        doc.addPageTemplates([
-            PageTemplate(id='principal', frames=frame0, onPage=self.encabezado),
-            ])
-        estilo=getSampleStyleSheet()
-        estilo.add(ParagraphStyle(name = "Titulo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica-Bold"))
-        estilo.add(ParagraphStyle(name = "Titulo2",  alignment=TA_CENTER, fontSize=10, fontName="Helvetica-Bold"))
-        estilo.add(ParagraphStyle(name = "Parrafo",  alignment=TA_LEFT, fontSize=10, fontName="Helvetica"))
-        estilo.add(ParagraphStyle(name="ParrafoCentro", alignment=TA_CENTER, fontSize=10, fontName="Helvetica"))
-           
-        #Iniciamos el platypus story
-        story=[]
-        story.append(NextPageTemplate('principal'))
-        data=[(Paragraph("NOMBRE", estilo['Titulo']),"","","",Paragraph("EDAD",estilo['Titulo']),"")]
-        data.append(((Paragraph(agenda.paciente.nombres+" "+agenda.paciente.apellidos, estilo['Parrafo'])),"","","",Paragraph(paciente_tags.edad(agenda.paciente.fecha_nacimiento), estilo['Parrafo']),""))
-        data.append((Paragraph("SEGURO", estilo['Titulo']),"","","",Paragraph("MATRICULA",estilo['Titulo']),""))
-        data.append(((Paragraph(agenda.seguro.nombre, estilo['Parrafo'])),"","","",Paragraph(agenda.matricula, estilo['Parrafo']),""))
-        data.append((Paragraph("FECHA", estilo['Titulo']),"","","",Paragraph("TIPO",estilo['Titulo']),""))
-        data.append(((Paragraph(agenda.fecha.strftime("%d - %m - %Y"), estilo['Parrafo'])),"","","",Paragraph(agenda.tipo_beneficiario, estilo['Parrafo']),""))
-        data.append((Paragraph("ANTECEDENTES OCULARES", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(agenda.antocu, estilo['Parrafo']),"","","","",""))
-        data.append(("", "", "", "", "", ""))
-        data.append((Paragraph("ANTECEDENTES SISTEMICOS", estilo['Titulo']), "", "", "", "", ""))
-        data.append((Paragraph(agenda.antsis, estilo['Parrafo']), "", "", "", "", ""))
-        data.append(("", "", "", "", "", ""))
-        data.append((Paragraph("MOTIVO DE CONSULTA", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
-        data.append(("", "", "", "", "", ""))
-        data.append((Paragraph("AGUDEZA VISUAL", estilo['Titulo']),"","","","",""))
-        data.append(("", "", Paragraph("O.D.", estilo['Titulo2']), "", Paragraph("O.I.", estilo['Titulo2']), ""))
-        data.append(("", Paragraph("S/C", estilo['Titulo']), Paragraph(agenda.dsc, estilo['ParrafoCentro'],""),
-                     Paragraph(agenda.isc, estilo['ParrafoCentro']),""))
-        data.append(("", Paragraph("C/C", estilo['Titulo']),Paragraph(agenda.dcc, estilo['ParrafoCentro']), "",
-                     Paragraph(agenda.icc, estilo['ParrafoCentro']),""))
-        refracd = ""
-        if agenda.dre1:
-            refracd = refracd+agenda.dre1+", "
-        else:
-            refracd = refracd+"---, "
-        if agenda.dre2:
-            refracd = refracd+agenda.dre2+", "
-        else:
-            refracd = refracd+"---, "
-        if agenda.dre3:
-            refracd = refracd+agenda.dre3+"°"
-        else:
-            refracd = refracd+"---"
-        refraci = ""
-        if agenda.ire1:
-            refraci = refraci + agenda.ire1 + ", "
-        else:
-            refraci = refraci + "---, "
-        if agenda.ire2:
-            refraci = refraci + agenda.ire2 + ", "
-        else:
-            refraci = refraci + "---, "
-        if agenda.ire3:
-            refraci = refraci + agenda.ire3 + "°"
-        else:
-            refraci = refraci + "---"
-        data.append(("",Paragraph("Refrac.", estilo['Titulo']),Paragraph(refracd, estilo['ParrafoCentro']), "",
-                     Paragraph(refraci, estilo['ParrafoCentro']),""))
-        data.append(("",Paragraph("Cerca", estilo['Titulo']), Paragraph(agenda.ddc1, estilo['ParrafoCentro']), "",
-                     Paragraph(agenda.ddc2, estilo['ParrafoCentro']), ""))
-        data.append((Paragraph("PIO", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph("O.D.", estilo['Titulo2']),"","",Paragraph("O.I.", estilo['Titulo2']),"",""))
-        data.append((Paragraph(agenda.dto, estilo['Parrafo']),"","",Paragraph(agenda.ito, estilo['Parrafo']),"",""))
-        data.append(("","","","","",""))
-        data.append((Paragraph("BIOMICROSCOPIA", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph("O.D.", estilo['Titulo2']),"","",Paragraph("O.I.", estilo['Titulo2']),"",""))
-        data.append((Paragraph(agenda.dbio, estilo['Parrafo']),"","",Paragraph(agenda.ibio, estilo['Parrafo']),"",""))
-        data.append(("","","","","",""))
-        data.append((Paragraph("FONDO DE OJO", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph("O.D.", estilo['Titulo2']),"","",Paragraph("O.I.", estilo['Titulo2']),"",""))
-        data.append((Paragraph(agenda.dfdo, estilo['Parrafo']),"","",Paragraph(agenda.ifdo, estilo['Parrafo']),"",""))
-        data.append(("","","","","",""))
-        data.append((Paragraph("OTROS", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(agenda.motivo, estilo['Parrafo']),"","","","",""))
-        data.append(("","","","","",""))
-        diagnosticos = ''
-        for idx, item in enumerate(agenda.diagnostico_set.all()):
-            diagnosticos = diagnosticos + str(idx + 1) + '.- ' + item.detalle + ', '
-        data.append((Paragraph("DIAGNOSTICO", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(diagnosticos, estilo['Parrafo']),"","","","",""))
-        data.append(("","","","","",""))
-        tratamientos = ''
-        for idx, item in enumerate(agenda.tratamiento_set.all()):
-            tratamientos = tratamientos + str(idx + 1) + '.- ' + item.detalle + ', '
-        data.append((Paragraph("TRATAMIENTO", estilo['Titulo']),"","","","",""))
-        data.append((Paragraph(tratamientos, estilo['Parrafo']),"","","","",""))
-        data.append(("","","","","",""))
-        
-
-        table = Table(data, colWidths=78, rowHeights=15)
-        table.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('GRID', (0, 0), (5, -1), 1, colors.black),
-            ('SPAN',(0,0),(3,0)),
-            ('SPAN',(0,1),(3,1)),
-            ('SPAN',(0,2),(3,2)),
-            ('SPAN',(0,3),(3,3)),
-            ('SPAN',(0,4),(3,4)),
-            ('SPAN',(0,5),(3,5)),
-            ('SPAN',(0,6),(5,6)),
-            ('SPAN',(0,7),(5,8)),
-            ('SPAN', (0, 9), (5, 9)),
-            ('SPAN', (0, 10), (5, 11)),
-            ('SPAN',(0,12),(5,12)),
-            ('SPAN',(0,13),(5,14)),
-            ('SPAN',(0,15),(5,15)),
-            ('SPAN',(0,16),(0,20)),
-            ('SPAN', (2, 16), (3, 16)),
-            ('SPAN', (2, 17), (3, 17)),
-            ('SPAN', (2, 18), (3, 18)),
-            ('SPAN', (2, 19), (3, 19)),
-            ('SPAN', (2, 20), (3, 20)),
-            ('SPAN', (4, 16), (5, 16)),
-            ('SPAN', (4, 17), (5, 17)),
-            ('SPAN', (4, 18), (5, 18)),
-            ('SPAN', (4, 19), (5, 19)),
-            ('SPAN', (4, 20), (5, 20)),
-            ('SPAN',(0,21),(5,21)),
-            ('SPAN',(0,22),(2,22)),
-            ('SPAN',(3,22),(5,22)),
-            ('SPAN',(0,23),(2,24)),
-            ('SPAN',(3,23),(5,24)),
-            ('SPAN',(0,25),(5,25)),
-            ('SPAN',(0,26),(2,26)),
-            ('SPAN',(3,26),(5,26)),
-            ('SPAN',(0,27),(2,28)),
-            ('SPAN',(3,27),(5,28)),
-            ('SPAN',(0,29),(5,29)),
-            ('SPAN',(0,30),(2,30)),
-            ('SPAN',(3,30),(5,30)),
-            ('SPAN',(0,31),(2,32)),
-            ('SPAN',(3,31),(5,32)),
-            ('SPAN',(0,33),(5,33)),
-            ('SPAN',(0,34),(5,35)),
-            ('SPAN',(0,36),(5,36)),
-            ('SPAN',(0,37),(5,38)),
-            ('SPAN',(0,39),(5,39)),
-            ('SPAN',(0,40),(5,41)),
-            ('SPAN',(4,0),(5,0)),
-            ('SPAN',(4,1),(5,1)),
-            ('SPAN',(4,2),(5,2)),
-            ('SPAN',(4,3),(5,3)),
-            ('SPAN',(4,4),(5,4)),
-            ('SPAN',(4,5),(5,5)),
-            ]
-            ))
-        
-        story.append(table)
-        doc.build(story)
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
 
 class ReporteRecsegurob(View):
     def encabezado(self, canvas, doc):
@@ -1258,6 +1090,7 @@ class ReporteRecsegurob(View):
             ('BOX', (0, 5), (1, 5), 1, colors.black),
             ]
         ))
+        
         story.append(table)
 
     def antecedentes(self, story, estilo, agenda):
@@ -1293,7 +1126,7 @@ class ReporteRecsegurob(View):
 
     def agudezavisual(self, story, estilo, agenda):
         data = []
-        datastyle = []
+        datastyle = []        
         datastyle.append(('GRID', (2, 1), (5, 5), 1, colors.black))
         datastyle.append(('GRID', (1, 2), (1, 5), 1, colors.black))
         datastyle.append(('SPAN', (0, 0), (5, 0)))
