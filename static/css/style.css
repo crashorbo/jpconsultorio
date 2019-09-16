@@ -8070,6 +8070,18 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
 .hrborder-top{
   border-top: 1px solid #052952;
 }
-#registro-paciente {
+.text-agenda{
+  color: #41897B !important;
+}
 
+.text-consulta{
+  color: #112952 !important;
+}
+
+.text-paciente{
+  color: #ED943C !important;
+}
+
+.text-configuracion{
+  color: #57ADED !important;
 }
