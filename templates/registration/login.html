@@ -37,8 +37,8 @@
   <!-- Preloader - style you can find in spinners.css -->
   <!-- ============================================================== -->
   <div class="preloader">
-      <svg class="circular" viewBox="25 25 50 50">
-          <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
   </div>
   <!-- ============================================================== -->
   <!-- Main wrapper - style you can find in pages.scss -->
@@ -46,78 +46,87 @@
   <section id="wrapper">
     <div class="login-register" style="background:#eef5f9;">
       <div class="login-box">
-        <div class="row">
-            <div class="col-md-12 text-center">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8 text-center">
                 <img src="{% static "assets/images/logoinicio.png" %}" class="img-fluid" alt="" />
+              </div>
             </div>
-        </div>
-        <hr />
-        <div class="row">
-          <div class="col-md-12">
-            <form class="form-horizontal" id="loginform" action="{% url 'login' %}" method="post" novalidate>
-              
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
-                        <ul>
-                            {% for field in form %}
-                                {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
-                            {% endfor %}
-                        </ul>
+            <hr />
+            <div class="row">
+              <div class="col-md-12">
+
+                <form class="form-horizontal" id="loginform" action="{% url 'login' %}" method="post" novalidate>
+
+                  {% if form.errors %}
+                  <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                    <ul>
+                      {% for field in form %}
+                      {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  {% endif %}
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                      <label for="">Usuario</label>
+                      <input id="username" name="username" class="form-control form-control-sm" type="text"
+                        value="{{ last_username }}" required="required">
                     </div>
-                {% endif %}
-                {% csrf_token %}
-                <div class="row">
-                  <div class="col-md-2"></div>  
-                  <div class="col-md-8">
-                    <small><strong>Usuario</strong></small>
-                      <input id="username" name="username" class="form-control" type="text" value="{{ last_username }}" required="required"> 
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-2"></div>  
-                  <div class="col-md-8">
-                    <small><strong>Contraseña</strong></small>  
-                    <input class="form-control" type="password" id="password" name="password" required="required">
+                  <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                      <label for="">Contraseña</label>
+                      <input class="form-control form-control-sm" type="password" id="password" name="password"
+                        required="required">
+                    </div>
                   </div>
-                </div>
-                <div class="row text-center m-t-20">
-                  <div class="col-md-2"></div>
-                  <div class="col-md-8">
-                      <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Ingresar</button>
+                  <div class="row text-center m-t-20">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                      <button class="btn btn-info btn-block text-uppercase waves-effect waves-light"
+                        type="submit">Ingresar</button>
+                    </div>
                   </div>
-                </div>
-            </form>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
-    <script src="{% static "assets/plugins/jquery/jquery.min.js" %}"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="{% static "assets/plugins/bootstrap/js/popper.min.js" %}"></script>
-    <script src="{% static "assets/plugins/bootstrap/js/bootstrap.min.js" %}"></script>
-    <!-- slimscrollbar scrollbar JavaScript -->
-    <script src="{% static "js/jquery.slimscroll.js" %}"></script>
-    <!--Wave Effects -->
-    <script src="{% static "js/waves.js" %}"></script>
-    <!--Menu sidebar -->
-    <script src="{% static "js/sidebarmenu.js" %}"></script>
-    <!--stickey kit -->
-    <script src="{% static "assets/plugins/sticky-kit-master/dist/sticky-kit.min.js" %}"></script>
-    <script src="{% static "assets/plugins/sparkline/jquery.sparkline.min.js" %}"></script>
-    <!--Custom JavaScript -->
-    <script src="{% static "js/custom.min.js" %}"></script>
-    <!-- ============================================================== -->
-    <!-- Style switcher -->
-    <!-- ============================================================== -->
-    <script src="{% static "assets/plugins/styleswitcher/jQuery.style.switcher.js" %}"></script>
+  <!-- ============================================================== -->
+  <!-- End Wrapper -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- All Jquery -->
+  <!-- ============================================================== -->
+  <script src="{% static "assets/plugins/jquery/jquery.min.js" %}"></script>
+  <!-- Bootstrap tether Core JavaScript -->
+  <script src="{% static "assets/plugins/bootstrap/js/popper.min.js" %}"></script>
+  <script src="{% static "assets/plugins/bootstrap/js/bootstrap.min.js" %}"></script>
+  <!-- slimscrollbar scrollbar JavaScript -->
+  <script src="{% static "js/jquery.slimscroll.js" %}"></script>
+  <!--Wave Effects -->
+  <script src="{% static "js/waves.js" %}"></script>
+  <!--Menu sidebar -->
+  <script src="{% static "js/sidebarmenu.js" %}"></script>
+  <!--stickey kit -->
+  <script src="{% static "assets/plugins/sticky-kit-master/dist/sticky-kit.min.js" %}"></script>
+  <script src="{% static "assets/plugins/sparkline/jquery.sparkline.min.js" %}"></script>
+  <!--Custom JavaScript -->
+  <script src="{% static "js/custom.min.js" %}"></script>
+  <!-- ============================================================== -->
+  <!-- Style switcher -->
+  <!-- ============================================================== -->
+  <script src="{% static "assets/plugins/styleswitcher/jQuery.style.switcher.js" %}"></script>
 </body>
 
 </html>
