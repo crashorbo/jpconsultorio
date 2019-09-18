@@ -266,7 +266,7 @@ class AgendaServicioCrear(CreateView):
         servicios = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
         valor = 0
         for serv in servicios:
-            if serv.estado and (not serv.agenda.tipo):
+            if not serv.agenda.tipo:
                 valor = valor + serv.costo
         movimiento.ingreso = valor
         movimiento.save()
@@ -279,9 +279,16 @@ class AgendaAjaxDelete(DeleteView):
     def delete(self, request, *args, **kwargs):
         borrar = self.get_object()
         if (not borrar.estado) and (not borrar.control):
-            borrar.deleted = True
+            borrar.deleted = True            
             borrar.save()
+            for serv in borrar.agendaserv_set.all():
+                serv.delete()
             self.recalculo()
+        if borrar.control:
+            borrar.estado = True
+            borrar.control = False
+            borrar.fecha = borrar.fecha_consulta
+            borrar.save()
         return render(self.request, 'paciente/success.html')
     
     def recalculo(self):
@@ -294,7 +301,7 @@ class AgendaAjaxDelete(DeleteView):
         servicios = Agendaserv.objects.filter(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
         valor = 0
         for serv in servicios:
-            if serv.estado:
+            if not serv.agenda.tipo:
                 valor = valor + serv.costo
         movimiento.ingreso = valor
         movimiento.save()

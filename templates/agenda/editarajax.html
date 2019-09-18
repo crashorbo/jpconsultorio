@@ -79,7 +79,7 @@
   <hr class="m-t-0 edagendaform" />
   <form id="form-ajaxeliminar" class="form-paciente edagendaform" action="{% url "agenda-editarajax" pk=agenda.id %}" method="post" novalidate>
     {% csrf_token %}
-    <div class="row hide">
+    <div id="agenda-oculto" class="row hide">
         {{ form }}
     </div>
     <div class="row">
@@ -254,7 +254,7 @@
           success: function(data){
             if(data.success){
               $('#calendar').fullCalendar("refetchEvents");
-              $("#responsive-modal").modal('hide');
+              $("#responsive-modal").modal('hide');              
               $.toast({
                 heading: 'Mensaje del Sistema',
                 text: 'Se ha Editado la informacion con exito',
@@ -297,9 +297,12 @@
             $("#servicios").html(data)
             $('#calendar').fullCalendar("refetchEvents");
             $('#form-servicio-crear')[0].reset();
-            $('#id_costo').prop('readonly', true);
-            costoajax();
-            window.recalculo();
+            $('#id_costo').prop('readonly', true);            
+            window.recalculo();      
+            if ($("#agenda-oculto > #id_tipo").val())
+              costoseguroajax($("#agenda-oculto > #id_seguro").val())
+            else
+              costoajax();
             $.toast({
               heading: 'Mensaje del Sistema',
               text: 'Se ha Adicionado un Nuevo Servicio a la Cita',

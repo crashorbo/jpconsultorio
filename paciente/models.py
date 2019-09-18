@@ -1,6 +1,6 @@
 from django.db import models
 from uuid import uuid4
-from datetime import date
+from datetime import date, datetime
 import os
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
@@ -74,7 +74,7 @@ class Paciente(models.Model):
       '<button class="paciente-historial btn btn-xs btn-info" data-url='+reverse('historia-lista',args=[self.id])+'><i class="icon-medical-history"></i></button><button class="paciente-editar btn btn-xs btn-warning m-l-5" data-url='+reverse('paciente-editar', args=[self.id])+'><i class="fa fa-edit"></i></button>']
 
 class Archivopdf(models.Model):
-  def _generar_ruta_archivo(instance, filename):
+  def _generar_ruta_archivo(self, instance, filename):
     # El primer paso es extraer la extension de la imagen del
     # archivo original
     extension = os.path.splitext(filename)[1][1:]
@@ -90,9 +90,10 @@ class Archivopdf(models.Model):
     # Devolvermos la ruta completa
     return os.path.join(ruta, nombre_archivo)
 
-  agenda = models.ForeignKey(Paciente, on_delete=models.CASCADE)
-  fecha = models.DateField(auto_now_add=True)
-  fecha_documento = models.DateField(auto_now=True)
-  archivo = models.FileField(upload_to=_generar_ruta_archivo)
+  paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+  fecha = models.DateField(default=datetime.datetime.now)
+  fecha_documento = models.DateField(default=datetime.datetime.now)
+  archivo = models.FileField(upload_to=_generar_ruta_archivo, blank=True)
   nombre = models.CharField(max_length=200, blank=True)
+  descripcion = models.TextField(blank=True)
   estado = models.BooleanField(default=True)

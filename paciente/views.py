@@ -1,13 +1,12 @@
 from django.shortcuts import render
-from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic.list import ListView
+from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.views.generic import View
 from django.http import JsonResponse
 import json
 # Create your views here.
 from braces.views import JSONResponseMixin
-from .models import Paciente
-from .forms import PacienteForm
+from .models import Paciente, Archivopdf
+from .forms import PacienteForm, ArchivopdfForm
 
 class TableAsJSON(JSONResponseMixin, View):
   model = Paciente
@@ -91,3 +90,21 @@ class PacienteEliminar(View):
     paciente = Paciente.objects.get(pk=request.GET.get('id'))
     paciente.delete()
     return JsonResponse(data)
+
+class ArchivopdfListar(DetailView):
+  model = Paciente
+  context_object_name = 'paciente'
+  template_name = 'paciente/archivopdf/archivolista.html'
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['archivo'] = self.model.objects.all().first
+    data = {'paciente': self.kwargs['pk']}
+    archivopdf = ArchivopdfForm(data)
+    context['archivoform'] = archivopdf
+    return context
+
+class ArchivopdfCrear(CreateView):
+  model = Archivopdf
+  form_class = ArchivopdfForm
+  

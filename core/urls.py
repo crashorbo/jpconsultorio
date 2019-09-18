@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import IndexView, MovimientoCalculoView, ServicioCostoView, GraficoView, GraficoFechaView, ServicioSeguroCosto
+from .views import IndexView, MovimientoCalculoView, ServicioCostoView, GraficoView, GraficoFechaView, ServicioSeguroCosto,ReportemensualView, ReportesegurosView
 
 
 urlpatterns = [
@@ -10,4 +10,6 @@ urlpatterns = [
     path('seguro-servicio-costo', login_required(ServicioSeguroCosto.as_view()), name="seguro-servicio_costo"),
     path('grafico', login_required(GraficoView.as_view()), name="grafico"),
     path('graficofecha/<year>', login_required(GraficoFechaView.as_view()), name="grafico_fecha"),
+    path('reportemensual', login_required(ReportemensualView.as_view()), name="reporte-mensual"),
+    path('reporteseguros', login_required(ReportesegurosView.as_view()), name="reporte-seguros"),
 ]

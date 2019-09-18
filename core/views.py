@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
 from datetime import datetime
+import datetime
 from django.http import HttpResponse,JsonResponse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -42,7 +43,7 @@ class ServicioSeguroCosto(View):
 
 class GraficoView(View):
     def get(self, *args, **kwargs):
-        now = datetime.now()
+        now = datetime.datetime.now()
         particular = []
         seguro = []
         for i in range(12):
@@ -61,3 +62,17 @@ class GraficoFechaView(View):
             seguro.append(Agenda.objects.filter(fecha__year=year, fecha__month=i + 1, tipo=1, estado=1).count())
         grafico = {"particular": particular, "seguro": seguro}
         return HttpResponse(json.dumps(grafico, cls=DjangoJSONEncoder), content_type='application/json')
+
+class ReportemensualView(View):
+  def get(self, *args, **kwargs):
+    now = datetime.date.today().year
+    frango = list(range(now, 2007, -1))
+    print(frango)
+    return render(self.request, 'core/reportemensual.html', {'frango': frango})
+
+class ReportesegurosView(View):
+  def get(self, *args, **kwargs):
+    now = datetime.date.today().year
+    frango = list(range(now, 2007, -1))
+    print(frango)
+    return render(self.request, 'core/reporteseguros.html', {'frango': frango})

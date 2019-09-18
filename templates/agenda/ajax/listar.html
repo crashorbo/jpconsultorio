@@ -5,6 +5,7 @@
     <a href="{% url 'agenda-editar' pk=consulta.id %}">
         <span class="{% if consulta.estado == 1%}text-danger{% endif %}{% if consulta.prioridad == 1%}text-success{% endif %}{% if consulta.prioridad == 2%}text-danger{% endif %}">
             <strong>{{ consulta.hora_inicio }} - </strong><span>{% if consulta.estado %}<strike><strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong></strike>{% else %}<strong>{{ consulta.paciente.nombres|add:" "|add:consulta.paciente.apellidos }}</strong>{% endif %} - {{ consulta.agendaserv_set.all.first.servicio.nombre }}
+            - {{ consulta.agendaserv_set.all.first.servicio.costo }}
         </span></h5>
     </a>
 </li>

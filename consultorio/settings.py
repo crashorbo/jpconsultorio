@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOGIN_REDIRECT_URL = '/'
 
-LOGIN_URL = 'cuentas/login'
+LOGIN_URL = '/cuentas/login'
 
 LOGOUT_REDIRECT_URL = '/'
 

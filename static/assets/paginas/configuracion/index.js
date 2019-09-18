@@ -128,7 +128,30 @@ $(document).ready(function(){
       }  
     })
   })
+  $('#rptmensual').on('click', function(e){
+    e.preventDefault();
+    $thisUrl = $(this).attr("href");
+    $.ajax({
+      method: "get",
+      url: $thisUrl,
+      success: function(data){
+        $("#mainbody").html(data);
+      }  
+    })
+  })
+  $('#rptseguros').on('click', function(e){
+    e.preventDefault();
+    $thisUrl = $(this).attr("href");
+    $.ajax({
+      method: "get",
+      url: $thisUrl,
+      success: function(data){
+        $("#mainbody").html(data);
+      }  
+    })
+  })
 });
+
 $(function() {
   
   // elementos de la lista
