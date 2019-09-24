@@ -100,11 +100,20 @@ class ArchivopdfListar(DetailView):
     context = super().get_context_data(**kwargs)
     context['archivo'] = self.model.objects.all().first
     data = {'paciente': self.kwargs['pk']}
-    archivopdf = ArchivopdfForm(data)
+    archivopdf = ArchivopdfForm(initial=data)
     context['archivoform'] = archivopdf
     return context
 
 class ArchivopdfCrear(CreateView):
   model = Archivopdf
   form_class = ArchivopdfForm
+  template_name = 'paciente/success.html'
+
+  def form_valid(self, form):
+      model = form.save(commit=False)        
+      model.save()
+      return JsonResponse({"success": True})
+
+  def form_invalid(self, form):
+      return JsonResponse({"success": False, "errors": dict(form.errors.items())})
   

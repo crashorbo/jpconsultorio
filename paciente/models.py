@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Q
 from django.db.models.query import QuerySet
-import datetime
 from django.contrib.auth.models import User
 # Create your models here.
 
@@ -51,7 +50,7 @@ class Paciente(models.Model):
 
   nombres = models.CharField(max_length=100)
   apellidos = models.CharField(max_length=100)
-  fecha_nacimiento = models.DateField(default=datetime.datetime.now)
+  fecha_nacimiento = models.DateField(default=datetime.now)
   documento = models.IntegerField(choices=DOCUMENTO_CHOICE, default=1)
   nro_documento = models.CharField(max_length=20, blank=True)
   direccion = models.TextField(blank=True)
@@ -71,10 +70,10 @@ class Paciente(models.Model):
       self.nro_documento,
       self.telefono,
       self.codigo,
-      '<button class="paciente-historial btn btn-xs btn-info" data-url='+reverse('historia-lista',args=[self.id])+'><i class="icon-medical-history"></i></button><button class="paciente-editar btn btn-xs btn-warning m-l-5" data-url='+reverse('paciente-editar', args=[self.id])+'><i class="fa fa-edit"></i></button>']
+      '<button class="paciente-historial btn btn-xs btn-info" data-url='+reverse('historia-lista',args=[self.id])+'><i class="icon-medical-history"></i></button><button class="paciente-examen btn btn-xs btn-success m-l-5" data-url='+reverse('archivopdf-listar',args=[self.id])+'><i class="fa fa-file-pdf-o"></i></button><button class="paciente-editar btn btn-xs btn-warning m-l-5" data-url='+reverse('paciente-editar', args=[self.id])+'><i class="fa fa-edit"></i></button>']
 
 class Archivopdf(models.Model):
-  def _generar_ruta_archivo(self, instance, filename):
+  def _generar_ruta_archivo(instance, filename):
     # El primer paso es extraer la extension de la imagen del
     # archivo original
     extension = os.path.splitext(filename)[1][1:]
@@ -91,8 +90,8 @@ class Archivopdf(models.Model):
     return os.path.join(ruta, nombre_archivo)
 
   paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
-  fecha = models.DateField(default=datetime.datetime.now)
-  fecha_documento = models.DateField(default=datetime.datetime.now)
+  fecha = models.DateField(auto_now=True)
+  fecha_documento = models.DateField(default=datetime.now)
   archivo = models.FileField(upload_to=_generar_ruta_archivo, blank=True)
   nombre = models.CharField(max_length=200, blank=True)
   descripcion = models.TextField(blank=True)

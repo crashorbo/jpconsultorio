@@ -23,8 +23,9 @@ class ArchivopdfForm(forms.ModelForm):
     fields = ('paciente', 'fecha_documento', 'archivo', 'nombre', 'descripcion')
 
     widgets = {
-      'fecha_documento': forms.DateInput(attrs={'class': 'form-control fecha'}),
-      'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-      'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+      'paciente': forms.HiddenInput(),
+      'fecha_documento': forms.DateInput(attrs={'class': 'form-control form-control-sm fecha'}),
+      'nombre': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+      'descripcion': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'rows': 2}),
       'archivo': forms.FileInput(attrs={'class': 'dropify'}),
     }

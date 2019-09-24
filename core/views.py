@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
-from datetime import datetime
 import datetime
 from django.http import HttpResponse,JsonResponse
 import json
@@ -19,12 +18,12 @@ class IndexView(TemplateView):
 
 class MovimientoCalculoView(View):
     def get(self, *args, **kwargs):
-        hoy = datetime.now()
+        hoy = datetime.datetime.now()
         fecha = hoy.strftime("%Y-%m-%d")
         try:
-            movimiento = Movdiario.objects.get(fecha=datetime.strptime(fecha, "%Y-%m-%d"))
+            movimiento = Movdiario.objects.get(fecha=datetime.datetime.strptime(fecha, "%Y-%m-%d"))
         except Movdiario.DoesNotExist:
-            movimiento = Movdiario(fecha=datetime.strptime(fecha, "%Y-%m-%d"), ingreso=0, egreso=0, estado=True)
+            movimiento = Movdiario(fecha=datetime.datetime.strptime(fecha, "%Y-%m-%d"), ingreso=0, egreso=0, estado=True)
         movimiento = self.get_results(movimiento)
         return HttpResponse( json.dumps(movimiento, cls=DjangoJSONEncoder), content_type='application/json')
     

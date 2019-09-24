@@ -82,3 +82,16 @@ $('#myTable').on('click', '.paciente-historial',function(e){
     }
   })
 });
+
+$('#myTable').on('click', '.paciente-examen',function(e){
+  e.preventDefault();
+  $this_url = $(this).attr('data-url');
+  $.ajax({
+    url: $this_url,
+    type: 'get',  
+    success: function(data){
+      $('#lmcontenido').html(data);
+      $('#lmodal').modal('show');
+    }
+  })
+});

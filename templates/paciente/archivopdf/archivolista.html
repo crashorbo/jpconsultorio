@@ -1,3 +1,97 @@
-Lista de Archivos
-<p>{{ paciente.nombres }}</p>
-{{ archivoform.as_p }}
+{% load static %}
+{% load paciente_tags %}
+<div class="modal-header">
+  <h4 class="modal-title">Examenes Complementarios</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+<div class="modal-body">  
+  <div id="archivopdf-listar" class="row">
+    <div class="col-md-12">
+      {% if paciente.archivopdf_set.all %}
+      <table class="table stylish-table">
+        <tbody>
+          {% for item in paciente.archivopdf_set.all %}
+          <tr>
+            <td width="10%">
+              <h6>{{ item.fecha_documento }}</h6>
+            </td>
+            <td width="25%">
+              <h6>{{ item.nombre }}</h6>
+            </td>
+            <td>
+              <h6>{{ item.descripcion }}</h6>
+            </td>
+            <td width="5%"><a href="/media/{{ item.archivo }}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="col-md-12 text-right">
+        <button class="btn btn-info archivopdf-new">Registrar</button>
+      </div>
+      {% else %}
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <p>No tiene Examenes Complementarios Registrados.</p>
+        </div>
+        <div class="col-md-12 text-right">
+          <button class="btn btn-info archivopdf-new">Registrar</button>
+        </div>
+      </div>
+      {% endif %}
+    </div>    
+  </div>  
+  <div id="archivopdf-registro" class="row">
+    <div class="col-md-12">
+      <form action="{% url "archivopdf-crear" %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-9">
+            <div class="row">
+              <div class="col-md-9">
+                <small><strong>Nombre</strong></small>
+                {{ archivoform.nombre }}
+              </div>
+              <div class="col-md-3">
+                <small><strong>Fecha</strong></small>
+                {{ archivoform.fecha_documento }}
+              </div>              
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <small><strong>Detalle</strong></small>
+                {{ archivoform.descripcion }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 align-self-end">
+                <button class="btn btn-inverse" id="archivopdf-cancelar"></button>
+                <button class="btn btn-info" type="submit">Guardar</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">            
+            {{ archivoform.archivo }}
+          </div>          
+        </div>        
+        {{ archivoform.paciente }}
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static "assets/plugins/dropify/dist/js/dropify.min.js" %}"></script>
+<script>
+  $(document).ready(function () {
+    // Basic
+    $('.dropify').dropify();
+    $('#archivopdf-registro').hide();
+    $(".archivopdf-new").click(function () {
+      $('#archivopdf-registro').show();
+      $('#archivopdf-listar').hide();
+    })
+    $("#archivopdf-cancelar").click(function () {
+      $('#archivopdf-registro').hide();
+      $('#archivopdf-listar').show();
+    })
+  })
+</script>
