@@ -4,11 +4,14 @@ import datetime
 from django.http import HttpResponse,JsonResponse
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from .models import Movdiario
 from servicio.models import Servicio
 from seguro.models import Segurocosto
-from agenda.models import Agenda
+from agenda.models import Agenda, Agendaserv
+from seguro.models import Seguro
 # Create your views here.
 
 
@@ -65,13 +68,20 @@ class GraficoFechaView(View):
 class ReportemensualView(View):
   def get(self, *args, **kwargs):
     now = datetime.date.today().year
-    frango = list(range(now, 2007, -1))
-    print(frango)
+    frango = list(range(now, 2007, -1))    
     return render(self.request, 'core/reportemensual.html', {'frango': frango})
 
 class ReportesegurosView(View):
   def get(self, *args, **kwargs):
     now = datetime.date.today().year
     frango = list(range(now, 2007, -1))
-    print(frango)
-    return render(self.request, 'core/reporteseguros.html', {'frango': frango})
+    seguros = Seguro.objects.all()
+    return render(self.request, 'core/reporteseguros.html', {'frango': frango, 'seguros': seguros})
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MovMensualView(View):
+  def post(self, request):
+    mes = request.POST.get('mes')    
+    gestion = request.POST.get('gestion')
+    servicios = Agendaserv.objects.filter(fecha__year=gestion, fecha__month=mes)   
+    return JsonResponse({"success": True, "servicios": servicios.count()})

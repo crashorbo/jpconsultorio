@@ -6,6 +6,7 @@
 {% block css %}
 <link href="{% static "assets/plugins/select2/dist/css/select2.css" %}" rel="stylesheet" type="text/css" />
 <link href="{% static "assets/plugins/bootstrap-selectf/dist/css/bootstrap-select.css" %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="{% static "assets/plugins/dropify/dist/css/dropify.min.css" %}">
 {% endblock %}
 
 {% block contenido %}
@@ -30,7 +31,8 @@
               {{ form.tipo_beneficiario }}
               {{ form.matricula }}
               {{ form.fecha_consulta }}
-          </div>
+              {{ form.referencia }}
+            </div>
           </div>
         </div>
         <div class="col-md-11 col-sm-10">
@@ -49,6 +51,13 @@
             </div>
             <div class="col-md-12">
               <h6>Procedencia: <em>{{ consulta.procedencia }}</em></h6>
+            </div>
+            <div class="col-md-10">
+              <h6>Referencia: <em>{{ consulta.referencia }}</em></h6>
+            </div>
+            <div class="col-md-2 m-b-5">
+              <button class="paciente-examen btn btn-xs btn-success" data-url="{% url "archivopdf-listar" pk=paciente.id %}" type="button"><i class="fa fa-file-pdf-o"></i></button>
+              <button class="paciente-examen btn btn-xs btn-info" data-url="{% url "archivopdf-listar" pk=paciente.id %}" type="button"><i class="fa fa-folder-open-o"></i></button>
             </div>
             {% if form.errors %}
             <div class="alert alert-danger">
@@ -256,7 +265,9 @@
             </div>
             <div class="col-md-6 text-right">
               {% csrf_token %}
-              <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historiam-lista' pk=consulta.paciente.id id=consulta.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
+              {% if paciente.agenda_set.all.count > 1 %}
+                <button type="button" class="btn btn-sm btn-info" id="historiac" data-url="{% url 'historiam-lista' pk=consulta.paciente.id id=consulta.id %}" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Historia Clinica"><i class="icon-medical-history"></i></button>
+              {% endif %}
               <button type="button" class="btn btn-sm btn-agenda text-white" id="recetar"  data-toggle="tooltip" data-placement="top" title=""  data-original-title="Receta"><i class="icon-medicine-2"></i></button>              
               <a onclick="imprimirlista(event, this);" href="{% url 'reporterecetasegurob' pk=consulta.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>              
               <a onclick="imprimirlista(event, this);" href="{% url 'reporterec' pk=consulta.id %}" class="btn btn-sm btn-inverse" data-toggle="tooltip" data-placement="top" title=""  data-original-title="Imprimir"><i class="fa fa-print"></i></a>
@@ -467,7 +478,7 @@
                                 <td width="40%" class="text-center"><h6 class="m-0">{{ visor.dsc }}</h6></td>
                                 <td width="40%" class="text-center"><h6 class="m-0">{{ visor.isc }}</h6></td>
                               </tr>
-                              <tr class="b-b">
+                              <tr class="b-b table-warning">
                                 <td width="20%" ><strong><h6 class="m-0"><u>C/C:</u></h6></strong></td>
                                 <td width="40%" class="text-center"><h6 class="m-0">{{ visor.dcc }}</h6></td>
                                 <td width="40%" class="text-center"><h6 class="m-0">{{ visor.icc }}</h6></td>
@@ -476,7 +487,7 @@
                           </table>
                           <table class="table table-sm table-bordered m-b-0">
                             <tbody>
-                              <tr class="b-b">
+                              <tr class="b-b table-info">
                                 <td width="20%" ><strong><h6 class="m-0"><u>Refr.:</u></h6></strong></td>
                                 <td width="13%" class="text-center"><h6 class="m-0">{{ visor.dre1 }}</h6></td>
                                 <td width="13%" class="text-center"><h6 class="m-0">{{ visor.dre2 }}</h6></td>
@@ -536,7 +547,7 @@
                           </table>
                           <table class="table table-sm table-bordered m-b-0">
                             <tbody>
-                              <tr class="b-b">
+                              <tr class="b-b table-info">
                                 <td width="20%" ><h6 class="m-0"><u>Receta:</u></h6></td>
                                 <td width="13%" class="text-center"><h6 class="m-0">{{ visor.drc1 }}</h6></td>
                                 <td width="13%" class="text-center"><h6 class="m-0">{{ visor.drc2 }}</h6></td>

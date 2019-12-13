@@ -287,6 +287,9 @@ class AgendaAjaxDelete(DeleteView):
         if borrar.control:
             borrar.estado = True
             borrar.control = False
+            for item in borrar.agendaserv_set.all():
+                if item.fecha == borrar.fecha:
+                    item.delete()
             borrar.fecha = borrar.fecha_consulta
             borrar.save()
         return render(self.request, 'paciente/success.html')
@@ -315,6 +318,8 @@ class AgendaEditar(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         agenda = Agenda.objects.get(id=self.kwargs['pk'])
+        paciente = Paciente.objects.get(id=agenda.paciente.id)
+        print(paciente.nombres)
         visor = Agenda.objects.filter(paciente=agenda.paciente).exclude(id=agenda.id).order_by('-fecha')
         diag_data = {'agenda': self.kwargs['pk']}
         descuento = False
@@ -337,6 +342,7 @@ class AgendaEditar(UpdateView):
         context['recetaform'] = receta
         context['controlform'] = control
         context['descuento'] = descuento
+        context['paciente'] = paciente
         return context
 
     def form_valid(self, form):

@@ -17,7 +17,7 @@ class AgendaForm(forms.ModelForm):
               'matricula', 'tipo_beneficiario', 'antocu', 'antsis', 'motivo', 'dsc', 'dcc', 'dre1', 'dre2', 'dre3', 'dau',
               'ddc1', 'ddc2', 'dph', 'dci', 'dcl', 'drc1', 'drc2', 'drc3', 'isc', 'icc', 'ire1', 'ire2', 'ire3', 'iau',
               'idc1', 'idc2', 'iph', 'ici', 'icl', 'irc1', 'irc2', 'irc3', 'adicion', 'tipo_lente', 'dto', 'ito', 'dbio',
-              'ibio', 'dfdo', 'ifdo', 'otros', 'impav', 'control')
+              'ibio', 'dfdo', 'ifdo', 'otros', 'impav', 'control', 'referencia')
 
     widgets = {
       'fecha': forms.DateInput(attrs={'class': 'form-control fecha form-control-sm'}),
@@ -26,6 +26,7 @@ class AgendaForm(forms.ModelForm):
       'tipo': forms.Select(attrs={'class': 'form-control form-control-sm'}),
       'prioridad': forms.Select(attrs={'class': 'form-control form-control-sm'}),
       'procedencia': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
+      'referencia': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
       'matricula': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
       'tipo_beneficiario': forms.Select(attrs={'class': 'form-control form-control-sm'}),
       'antocu': forms.Textarea(attrs={'class': 'form-control form-control-sm autoguardado', 'tabindex': 1, 'rows': 2}),

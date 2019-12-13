@@ -6,7 +6,7 @@
   <div class="col-md-7 col-4 align-self-center">
     <div class="d-flex m-t-10 justify-content-end">
       <div class="d-flex m-r-20 m-l-10 hidden-md-down">
-        <div class="chart-text m-r-10">          
+        <div class="chart-text m-r-10">
         </div>
       </div>
     </div>
@@ -17,23 +17,84 @@
 <!-- ============================================================== -->
 <div class="row rowstyle">
   <div class="col-md-12 p-0">
-    <div class="card"> 
+    <div class="card m-b-0">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-8"></div>
-          <div class="col-md-2"></div>
+          <div class="col-md-7"></div>
           <div class="col-md-2">
             <div class="row">
-                <label class="col-md-6 control-label col-form-label-sm text-right" for="">Gestion</label>
-                <div class="col-md-6">
-                    <select  id="gestionsel" class="form-control form-control-sm">
-                    {% for i in frango %}
-                        <option value="{{ i }}">{{ i }}</option>
-                    {% endfor %}
-                    </select>
-                </div>
+              <label class="col-md-6 control-label col-form-label-sm text-right" for="">Gestion</label>
+              <div class="col-md-6">
+                <select id="gestionsel" class="form-control form-control-sm">
+                  {% for i in frango %}
+                  <option value="{{ i }}">{{ i }}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
-        </div>        
+          </div>
+          <div class="col-md-2">
+            <div class="row">
+              <label class="col-md-4 control-label col-form-label-sm text-right" for="">Mes</label>
+              <div class="col-md-8">
+                <select id="messel" class="form-control form-control-sm">
+                  <option value="1">Enero</option>
+                  <option value="2">Febrero</option>
+                  <option value="3">Marzo</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Mayo</option>
+                  <option value="6">Junio</option>
+                  <option value="7">Julio</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Septiembre</option>
+                  <option value="10">Octubre</option>
+                  <option value="11">Noviembre</option>
+                  <option value="12">Diciembre</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <div class="row">
+              <button id="generar" type="button" class="btn btn-primary btn-sm">Generar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card m-b-0">
+      <div class="card-body">
+        <div class="row">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Gestion</td>
+                <th>Mes</td>
+                <th>Particular</td>
+                <th>Seguro</td>
+                <th>Total</td>                
+              </tr>
+            </thead>            
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+<script>
+  $(document).ready(function(){
+    
+  })
+  $("#generar").on("click", function(){
+    gestion = $("#gestionsel").val();
+    mes = $("#messel").val();
+    $.ajax({
+      method: "post",
+      url: "/movmensual",
+      data: {"gestion": gestion, "mes": mes},
+    })
+    .done(function(data){
+      alert("realizado")
+    })
+  })
+</script>

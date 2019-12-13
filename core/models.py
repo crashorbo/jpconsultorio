@@ -7,22 +7,28 @@ class Movdiario(models.Model):
   egreso = models.DecimalField(max_digits=10, decimal_places=2)
   estado = models.BooleanField(default=True)
 
-class RecPaciente(models.Model):
-    codigo = models.TextField(db_column='CODIGO', primary_key=True)  # Field name made lowercase.
-    nombres = models.TextField(db_column='NOMBRES', blank=True, null=True)  # Field name made lowercase.
-    a_paterno = models.TextField(db_column='A_PATERNO', blank=True, null=True)  # Field name made lowercase.
-    a_materno = models.TextField(db_column='A_MATERNO', blank=True, null=True)  # Field name made lowercase.
-    de = models.TextField(db_column='DE', blank=True, null=True)  # Field name made lowercase.
-    fecha_nac = models.DateField(db_column='FECHA_NAC', blank=True, null=True)  # Field name made lowercase.
-    direccion = models.TextField(db_column='DIRECCION', blank=True, null=True)  # Field name made lowercase.
-    telefono = models.TextField(db_column='TELEFONO', blank=True, null=True)  # Field name made lowercase.
-    ocupacion = models.TextField(db_column='OCUPACION', blank=True, null=True)  # Field name made lowercase.
-    ci = models.TextField(db_column='CI', blank=True, null=True)  # Field name made lowercase.
-    fecha_reg = models.DateField(db_column='FECHA_REG', blank=True, null=True)  # Field name made lowercase.
+class MovMensual(models.Model):
+  mes = models.IntegerField(default=0)
+  gestion = models.IntegerField(default=2007)
+  particular = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+  seguro = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
 
-    class Meta:
-        managed = False
-        db_table = 'rec_paciente'
+class RecPaciente(models.Model):
+  codigo = models.TextField(db_column='CODIGO', primary_key=True)  # Field name made lowercase.
+  nombres = models.TextField(db_column='NOMBRES', blank=True, null=True)  # Field name made lowercase.
+  a_paterno = models.TextField(db_column='A_PATERNO', blank=True, null=True)  # Field name made lowercase.
+  a_materno = models.TextField(db_column='A_MATERNO', blank=True, null=True)  # Field name made lowercase.
+  de = models.TextField(db_column='DE', blank=True, null=True)  # Field name made lowercase.
+  fecha_nac = models.DateField(db_column='FECHA_NAC', blank=True, null=True)  # Field name made lowercase.
+  direccion = models.TextField(db_column='DIRECCION', blank=True, null=True)  # Field name made lowercase.
+  telefono = models.TextField(db_column='TELEFONO', blank=True, null=True)  # Field name made lowercase.
+  ocupacion = models.TextField(db_column='OCUPACION', blank=True, null=True)  # Field name made lowercase.
+  ci = models.TextField(db_column='CI', blank=True, null=True)  # Field name made lowercase.
+  fecha_reg = models.DateField(db_column='FECHA_REG', blank=True, null=True)  # Field name made lowercase.
+
+  class Meta:
+    managed = False
+    db_table = 'rec_paciente'
 
 class RecHistoria(models.Model):
   codigo = models.TextField(db_column='CODIGO', primary_key=True)  # Field name made lowercase.

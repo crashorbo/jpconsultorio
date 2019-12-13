@@ -80,7 +80,7 @@ $('#myTable').on('click', '.paciente-historial',function(e){
       $('#lmcontenido').html(data);
       $('#lmodal').modal('show');
     }
-  })
+  });
 });
 
 $('#myTable').on('click', '.paciente-examen',function(e){

@@ -441,3 +441,16 @@ function agudezaclose() {
     $(".agudeza").show();
     $("#visor").hide();
 }
+
+$('.paciente-examen').on('click',function(e){
+  e.preventDefault();
+  $this_url = $(this).attr('data-url');
+  $.ajax({
+    url: $this_url,
+    type: 'get',  
+    success: function(data){
+      $('#lmcontenido').html(data);
+      $('#lmodal').modal('show');
+    }
+  });
+});

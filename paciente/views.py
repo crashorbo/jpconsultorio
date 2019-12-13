@@ -1,12 +1,14 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, UpdateView, DetailView, ListView
+from django.views.generic import CreateView, UpdateView, DetailView, ListView, DeleteView
 from django.views.generic import View
 from django.http import JsonResponse
 import json
+import locale
 # Create your views here.
 from braces.views import JSONResponseMixin
 from .models import Paciente, Archivopdf
 from .forms import PacienteForm, ArchivopdfForm
+from agenda.models import Agenda
 
 class TableAsJSON(JSONResponseMixin, View):
   model = Paciente
@@ -107,7 +109,7 @@ class ArchivopdfListar(DetailView):
 class ArchivopdfCrear(CreateView):
   model = Archivopdf
   form_class = ArchivopdfForm
-  template_name = 'paciente/success.html'
+  template_name = 'paciente/archivopdf/update.html'
 
   def form_valid(self, form):
       model = form.save(commit=False)        
@@ -117,3 +119,33 @@ class ArchivopdfCrear(CreateView):
   def form_invalid(self, form):
       return JsonResponse({"success": False, "errors": dict(form.errors.items())})
   
+class ArchivopdfUpdate(UpdateView):
+  model = Archivopdf
+  form_class = ArchivopdfForm
+
+  def form_valid(self, form):
+    model = form.save(commit=False)
+    model.save()
+    return JsonResponse({"success": True})
+
+class ArchivoPdfEliminar(DeleteView):
+  model = Archivopdf  
+
+  def delete(self, request, *args, **kwargs):
+      model = self.get_object()
+      paciente = Paciente.objects.get(pk=model.paciente.id)            
+      model.delete()
+      return render(self.request, 'paciente/archivopdf/archivolista-ajax.html', context={'paciente': paciente })
+
+class UltimaconPaciente(View):
+  def get(self, *args, **kwargs):    
+    q = self.request.GET['paciente']
+    object_list = Agenda.objects.filter(paciente=q).order_by('-fecha_consulta')    
+    try:    
+      return JsonResponse({
+        'result': object_list[0].fecha_consulta.strftime('%d de %B de %Y')
+      }, content_type='application/json')
+    except IndexError:
+      return JsonResponse({
+        'result': None
+      }, content_type='application/json')

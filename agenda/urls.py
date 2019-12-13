@@ -38,5 +38,5 @@ urlpatterns = [
     path('reconsulta/<pk>/eliminar', login_required(ReconsultaEliminar.as_view()), name='control-eliminar'),
     path('receta/crear', login_required(RecetaCrear.as_view()), name='receta-crear'),
     path('receta/<pk>/eliminar', login_required(RecetaEliminar.as_view()), name='receta-eliminar'),
-    path('agendaserv/<pk>/cobrar', login_required(AgendaservUpdate.as_view()), name='agendaserv-cobrar'),
+    path('agendaserv/<pk>/cobrar', login_required(AgendaservUpdate.as_view()), name='agendaserv-cobrar'),     
 ]

@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 # Create your models here.
 
 class MyModelMixin(object):
@@ -94,5 +95,20 @@ class Archivopdf(models.Model):
   fecha_documento = models.DateField(default=datetime.now)
   archivo = models.FileField(upload_to=_generar_ruta_archivo, blank=True)
   nombre = models.CharField(max_length=200, blank=True)
-  descripcion = models.TextField(blank=True)
+  #descripcion = models.TextField(blank=True)
+  descripcion = RichTextField(blank=True)
+  estado = models.BooleanField(default=True)
+
+class Nota(models.Model):
+  TIPO_CHOICES = (
+    (0, "NOTA"),
+    (1, "EXAMEN EXTERNO"),
+    (2, "CERTIFICADO MEDICO"),
+  )
+  paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+  tipo = models.IntegerField(default=0, choices=TIPO_CHOICES)
+  fecha = models.DateField(auto_now=True)
+  fecha_documento = models.DateField(default=datetime.now)
+  nombre = models.CharField(max_length=200, blank=True)
+  texto = models.TextField(blank=True)
   estado = models.BooleanField(default=True)

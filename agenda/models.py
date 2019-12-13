@@ -89,6 +89,7 @@ class Agenda(models.Model):
   impav = models.BooleanField(default=False)
   control = models.BooleanField(default=False)
   cobrar = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+  referencia = models.CharField(max_length=100, blank=True)
 
   def __str__(self):
     return self.fecha.strftime('%d/%m/%Y')
@@ -119,6 +120,9 @@ class Agendaserv(models.Model):
   hora = models.DateTimeField(default=timezone.now)
   estado = models.BooleanField(default=True)
   descuento = models.BooleanField(default=False)
+
+  class Meta:
+    ordering = ['-fecha']
 
 class Receta(models.Model):
   agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)

@@ -67,7 +67,19 @@ $(document).ready(function(){
     minimumInputLength: 2,
     
   });
- 
+  
+  $("#id_paciente").on("select2:select", function (e) { 
+    var select_val = $(e.currentTarget).val();
+    $.ajax({
+      url: '/paciente/ultimacon',
+      type: 'get',
+      data: {'paciente': select_val},
+      success: function(data){
+          $('#ultimacon').val(data.result);
+      }
+    });
+  });
+
   $('.clockpicker').clockpicker({
     donetext: 'Done',
   }).find('input').change(function() {
@@ -94,7 +106,7 @@ $(document).ready(function(){
         data: $formData,
         success: function(data){
           console.log(data);
-          if(!data.success){
+          if(!data.success){         
             $('#calendar').fullCalendar("refetchEvents");
             $('#form-agenda')[0].reset();
             $("#id_paciente").val("").trigger("change");

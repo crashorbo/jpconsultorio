@@ -4,11 +4,19 @@
   <h4 class="modal-title">Examenes Complementarios</h4>
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 </div>
-<div class="modal-body">  
+<div id="archivopdf-ajax" class="modal-body">
   <div id="archivopdf-listar" class="row">
     <div class="col-md-12">
       {% if paciente.archivopdf_set.all %}
-      <table class="table stylish-table">
+      <table class="table stylish-table table-hover">
+        <thead>
+          <tr>
+            <th>Fecha Documento</th>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody>
           {% for item in paciente.archivopdf_set.all %}
           <tr>
@@ -19,9 +27,17 @@
               <h6>{{ item.nombre }}</h6>
             </td>
             <td>
-              <h6>{{ item.descripcion }}</h6>
+              <h6>{{ item.descripcion|safe }}</h6>
             </td>
-            <td width="5%"><a href="/media/{{ item.archivo }}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></td>
+            <td width="5%" class="text-right">
+              <form action="{% url "archivopdf-eliminar" pk=item.id %}" method="post" class="eliminar-examen">
+                {% csrf_token %}
+                {% if item.archivo %}<a href="/media/{{ item.archivo }}" target="_blank"><i
+                    class="fa fa-file-pdf-o"></i></a>{% endif %}
+                <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
+                  data-original-title="Eliminar"><i class="fa fa-close"></i></button>
+              </form>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -31,7 +47,7 @@
       </div>
       {% else %}
       <div class="row">
-        <div class="col-md-12 text-center">
+        <div class="col-md-12 text-center archivopdf-reg">
           <p>No tiene Examenes Complementarios Registrados.</p>
         </div>
         <div class="col-md-12 text-right">
@@ -39,15 +55,17 @@
         </div>
       </div>
       {% endif %}
-    </div>    
-  </div>  
+    </div>
+  </div>
   <div id="archivopdf-registro" class="row">
     <div class="col-md-12">
-      <form action="{% url "archivopdf-crear" %}" method="post" enctype="multipart/form-data">
+      <form id="archivopdf-form" action="{% url "archivopdf-crear" %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        {{ archivoform.media }}
         <div class="row">
           <div class="col-md-9">
             <div class="row">
+              {{ archivoform.paciente }}
               <div class="col-md-9">
                 <small><strong>Nombre</strong></small>
                 {{ archivoform.nombre }}
@@ -55,26 +73,25 @@
               <div class="col-md-3">
                 <small><strong>Fecha</strong></small>
                 {{ archivoform.fecha_documento }}
-              </div>              
+              </div>
             </div>
             <div class="row">
               <div class="col-md-12">
-                <small><strong>Detalle</strong></small>
+                <small><strong>Detalle</strong></small>                
                 {{ archivoform.descripcion }}
               </div>
             </div>
             <div class="row">
               <div class="col-md-12 align-self-end">
-                <button class="btn btn-inverse" id="archivopdf-cancelar"></button>
                 <button class="btn btn-info" type="submit">Guardar</button>
+                <button class="btn btn-inverse" type="button" id="archivopdf-cancelar">Cancelar</button>
               </div>
             </div>
           </div>
-          <div class="col-md-3">            
+          <div class="col-md-3">
             {{ archivoform.archivo }}
-          </div>          
-        </div>        
-        {{ archivoform.paciente }}
+          </div>
+        </div>
       </form>
     </div>
   </div>
@@ -84,14 +101,94 @@
   $(document).ready(function () {
     // Basic
     $('.dropify').dropify();
+    var drEvent = $('#input-file-events').dropify();
+
+    drEvent.on('dropify.beforeClear', function (event, element) {
+      return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
+    });
+
+    drEvent.on('dropify.afterClear', function (event, element) {
+      alert('File deleted');
+    });
+
+    drEvent.on('dropify.errors', function (event, element) {
+      console.log('Has Errors');
+    });
+
+    var drDestroy = $('#input-file-to-destroy').dropify();
+    drDestroy = drDestroy.data('dropify')
+    $('#toggleDropify').on('click', function (e) {
+      e.preventDefault();
+      if (drDestroy.isDropified()) {
+        drDestroy.destroy();
+      } else {
+        drDestroy.init();
+      }
+    });
+
     $('#archivopdf-registro').hide();
-    $(".archivopdf-new").click(function () {
+    $("#archivopdf-listar").on("click", ".archivopdf-new", function () {
       $('#archivopdf-registro').show();
       $('#archivopdf-listar').hide();
-    })
-    $("#archivopdf-cancelar").click(function () {
+    });
+    $("#archivopdf-cancelar").on("click", function () {
       $('#archivopdf-registro').hide();
       $('#archivopdf-listar').show();
+    });
+  });
+  $('#archivopdf-form').on('submit', function (e) {
+    e.preventDefault();
+    for (var instance in CKEDITOR.instances){
+    CKEDITOR.instances[instance].updateElement();
+    }
+    var $formData = new FormData(this);
+    var $thisUrl = $(this).attr('action');
+    var $thisMethod = $(this).attr('method');
+    console.log($formData);
+    $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function (data) {
+        location.reload();
+      },
+      error: function (xhr, errmsg, err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>" +
+          "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"
+          ); // add error to the dom
+        console.log(xhr.status + ": " + xhr
+        .responseText); // provide a bit more info about the error to the console
+      }
     })
-  })
+  });
+  $("#archivopdf-listar").on("submit", ".eliminar-examen", function (e) {
+    e.preventDefault();
+    var $formData = $(this).serialize();
+    var $formArray = {};
+    $.each($(this).serializeArray(), function (i, field) {
+      $formArray[field.name] = field.value;
+    });
+    var $thisUrl = $(this).attr('action');
+    var $thisMethod = $(this).attr('method');
+    $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      success: function (data) {
+        $('#archivopdf-listar').html(data);
+      },
+      error: function (xhr, errmsg, err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>" +
+          "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"
+          ); // add error to the dom
+        console.log(xhr.status + ": " + xhr
+        .responseText); // provide a bit more info about the error to the console
+      }
+    })
+  });
 </script>
