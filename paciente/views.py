@@ -10,6 +10,7 @@ from .models import Paciente, Archivopdf
 from .forms import PacienteForm, ArchivopdfForm
 from agenda.models import Agenda
 
+
 class TableAsJSON(JSONResponseMixin, View):
   model = Paciente
 
@@ -47,6 +48,7 @@ class TableAsJSON(JSONResponseMixin, View):
     }
     return self.render_json_response(json)
 
+
 # Vista Inicial de la aplicacion
 class IndexView(ListView):
   template_name = 'paciente/index.html'
@@ -57,7 +59,8 @@ class IndexView(ListView):
     context = super().get_context_data(**kwargs)
     context['pacientes'] = self.model.objects.all()
     return context
-  
+
+
 class PacienteRegistrar(CreateView):
   model = Paciente
   form_class = PacienteForm
@@ -66,9 +69,11 @@ class PacienteRegistrar(CreateView):
   def form_valid(self, form):
     self.object = form.save()
     return JsonResponse({"success": True})
-  
+
+
   def form_invalid(self, form):
     return JsonResponse({"success": False, "errores": [(k, v[0]) for k, v in form.errors.items()]})
+
 
 
 class PacienteEditar(UpdateView):
@@ -84,6 +89,7 @@ class PacienteEditar(UpdateView):
   def form_invalid(self, form):
     return JsonResponse({"success": False, "errores": [(k, v[0]) for k, v in form.errors.items()]})
 
+
 class PacienteEliminar(View):
   def get(self, request):
     data = {
@@ -93,23 +99,30 @@ class PacienteEliminar(View):
     paciente.delete()
     return JsonResponse(data)
 
-class ArchivopdfListar(DetailView):
+
+class ArchivopdfListajax(DetailView):
   model = Paciente
   context_object_name = 'paciente'
-  template_name = 'paciente/archivopdf/archivolista.html'
+  template_name = 'paciente/archivopdf/archivopdf-lista-ajax.html'
 
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    context['archivo'] = self.model.objects.all().first
-    data = {'paciente': self.kwargs['pk']}
-    archivopdf = ArchivopdfForm(initial=data)
-    context['archivoform'] = archivopdf
-    return context
+
+class ArchivopdfList(DetailView):
+  model = Paciente
+  context_object_name = 'paciente'
+  template_name = 'paciente/archivopdf/archivopdf-lista.html'
+
 
 class ArchivopdfCrear(CreateView):
   model = Archivopdf
   form_class = ArchivopdfForm
-  template_name = 'paciente/archivopdf/update.html'
+  template_name = 'paciente/archivopdf/archivopdf-registrar.html'
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['paciente'] = self.kwargs['pk']
+    data = {'paciente': self.kwargs['pk']}
+    context['form'] = ArchivopdfForm(initial=data)
+    return context
 
   def form_valid(self, form):
       model = form.save(commit=False)        
@@ -118,15 +131,7 @@ class ArchivopdfCrear(CreateView):
 
   def form_invalid(self, form):
       return JsonResponse({"success": False, "errors": dict(form.errors.items())})
-  
-class ArchivopdfUpdate(UpdateView):
-  model = Archivopdf
-  form_class = ArchivopdfForm
 
-  def form_valid(self, form):
-    model = form.save(commit=False)
-    model.save()
-    return JsonResponse({"success": True})
 
 class ArchivoPdfEliminar(DeleteView):
   model = Archivopdf  
@@ -135,7 +140,23 @@ class ArchivoPdfEliminar(DeleteView):
       model = self.get_object()
       paciente = Paciente.objects.get(pk=model.paciente.id)            
       model.delete()
-      return render(self.request, 'paciente/archivopdf/archivolista-ajax.html', context={'paciente': paciente })
+      return render(self.request, 'paciente/archivopdf/archivolista-ajax.html', context={'paciente': paciente})
+
+
+class ArchivoPdfUpdate(UpdateView):
+  model = Archivopdf
+  form_class = ArchivopdfForm
+  template_name = 'paciente/archivopdf/archivopdf-editar.html'
+  context_object_name = 'archivopdf'
+
+  def form_valid(self, form):
+    model = form.save(commit=False)
+    model.save()
+    return JsonResponse({"success": True})
+
+  def form_invalid(self, form):
+    return JsonResponse({"success": False, "errors": dict(form.errors.items())})
+
 
 class UltimaconPaciente(View):
   def get(self, *args, **kwargs):    

@@ -1,0 +1,116 @@
+{% load static %}
+
+<div id="archivopdf-crear" class="row">
+  <div class="col-md-12">
+    <form id="archivopdf-form" action="{% url "archivopdf-crear" pk=paciente %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.media }}
+      <div class="row">
+        <div class="col-md-9">
+          <div class="row">
+            {{ form.paciente }}
+            <div class="col-md-9">
+              <small><strong>Nombre</strong></small>
+              {{ form.nombre }}
+            </div>
+            <div class="col-md-3">
+              <small><strong>Fecha</strong></small>
+              {{ form.fecha_documento }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <small><strong>Detalle</strong></small>
+              {{ form.descripcion }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 align-self-end">
+              <button class="btn btn-info" type="submit">Guardar</button>
+              <button data-ref="{% url 'archivopdf-listar-ajax' pk=paciente %}" class="btn btn-inverse" type="button" id="archivopdf-cancelar">Cancelar</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          {{ form.archivo }}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="{% static "assets/plugins/dropify/dist/js/dropify.min.js" %}"></script>
+<script>
+  $(document).ready(function () {
+    // Basic
+    $('.dropify').dropify();
+    var drEvent = $('#input-file-events').dropify();
+
+    drEvent.on('dropify.beforeClear', function (event, element) {
+      return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
+    });
+
+    drEvent.on('dropify.afterClear', function (event, element) {
+      alert('File deleted');
+    });
+
+    drEvent.on('dropify.errors', function (event, element) {
+      console.log('Has Errors');
+    });
+
+    var drDestroy = $('#input-file-to-destroy').dropify();
+    drDestroy = drDestroy.data('dropify');
+    $('#toggleDropify').on('click', function (e) {
+      e.preventDefault();
+      if (drDestroy.isDropified()) {
+        drDestroy.destroy();
+      } else {
+        drDestroy.init();
+      }
+    });
+  });
+  $('#archivopdf-form').on('submit', function (e) {
+    e.preventDefault();
+    for (var instance in CKEDITOR.instances){
+    CKEDITOR.instances[instance].updateElement();
+    }
+    var $formData = new FormData(this);
+    var $thisUrl = $(this).attr('action');
+    var $thisMethod = $(this).attr('method');
+    $.ajax({
+      method: $thisMethod,
+      url: $thisUrl,
+      data: $formData,
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function (data) {
+        var $href = $('#archivopdf-cancelar').attr("data-ref");
+        $.ajax({
+          method: 'get',
+          url: $href,
+          success: function (data) {
+            $("#archivopdf-ajax").html(data);
+          }
+        });
+      },
+      error: function (xhr, errmsg, err) {
+        // Show an error
+        $('#results').html("<div class='alert-box alert radius' data-alert>" +
+          "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"
+          ); // add error to the dom
+        console.log(xhr.status + ": " + xhr
+        .responseText); // provide a bit more info about the error to the console
+      }
+    })
+  });
+  $('#archivopdf-cancelar').on('click', function (e) {
+    var $href = $(this).attr("data-ref");
+    $.ajax({
+      method: 'get',
+      url: $href,
+      success: function (data) {
+        $("#archivopdf-ajax").html(data);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,77 @@
+{% load static %}
+<div class="modal-header">
+  <h4 class="modal-title">Examenes Complementarios</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+<div id="archivopdf-ajax" class="modal-body">
+  <div id="archivopdf-listar" class="row">
+    <div class="col-md-12">
+      {% if paciente.archivopdf_set.all %}
+      <table class="table stylish-table table-hover">
+        <thead>
+          <tr>
+            <th>Fecha Documento</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in paciente.archivopdf_set.all %}
+          <tr>
+            <td width="10%">
+              <h6>{{ item.fecha_documento }}</h6>
+            </td>
+            <td width="25%">
+              <h6>{{ item.nombre }}</h6>
+            </td>
+            <td width="5%" class="text-right">
+              <form action="{% url "archivopdf-eliminar" pk=item.id %}" method="post" class="eliminar-examen">
+                {% csrf_token %}
+                <button type="button" data-ref="{% url 'archivopdf-editar' pk=item.id %}" class="btn btn-xs btn-success editar-examen">
+                    <i class="fa fa-eye"></i></button>
+                <button type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
+                  data-original-title="Eliminar"><i class="fa fa-close"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="col-md-12 text-right">
+        <button data-ref="{% url 'archivopdf-crear' pk=paciente.id %}" class="btn btn-info archivopdf-new">Registrar</button>
+      </div>
+      {% else %}
+      <div class="row">
+        <div class="col-md-12 text-center archivopdf-reg">
+          <p>No tiene Examenes Complementarios Registrados.</p>
+        </div>
+        <div class="col-md-12 text-right">
+          <button data-ref="{% url 'archivopdf-crear' pk=paciente.id %}" class="btn btn-info archivopdf-new">Registrar</button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <script>
+    $("td").on("click", ".editar-examen", function (e) {
+      var $href = $(this).attr("data-ref");
+      $.ajax({
+        method: 'get',
+        url: $href,
+        success: function (data) {
+          $("#archivopdf-ajax").html(data);
+        }
+      })
+    });
+    $(".archivopdf-new").on("click", function (e) {
+      var $href = $(this).attr("data-ref");
+      $.ajax({
+        method: 'get',
+        url: $href,
+        success: function (data) {
+          $("#archivopdf-ajax").html(data);
+        }
+      })
+    })
+  </script>
+</div>
