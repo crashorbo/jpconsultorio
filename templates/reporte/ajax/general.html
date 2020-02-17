@@ -1,0 +1,206 @@
+{% load static %}
+
+<div class="card-body">
+  <div class="card b-all shadow-none">
+    <div class="card-body">
+      <div class="row">
+        <div class="col md-8"><h3 class="card-title m-b-0">REPORTE GENERAL</h3></div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-5 text-right"><label class="control-label col-form-label-sm" for="">Gestion</label></div>
+            <div class="col-md-7">
+              <select id="gestionsel" class="form-control form-control-sm">
+                {% for i in rangestion %}
+                  <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="bar-chart" style="width:100%; height:300px;"></div>
+      <div id="restabla">
+
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static "assets/plugins/echarts/echarts-all.js" %}"></script>
+<script src="{% static "assets/plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script>
+  $(function () {
+    var myChart = echarts.init(document.getElementById('bar-chart'));
+    $.get('/grafico').done(function (data) {
+      myChart.setOption({
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['Particular', 'Seguro']
+        },
+        toolbox: {
+          show: true,
+          feature: {
+
+            magicType: {show: true, type: ['line', 'bar']},
+            restore: {show: true},
+          }
+        },
+        color: ["#55ce63", "#009efb"],
+        calculable: true,
+        xAxis: [
+          {
+            type: 'category',
+            data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: 'Particular',
+            type: 'bar',
+            data: data.particular,
+            markPoint: {
+              data: [
+                {type: 'max', name: 'Max'},
+                {type: 'min', name: 'Min'}
+              ]
+            },
+            markLine: {
+              data: [
+                {type: 'average', name: 'Media'}
+              ]
+            }
+          },
+          {
+            name: 'Seguro',
+            type: 'bar',
+            data: data.seguro,
+            markPoint: {
+              data: [
+                {type: 'average', name: 'Media'}
+              ]
+            },
+            markLine: {
+              data: [
+                {type: 'average', name: 'Media'}
+              ]
+            }
+          }
+        ]
+      }), $(function () {
+        function resize() {
+          setTimeout(function () {
+            myChart.resize();
+          }, 100);
+        }
+
+        $(window).on("resize", resize), $(".sidebartoggler").on("click", resize)
+      });
+    });
+    $.ajax({
+      url: 'general-ajax/' + $("#gestionsel").val(),
+      type: 'get',
+      success: function (data) {
+        $("#restabla").html(data);
+      }
+    });
+    $("#gestionsel").on("change", function (e) {
+      $.ajax({
+        url: 'general-ajax/' + $("#gestionsel").val(),
+        type: 'get',
+        success: function (data) {
+          $("#restabla").html(data);
+        }
+      });
+      $.get('/graficofecha/' + $(this).val()).done(function (data) {
+        myChart.setOption({
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: ['Particular', 'Seguro']
+          },
+          toolbox: {
+            show: true,
+            feature: {
+
+              magicType: {show: true, type: ['line', 'bar']},
+              restore: {show: true},
+            }
+          },
+          color: ["#55ce63", "#009efb"],
+          calculable: true,
+          xAxis: [
+            {
+              type: 'category',
+              data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+            }
+          ],
+          yAxis: [
+            {
+              type: 'value'
+            }
+          ],
+          series: [
+            {
+              name: 'Particular',
+              type: 'bar',
+              data: data.particular,
+              markPoint: {
+                data: [
+                  {type: 'max', name: 'Max'},
+                  {type: 'min', name: 'Min'}
+                ]
+              },
+              markLine: {
+                data: [
+                  {type: 'average', name: 'Media'}
+                ]
+              }
+            },
+            {
+              name: 'Seguro',
+              type: 'bar',
+              data: data.seguro,
+              markPoint: {
+                data: [
+                  {type: 'average', name: 'Media'}
+                ]
+              },
+              markLine: {
+                data: [
+                  {type: 'average', name: 'Media'}
+                ]
+              }
+            }
+          ]
+        }), $(function () {
+          function resize() {
+            setTimeout(function () {
+              myChart.resize();
+            }, 100);
+          }
+
+          $(window).on("resize", resize), $(".sidebartoggler").on("click", resize)
+        });
+      });
+    });
+  });
+  $("#restabla").on("click", '#registrar-mes', function (e) {
+    $.ajax({
+      url: 'general-form/' + $("#gestionsel").val(),
+      type: 'get',
+      success: function (data) {
+        $('#contenido-modal').html(data);
+        $('#responsive-modal').modal('show');
+      }
+    });
+  })
+</script>

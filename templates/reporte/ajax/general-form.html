@@ -1,0 +1,23 @@
+{% load static %}
+<div class="modal-header">
+  <h4 class="modal-title">Generar Reporte</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+<div class="modal-body">
+  <form class="form" action="{% url 'reporte-form' pk=gestion %}" method="post">
+    {% csrf_token %}
+    {{ form.gestion }}
+    <div class="form-group row">
+      <label for="" class="col-md-2 col-form-label"><strong>Mes</strong></label>
+      <div class="col-md-5">
+        {{ form.mes }}
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-sm btn-success">Generar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

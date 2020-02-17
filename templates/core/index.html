@@ -8,146 +8,133 @@
 <!-- ============================================================== -->
 <!-- Start Page Content -->
 <!-- ============================================================== -->
-{% if user|has_group:"medico" %}
-<div class="row p-t-30">
-  <div class="col-lg-3 col-md-6">
-    <div class="card ">
-      <div class="row">
-        <div class="col-12">
-          <a href="{% url "agenda-index" %}">
-            <div class="social-widget">
-              <div class="icono-main soc-header box-agenda">
-                <i class="icon-calendar-3"></i>
-              </div>
-              <div class="soc-content">
-                <div class="col-12 text-center">
-                  <h4 class="text-agenda">AGENDA</h4>
+<div class="row align-items-center p-t-30">
+  <div class="col-md-6 col-lg-6">
+    <div class="row align-items-center">
+      {% if user|has_group:"medico" or user|has_group:"auxiliar" %}
+      <div class="col-md-6">
+        <div class="card ">
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url "agenda-index" %}">
+                <div class="social-widget">
+                  <div class="icono-main soc-header box-agenda">
+                    <i class="icon-calendar-3"></i>
+                  </div>
+                  <div class="soc-content">
+                    <div class="col-12 text-center">
+                      <h4 class="text-agenda">AGENDA</h4>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6">
-    <div class="card ">
-      <div class="row">
-        <div class="col-12">
-          <a href="{% url "agenda-listar" %}">
-            <div class="social-widget">
-              <div class="icono-main soc-header box-consulta">
-                <i class="icon-doctor"></i>
-              </div>
-              <div class="soc-content">
-                <div class="col-12 text-center">
-                  <h4 class="text-consulta">CONSULTA</h4>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6">
-    <div class="card ">
-      <div class="row">
-        <div class="col-12">
-          <a href="{% url "paciente-index" %}">
-            <div class="social-widget">
-              <div class="icono-main soc-header box-paciente">
-                <i class="ti-user"></i>
-              </div>
-              <div class="soc-content">
-                <div class="col-12 text-center">
-                  <h4 class="text-paciente">PACIENTE</h4>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6">
-    <div class="card ">
-      <div class="row">
-        <div class="col-12">
-          <a href="{% url "configuracion" %}">
-            <div class="social-widget">
-              <div class="icono-main soc-header box-twitter">
-                <i class="ti-settings"></i>
-              </div>
-              <div class="soc-content">
-                <div class="col-12 text-center">
-                  <h4 class="text-configuracion">CONFIGURACION</h4>
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-{% if user|has_group:"auxiliar" %}
-<div class="row p-t-30">
-  <div class="col-md-6 col-lg-3"></div>
-  <div class="col-lg-3 col-md-6">
-    <div class="card ">
-      <div class="row">
-        <div class="col-12">
-          <div class="social-widget">
-            <div class="icono-main soc-header box-agenda">
-              <i class="icon-calendar-3"></i>
-            </div>
-            <div class="soc-content">
-              <div class="col-12 text-center">
-                <a href="{% url "agenda-index" %}" class="btn btn-agenda text-white">
-                  <i class="fa fa-arrow-right"></i>
-                </a>
-              </div>
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6">
-    <div class="card ">
-      <div class="row">
-        <div class="col-12">
-          <div class="social-widget">
-            <div class="icono-main soc-header box-paciente">
-              <i class="ti-user"></i>
-            </div>
-            <div class="soc-content">
-              <div class="col-12 text-center">
-                <a href="{% url "paciente-index" %}" class="btn btn-paciente">
-                  <i class="fa fa-arrow-right"></i>
-                </a>
-              </div>
+      {% endif %}
+      {% if user|has_group:"medico" %}
+      <div class="col-md-6">
+        <div class="card ">
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url "agenda-listar" %}">
+                <div class="social-widget">
+                  <div class="icono-main soc-header box-consulta">
+                    <i class="icon-doctor"></i>
+                  </div>
+                  <div class="soc-content">
+                    <div class="col-12 text-center">
+                      <h4 class="text-consulta">CONSULTA</h4>
+                    </div>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>
       </div>
+      {% endif %}
+      {% if user|has_group:"medico" or user|has_group:"auxiliar" %}
+      <div class="col-md-6">
+        <div class="card ">
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url "paciente-index" %}">
+                <div class="social-widget">
+                  <div class="icono-main soc-header box-paciente">
+                    <i class="ti-user"></i>
+                  </div>
+                  <div class="soc-content">
+                    <div class="col-12 text-center">
+                      <h4 class="text-paciente">PACIENTE</h4>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if user|has_group:"medico"%}
+      <div class="col-md-6">
+        <div class="card ">
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url "reporte-index" %}">
+                <div class="social-widget">
+                  <div class="icono-main soc-header box-reporte">
+                    <i class="ti-agenda"></i>
+                  </div>
+                  <div class="soc-content">
+                    <div class="col-12 text-center">
+                      <h4 class="text-reporte">REPORTE</h4>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if user|has_group:"medico" or user|has_group:"auxiliar" %}
+      <div class="col-md-6">
+        <div class="card ">
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url "configuracion" %}">
+                <div class="social-widget">
+                  <div class="icono-main soc-header box-twitter">
+                    <i class="ti-settings"></i>
+                  </div>
+                  <div class="soc-content">
+                    <div class="col-12 text-center">
+                      <h4 class="text-configuracion">CONFIGURACION</h4>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
-</div>
-{% endif %}
-<div class="row">
-  <!-- column -->
-  <div class="col-md-4"></div>
-  <div class="col-md-4 text-center">
-    <img src="{% static "assets/images/logoinicio.png" %}" class="img-fluid" alt="Home" />
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12 text-center">
-    <a href="{% url 'logout' %}" class="btn btn-danger btn-xl" data-toggle="tooltip" data-placement="top" title=""
-      data-original-title="Salir"><i class="mdi mdi-exit-to-app"></i></a>
+  <div class="col-md-6 col-lg-6">
+    <div class="row justify-content-center">
+      <div class="col-md-8 d-none d-md-block text-center">
+        <img src="{% static "assets/images/logoinicio.png" %}" class="img-fluid" alt="Home" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-xl" data-toggle="tooltip" data-placement="top" title=""
+        data-original-title="Salir"><i class="mdi mdi-exit-to-app"></i></a>
+      </div>
+    </div>
   </div>
 </div>
 <!-- ============================================================== -->

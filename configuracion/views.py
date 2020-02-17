@@ -13,7 +13,6 @@ class IndexView(View):
     def get(self, *args, **kwargs):
       now = datetime.date.today().year
       frango = list(range(now, 2007, -1))
-      print(frango)
       return render(self.request, 'configuracion/index.html', {'frango': frango})
 
 

@@ -1,0 +1,50 @@
+{% load reporte_tag %}
+{% if general %}
+  <table id="myTable" class="table table-bordered">
+    <thead>
+    <tr>
+      <th>Gestion</th>
+      <th>Mes</th>
+      <th>Particular(Bs)</th>
+      <th>Seguro(Bs)</th>
+      <th>Accion</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in general %}
+      <tr>
+        <td>{{ item.gestion }}</td>
+        <td>{{ item.mes | mesliteral }}</td>
+        <td class="text-right">{{ item.particular }}</td>
+        <td class="text-right">{{ item.seguro }}</td>
+        <td class="text-right">
+          <button data-ref="1" class="btn btn-info btn-sm imprimir-general">
+            <i class="fa fa-file-pdf-o"></i>
+          </button>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-4 text-right">
+      <button id="registrar-mes" class="btn btn-sm btn-info">Registrar</button>
+    </div>
+  </div>
+{% else %}
+  <div class="row">
+    <div class="col-md-8">
+      <p>No se ha encontrado ningun registro.</p>
+    </div>
+    <div class="col-md-4 text-right">
+      <button id="registrar-mes" class="btn btn-sm btn-info">Registrar</button>
+    </div>
+  </div>
+{% endif %}
+<script>
+  $("td").on("click", ".imprimir-general", function (e) {
+    e.preventDefault();
+    alert("imprimir"+$(this).attr("data-ref"));
+  })
+</script>

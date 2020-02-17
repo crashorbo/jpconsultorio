@@ -6121,6 +6121,8 @@ File: scss
     background: #052952; }
   .social-widget .soc-header.box-paciente {
     background: #F3943D; }
+  .social-widget .soc-header.box-reporte {
+    background: #A63226; }
 .social-widget .soc-content {
   display: -webkit-box;
   display: -webkit-flex;
@@ -8084,4 +8086,8 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
 
 .text-configuracion{
   color: #57ADED !important;
+}
+
+.text-reporte{
+  color: #A63226 !important;
 }

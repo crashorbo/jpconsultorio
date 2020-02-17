@@ -31,14 +31,14 @@ $(document).ready(function(){
   $('#myTable').on('click','.paciente-eliminar', function(e){
     e.preventDefault();
     $thisUrl = $(this).attr('data-url');
-    $.ajax(({
+    $.ajax({
       url: 'ajax/eliminar',
       type: 'get',
       data: {'id': $thisUrl},
       success: function(data){
         $('#myTable').DataTable().ajax.reload(null, false);
       }
-    }));
+    });
   });
 });
 
@@ -49,21 +49,21 @@ $("#registro-paciente").click(function(){
     success: function(data){
         $('#contenido-modal').html(data);
     }
-  })
+  });
 });
 
-$("#myTable").on('click','.paciente-editar',function(e){
+$('#myTable').on('click', '.paciente-editar',function(e){
   e.preventDefault();
-  $this_url = $(this).attr('data-url');
+  $thisUrl = $(this).attr('data-url');
   $.ajax({
-    url: $this_url,
+    url: $thisUrl,
     type: 'get',  
     success: function(data){
       $('#contenido-modal').html(data);
       $('#responsive-modal').modal('show');
 
     }
-  })
+  });
 });
 
 $('#mensaje-modal').on('hidden.bs.modal', function (e) {
