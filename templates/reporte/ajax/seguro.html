@@ -1,10 +1,77 @@
 <div class="card-body">
   <div class="card b-all shadow-none">
     <div class="card-body">
-      <h3 class="card-title m-b-0">REPORTE SEGURO</h3>
+      <div class="row">
+        <div class="col-md-4"><h3 class="card-title m-b-0">REPORTE SEGURO</h3></div>
+        <div class="col-md-5">
+          <div class="row">
+            <div class="col-md-3 text-right"><label class="control-label col-form-label-sm" for="">Seguro</label></div>
+            <div class="col-md-9">
+              <select id="segurosel" class="form-control form-control-sm">
+                {% for i in seguros %}
+                  <option value="{{ i.id }}">{{ i.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6 text-right"><label class="control-label col-form-label-sm" for="">Gestion</label></div>
+            <div class="col-md-6">
+              <select id="gestionsel" class="form-control form-control-sm">
+                {% for i in rangestion %}
+                  <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <hr class="m-t-0">
+    <div class="card-body">
+      <div id="restabla">
+
+      </div>
     </div>
   </div>
 </div>
+<script>
+  $(function () {
+    $.ajax({
+      url: 'seguro-ajax/' + $("#segurosel").val() + '/' + $("#gestionsel").val(),
+      type: 'get',
+      success: function (data) {
+        $("#restabla").html(data);
+      }
+    });
+  });
+  $("#restabla").on("click", '#registrar-mes', function (e) {
+    $.ajax({
+      url: 'seguro-form/' + $("#segurosel").val() + '/' + $("#gestionsel").val(),
+      type: 'get',
+      success: function (data) {
+        $('#contenido-modal').html(data);
+        $('#responsive-modal').modal('show');
+      }
+    });
+  });
+  $("#gestionsel").on("change", function (e) {
+    $.ajax({
+      url: 'seguro-ajax/' + $("#segurosel").val() + '/' + $("#gestionsel").val(),
+      type: 'get',
+      success: function (data) {
+        $("#restabla").html(data);
+      }
+    });
+  });
+  $("#segurosel").on("change", function (e) {
+    $.ajax({
+      url: 'seguro-ajax/' + $("#segurosel").val() + '/' + $("#gestionsel").val(),
+      type: 'get',
+      success: function (data) {
+        $("#restabla").html(data);
+      }
+    });
+  });
+</script>

@@ -1,24 +1,23 @@
+{% load static %}
 {% load reporte_tag %}
-{% if general %}
+{% if seguro %}
   <table id="myTable" class="table table-bordered">
     <thead>
     <tr>
       <th>Gestion</th>
       <th>Mes</th>
       <th>Monto(Bs)</th>
-      <th>Seguro(Bs)</th>
       <th>Acciones</th>
     </tr>
     </thead>
     <tbody>
-    {% for item in general %}
+    {% for item in seguro %}
       <tr>
         <td>{{ item.gestion }}</td>
         <td>{{ item.mes | mesliteral }}</td>
-        <td class="text-right">{{ item.particular }}</td>
-        <td class="text-right">{{ item.seguro }}</td>
+        <td class="text-right">{{ item.monto }}</td>
         <td class="text-right">
-          <button data-ref="1" class="btn btn-info btn-sm imprimir-general">
+          <button data-ref="{% url 'reporte-seguro-pdf' pk=item.id %}" class="btn btn-info btn-sm imprimir-general">
             <i class="fa fa-file-pdf-o"></i>
           </button>
         </td>
@@ -45,6 +44,7 @@
 <script>
   $("td").on("click", ".imprimir-general", function (e) {
     e.preventDefault();
-    alert("imprimir"+$(this).attr("data-ref"));
+    this_url = $(this).attr("data-ref");
+    window.open(this_url,"reporte","height=600,width=700,status=no, toolbar=no,menubar=no,location=no,scrollbars=yes");
   })
 </script>

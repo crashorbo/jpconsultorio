@@ -6,9 +6,7 @@ from seguro.models import Seguro
 
 # Create your models here.
 
-
-class Reportegeneral(models.Model):
-    MESES_CHOICES = (
+MESES_CHOICES = (
         (1, 'Enero'),
         (2, 'Febrero'),
         (3, 'Marzo'),
@@ -23,6 +21,8 @@ class Reportegeneral(models.Model):
         (12, 'Diciembre'),
     )
 
+
+class Reportegeneral(models.Model):
     mes = models.IntegerField(default=1, choices=MESES_CHOICES)
     gestion = models.IntegerField(default=0)
     particular = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -35,7 +35,10 @@ class Reportegeneral(models.Model):
 
 class Reporteseguro(models.Model):
     seguro = models.ForeignKey(Seguro, on_delete=models.CASCADE)
-    mes = models.IntegerField(default=0)
+    mes = models.IntegerField(default=1, choices=MESES_CHOICES)
     gestion = models.IntegerField(default=0)
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.gestion + self.mes

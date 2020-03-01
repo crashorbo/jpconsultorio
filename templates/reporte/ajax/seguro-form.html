@@ -4,9 +4,10 @@
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 </div>
 <div class="modal-body">
-  <form class="form" action="{% url 'reporte-general-form' pk=gestion %}" method="post">
+  <form class="form" action="{% url 'reporte-seguro-form' pk=seguro gestion=gestion %}" method="post">
     {% csrf_token %}
     {{ form.gestion }}
+    {{ form.seguro }}
     <div class="form-group row">
       <label for="" class="col-md-2 col-form-label"><strong>Mes</strong></label>
       <div class="col-md-5">

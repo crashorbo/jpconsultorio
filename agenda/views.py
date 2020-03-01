@@ -21,6 +21,7 @@ from core.models import Movdiario
 from paciente.forms import PacienteForm
 from .models import Agenda, Diagnostico, Tratamiento, Agendaserv, Receta, Reconsulta, Agendaserv
 from .forms import AgendaForm, DiagnosticoForm, TratamientoForm, ServicioFormset, RecetaForm, ReconsultaForm, AgendaservicioForm
+
 from io import BytesIO
 from decimal import Decimal, getcontext
 from django.utils import formats
