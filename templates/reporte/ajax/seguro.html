@@ -37,14 +37,18 @@
   </div>
 </div>
 <script>
+    var inicializar = function(){
+      $.ajax({
+          url: 'seguro-ajax/' + $("#segurosel").val() + '/' + $("#gestionsel").val(),
+          type: 'get',
+          success: function (data) {
+            $("#restabla").html(data);
+          }
+      });
+    };
   $(function () {
-    $.ajax({
-      url: 'seguro-ajax/' + $("#segurosel").val() + '/' + $("#gestionsel").val(),
-      type: 'get',
-      success: function (data) {
-        $("#restabla").html(data);
-      }
-    });
+
+    inicializar();
   });
   $("#restabla").on("click", '#registrar-mes', function (e) {
     $.ajax({

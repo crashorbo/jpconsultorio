@@ -4,7 +4,7 @@
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 </div>
 <div class="modal-body">
-  <form class="form" action="{% url 'reporte-seguro-form' pk=seguro gestion=gestion %}" method="post">
+  <form id="form-seguro" class="form" action="{% url 'reporte-seguro-form' pk=seguro gestion=gestion %}" method="post">
     {% csrf_token %}
     {{ form.gestion }}
     {{ form.seguro }}
@@ -22,3 +22,48 @@
     </div>
   </form>
 </div>
+<script>
+$('#form-seguro').on('submit', function (e) {
+      e.preventDefault();
+      var $formData = $(this).serialize();
+      var $thisUrl = $(this).attr('action');
+      var $thisMethod = $(this).attr('method');
+      $.ajax({
+          method: $thisMethod,
+          url: $thisUrl,
+          data: $formData,
+          success: function(data){
+            if(data.success){
+              $("#responsive-modal").modal('hide');
+              $.toast({
+                heading: 'Mensaje del Sistema',
+                text: 'El Reporte se ha generado con exito',
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'success',
+                hideAfter: 3500,
+                stack: 6
+              });
+              inicializar();
+            }
+            else{
+              $.toast({
+              heading: 'Mensaje del Sistema',
+              text: 'Ha ocurrido un error, el reporte del mes indicado ya existe',
+              position: 'top-right',
+              loaderBg:'#ff6849',
+              icon: 'error',
+              hideAfter: 3500
+            });
+            }
+
+          },
+          error: function(xhr,errmsg,err) {
+            // Show an error
+            $('#results').html("<div class='alert-box alert radius' data-alert>"+
+            "Oops! We have encountered an error. <a href='#' class='close'>&times;</a></div>"); // add error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+      })
+  });
+</script>
