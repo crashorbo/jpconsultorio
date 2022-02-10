@@ -4,7 +4,7 @@ certifi==2019.11.28
 colorama==0.4.3
 dataset==1.1.2
 dbfread==2.0.7
-Django==2.2.8
+Django==2.2.27
 django-appconf==1.0.3
 django-autocomplete-light==3.5.0
 django-braces==1.13.0
